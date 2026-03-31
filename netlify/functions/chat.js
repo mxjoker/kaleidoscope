@@ -1,35 +1,65 @@
-// netlify/functions/chat.js
-import { getStore } from "@netlify/blobs";
+import Anthropic from "@anthropic-ai/sdk";
 
-export async function handler(req, res) {
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+export default async function handler(req, context) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   try {
-    const store = getStore("game-data");
-    const globalStateRaw = await store.get("globalState");
-    const globalState = globalStateRaw ? JSON.parse(globalStateRaw) : { foundSecrets: [], usedSecrets: [], kimchiBank: 100 };
+    const { npc, message, history = [], persona } = await req.json();
 
-    const body = JSON.parse(await req.text());
-    const { player, message } = body;
-
-    // Basic NPC logic:
-    let response = "NPC doesn't understand.";
-
-    if (/hello|hi|greetings/i.test(message)) {
-      response = `Hello ${player}! Have you discovered any secrets lately?`;
-    } else if (/secret/i.test(message)) {
-      const secrets = globalState.foundSecrets.join(", ") || "no secrets yet";
-      response = `I see you have found: ${secrets}`;
-    } else if (/kimchi/i.test(message)) {
-      response = `Your kimchi bank has ${globalState.kimchiBank} coins. Spend wisely!`;
-    } else if (globalState.foundSecrets.includes(message)) {
-      response = `Ah, I know about "${message}"! Clever you, ${player}.`;
+    if (!message) {
+      return new Response(JSON.stringify({ error: "No message provided" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    return res.status(200).json({ npcResponse: response });
-  } catch (err) {
-    return res.status(500).json({ error: "Server Error", details: err.message });
+    const systemPrompt =
+      persona ||
+      `You are a mysterious NPC aboard a ship called The Kaleidoscope. Be brief and in character.`;
+
+    // Build messages array from history + new message
+    const messages = [
+      ...history.slice(-8).map((h) => ({
+        role: h.role,
+        content: h.content,
+      })),
+      { role: "user", content: message },
+    ];
+
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 200,
+      system: systemPrompt,
+      messages,
+    });
+
+    const reply =
+      response.content[0]?.type === "text"
+        ? response.content[0].text
+        : "...";
+
+    return new Response(JSON.stringify({ response: reply, npc }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (error) {
+    console.error("Chat error:", error);
+    return new Response(
+      JSON.stringify({ error: "Chat failed", response: "..." }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

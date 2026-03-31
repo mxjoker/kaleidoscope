@@ -1,13 +1,2403 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Kaleidoscope</title>
-    <meta name="description" content="Ship's log, crew manifest & between-session companion for The Sailors campaign." />
-    <script type="module" crossorigin src="/assets/index-Dr4KmGPL.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Kaleidoscope</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink-deep: #0e1f2b;
+  --ink-mid: #1a3344;
+  --ocean-light: #2d6a7f;
+  --teal: #3d9aaa;
+  --teal-bright: #52c5d5;
+  --seafoam: #8ecbc8;
+  --cream: #f4edd8;
+  --parchment: #e8ddc0;
+  --warm-sand: #c4a87a;
+  --gold: #d4a832;
+  --rust: #b05c3a;
+  --vote-purple: #8b6fc4;
+  --secret-glow: #f0d060;
+  --border-warm: rgba(196,168,122,0.35);
+  --surface: rgba(244,237,216,0.96);
+  --hp-red: #c0392b;
+  --hp-green: #27ae60;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Lora', Georgia, serif;
+  background: var(--ink-deep);
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--cream);
+  overflow-x: hidden;
+}
+
+/* Ocean background */
+.bg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, #0e1f2b 0%, #1a3344 40%, #0d2233 100%);
+  z-index: 0;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(82,197,213,0.08);
+  animation: float linear infinite;
+}
+@keyframes float {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(-20px) scale(1); opacity: 0; }
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,22,32,0.97);
+  border-top: 1px solid var(--border-warm);
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  padding-bottom: env(safe-area-inset-bottom);
+  backdrop-filter: blur(12px);
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  gap: 3px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s;
+}
+.nav-btn.active .nav-icon { color: var(--teal-bright); }
+.nav-btn.active .nav-label { color: var(--teal-bright); }
+.nav-icon { font-size: 18px; color: rgba(244,237,216,0.4); transition: color 0.15s; }
+.nav-label { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.06em; color: rgba(244,237,216,0.4); transition: color 0.15s; }
+
+/* ── More menu ── */
+.more-menu {
+  position: fixed;
+  bottom: calc(65px + env(safe-area-inset-bottom));
+  right: 8px;
+  background: rgba(14,31,43,0.98);
+  border: 1px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 8px 0;
+  z-index: 200;
+  display: none;
+  min-width: 200px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+}
+.more-menu.show { display: block; }
+.more-item {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--seafoam);
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.more-item:hover { background: rgba(61,154,170,0.1); }
+.more-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+  display: none;
+}
+.more-overlay.show { display: block; }
+
+/* ── Panels ── */
+.panel { display: none; padding: 16px; }
+.panel.active { display: block; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  color: var(--ink-deep);
+}
+.card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ocean-light);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* ── Page header ── */
+.page-header {
+  padding: 20px 16px 4px;
+  text-align: center;
+}
+.page-title {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+}
+.page-sub {
+  font-size: 12px;
+  color: var(--seafoam);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* ══════════ SHIP'S LOG ══════════ */
+.log-session-badge {
+  display: inline-block;
+  background: rgba(212,168,50,0.15);
+  border: 1px solid rgba(212,168,50,0.4);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.log-recap {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ink-mid);
+}
+.log-recap p { margin-bottom: 10px; }
+
+.gold-table { width: 100%; border-collapse: collapse; }
+.gold-table th {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ocean-light);
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-warm);
+}
+.gold-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-warm);
+  font-size: 13px;
+  color: var(--ink-deep);
+}
+.gold-table tr:last-child td { border-bottom: none; }
+.gold-amt {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #7a5a00;
+}
+
+/* ══════════ THE SHIP ══════════ */
+.ship-locations { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.location-btn {
+  background: rgba(26,51,68,0.8);
+  border: 1px solid var(--border-warm);
+  border-radius: 12px;
+  padding: 16px 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.location-btn:hover, .location-btn.active {
+  border-color: var(--teal);
+  background: rgba(61,154,170,0.12);
+}
+.location-btn.active { border-color: var(--teal-bright); }
+.loc-icon { font-size: 22px; margin-bottom: 6px; }
+.loc-name { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--seafoam); }
+.loc-npc  { font-size: 11px; color: var(--warm-sand); margin-top: 3px; font-style: italic; }
+
+.npc-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.chat-area {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+.chat-area.show { display: flex; }
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-warm);
+  margin-bottom: 4px;
+}
+.chat-npc-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--ink-deep); }
+.chat-npc-desc { font-size: 11px; color: var(--warm-sand); font-style: italic; }
+
+.chat-messages {
+  min-height: 120px;
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+.msg {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.msg.player { flex-direction: row-reverse; }
+.msg-bubble {
+  max-width: 78%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.msg.npc .msg-bubble    { background: rgba(26,51,68,0.15); color: var(--ink-mid); border-radius: 4px 14px 14px 14px; }
+.msg.player .msg-bubble { background: var(--teal); color: #fff; border-radius: 14px 4px 14px 14px; }
+.msg.secret .msg-bubble { background: rgba(240,208,96,0.12); border: 1px solid rgba(240,208,96,0.3); color: var(--ink-mid); border-radius: 4px 14px 14px 14px; }
+
+.secret-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(240,208,96,0.15);
+  border: 1px solid rgba(240,208,96,0.4);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--secret-glow);
+  margin-top: 6px;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.chat-input {
+  flex: 1;
+  background: var(--parchment);
+  border: 1px solid var(--warm-sand);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Lora', serif;
+  font-size: 14px;
+  color: var(--ink-deep);
+}
+.chat-input:focus { outline: none; border-color: var(--teal); }
+
+.chat-typing { font-size: 12px; color: var(--warm-sand); font-style: italic; min-height: 18px; }
+
+/* Games */
+.games-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.game-btn {
+  background: rgba(26,51,68,0.6);
+  border: 1px solid var(--border-warm);
+  border-radius: 10px;
+  padding: 14px 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.game-btn:hover { border-color: var(--teal); }
+.game-title { font-family: 'Cinzel', serif; font-size: 11px; color: var(--seafoam); letter-spacing: 0.06em; }
+.game-desc  { font-size: 11px; color: var(--warm-sand); margin-top: 4px; font-style: italic; }
+
+/* Game modals */
+.game-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(8,16,24,0.88);
+  align-items: flex-end;
+  justify-content: center;
+}
+.game-modal.show { display: flex; }
+.game-panel {
+  background: var(--ink-mid);
+  border: 1px solid var(--border-warm);
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.game-panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.game-panel-sub { font-size: 12px; color: var(--seafoam); font-style: italic; margin-bottom: 16px; }
+
+.coin-flip-row { display: flex; justify-content: center; gap: 16px; margin: 16px 0; }
+.coin {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--warm-sand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(196,168,122,0.1);
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  color: var(--cream);
+  user-select: none;
+}
+.coin.selected-h { background: rgba(212,168,50,0.25); border-color: var(--gold); }
+.coin.selected-t { background: rgba(61,154,170,0.25); border-color: var(--teal-bright); }
+.coin.flipping { animation: coinFlip 0.5s ease; }
+@keyframes coinFlip { 0%,100%{transform:rotateY(0)} 50%{transform:rotateY(90deg)} }
+
+.bvr-row { display: flex; justify-content: center; gap: 12px; margin: 16px 0; }
+.bvr-btn {
+  width: 70px; height: 70px;
+  border-radius: 12px;
+  border: 2px solid var(--border-warm);
+  background: rgba(26,51,68,0.8);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; gap: 4px;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bvr-btn:hover { border-color: var(--teal); }
+.bvr-btn.chosen { border-color: var(--gold); background: rgba(212,168,50,0.15); }
+.bvr-icon { font-size: 26px; }
+.bvr-label { font-family: 'Cinzel', serif; font-size: 9px; color: var(--seafoam); letter-spacing: 0.06em; }
+
+.game-result {
+  text-align: center;
+  padding: 14px;
+  border-radius: 12px;
+  margin: 12px 0;
+  font-family: 'Cinzel', serif;
+}
+.game-result.win  { background: rgba(39,174,96,0.15);  border: 1px solid rgba(39,174,96,0.4);  color: var(--hp-green); }
+.game-result.lose { background: rgba(176,92,58,0.15);   border: 1px solid rgba(176,92,58,0.4);   color: var(--rust); }
+.game-result.draw { background: rgba(139,111,196,0.15); border: 1px solid rgba(139,111,196,0.4); color: var(--vote-purple); }
+.game-result-big  { font-size: 20px; font-weight: 600; }
+.game-result-sub  { font-size: 11px; margin-top: 4px; }
+
+.bet-row { display: flex; gap: 8px; align-items: center; margin: 10px 0; }
+.bet-row label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--seafoam); flex-shrink: 0; }
+.bet-input {
+  flex: 1;
+  background: rgba(14,31,43,0.8);
+  border: 1px solid var(--warm-sand);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: var(--cream);
+  text-align: center;
+}
+
+/* ══════════ LETTERS ══════════ */
+.letter-select { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+.letter-char-btn {
+  background: rgba(26,51,68,0.8);
+  border: 1px solid var(--border-warm);
+  border-radius: 10px;
+  padding: 12px 6px;
+  cursor: pointer;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--seafoam);
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.letter-char-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212,168,50,0.1); }
+
+.letter-unlock {
+  text-align: center;
+  padding: 20px;
+}
+.letter-seal {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+  animation: sealFloat 3s ease-in-out infinite;
+}
+@keyframes sealFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.letter-unlock-hint { font-size: 13px; color: var(--warm-sand); font-style: italic; margin-bottom: 14px; }
+.letter-input {
+  background: rgba(14,31,43,0.6);
+  border: 1px solid var(--warm-sand);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: 'Lora', serif;
+  font-size: 16px;
+  color: var(--cream);
+  text-align: center;
+  width: 200px;
+}
+.letter-input:focus { outline: none; border-color: var(--gold); }
+
+.letter-content { display: none; }
+.letter-content.show { display: block; }
+
+.letter-from { font-size: 11px; color: var(--warm-sand); font-style: italic; margin-bottom: 12px; }
+.letter-body { font-size: 14px; line-height: 1.8; color: var(--ink-mid); margin-bottom: 14px; }
+.letter-mechanic {
+  background: rgba(212,168,50,0.1);
+  border: 1px solid rgba(212,168,50,0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #7a5a00;
+  line-height: 1.6;
+}
+.letter-mechanic strong { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; display: block; margin-bottom: 4px; color: var(--gold); }
+
+/* ══════════ VOTE ══════════ */
+.voter-select {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.voter-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-warm);
+  background: transparent;
+  color: var(--seafoam);
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.voter-btn.active {
+  background: var(--vote-purple);
+  border-color: #a88ce0;
+  color: #fff;
+}
+
+.vote-question { margin-bottom: 20px; }
+.vote-q-text { font-size: 14px; font-weight: 600; color: var(--ink-deep); margin-bottom: 10px; line-height: 1.5; }
+.vote-options { display: flex; flex-direction: column; gap: 8px; }
+.vote-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border-warm);
+  background: var(--parchment);
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.vote-option:hover { border-color: var(--vote-purple); }
+.vote-option.voted { border-color: var(--vote-purple); background: rgba(139,111,196,0.08); }
+.vote-radio {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--warm-sand);
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.15s;
+}
+.vote-option.voted .vote-radio { background: var(--vote-purple); border-color: var(--vote-purple); }
+.vote-opt-text { font-size: 13px; color: var(--ink-mid); line-height: 1.5; flex: 1; }
+.vote-voters { font-size: 11px; color: var(--vote-purple); margin-top: 3px; font-style: italic; }
+
+.vote-status { font-family: 'Cinzel', serif; font-size: 10px; color: var(--warm-sand); letter-spacing: 0.06em; margin-top: 8px; }
+
+/* ══════════ NEW CREW ══════════ */
+.crew-card {
+  background: var(--surface);
+  border: 1px solid var(--border-warm);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  color: var(--ink-deep);
+}
+.crew-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.crew-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.crew-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; color: var(--ink-deep); }
+.crew-title { font-size: 12px; color: var(--warm-sand); font-style: italic; }
+.crew-bio { font-size: 13px; line-height: 1.7; color: var(--ink-mid); margin-bottom: 12px; }
+.crew-talk-btn {
+  width: 100%;
+  padding: 10px;
+  background: #1a3344;
+  border: 1px solid var(--teal);
+  border-radius: 9px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--teal-bright);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ══════════ PROVISIONS (SHOP) ══════════ */
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-warm);
+}
+.shop-item:last-child { border-bottom: none; }
+.shop-item-info { flex: 1; }
+.shop-item-name { font-size: 14px; font-weight: 600; color: var(--ink-deep); }
+.shop-item-desc { font-size: 11px; color: var(--warm-sand); margin-top: 2px; }
+.shop-item-price { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: #7a5a00; flex-shrink: 0; }
+
+/* ══════════ LEDGER ══════════ */
+.ledger-entry {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-warm);
+}
+.ledger-entry:last-child { border-bottom: none; }
+.ledger-who { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--teal); margin-bottom: 4px; }
+.ledger-text { font-size: 13px; color: var(--ink-mid); line-height: 1.6; font-style: italic; }
+
+/* ══════════ CURIOSITIES ══════════ */
+.curio-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-warm);
+}
+.curio-item:last-child { border-bottom: none; }
+.curio-name { font-size: 14px; font-weight: 600; color: var(--ink-deep); margin-bottom: 3px; }
+.curio-type { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.1em; color: var(--teal); text-transform: uppercase; margin-bottom: 4px; }
+.curio-desc { font-size: 12px; color: var(--warm-sand); line-height: 1.6; }
+
+/* ══════════ PUDDLE'S JOURNAL ══════════ */
+.journal-entry {
+  margin-bottom: 10px;
+  border: 1px solid var(--border-warm);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+  background: rgba(109,232,216,0.06);
+  -webkit-tap-highlight-color: transparent;
+}
+.journal-entry-num { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.08em; color: #6de8d8; }
+.journal-chevron { font-size: 12px; color: var(--warm-sand); transition: transform 0.2s; }
+.journal-entry.open .journal-chevron { transform: rotate(180deg); }
+.journal-body { display: none; padding: 14px; border-top: 1px solid var(--border-warm); }
+.journal-entry.open .journal-body { display: block; }
+.journal-text { font-size: 13px; line-height: 1.8; color: var(--ink-mid); font-style: italic; }
+
+/* ══════════ VOYAGE MAP ══════════ */
+.map-wrap {
+  position: relative;
+  background: rgba(13,34,51,0.9);
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+.map-svg { width: 100%; height: 100%; }
+.port-label { font-family: 'Cinzel', serif; font-size: 10px; fill: var(--cream); }
+.port-dot { cursor: pointer; transition: r 0.2s; }
+@keyframes pulse { 0%,100%{opacity:1;r:7} 50%{opacity:0.5;r:10} }
+.port-pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* ══════════ NEXT VOYAGE ══════════ */
+.hook-card {
+  background: linear-gradient(135deg, rgba(26,51,68,0.95), rgba(14,31,43,0.95));
+  border: 1px solid rgba(82,197,213,0.3);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.hook-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal-bright), transparent);
+}
+.hook-title { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600; color: var(--cream); margin-bottom: 8px; letter-spacing: 0.04em; }
+.hook-body { font-size: 14px; line-height: 1.8; color: rgba(244,237,216,0.8); }
+
+/* ══════════ THE CREW ══════════ */
+.crew-roster { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.roster-card {
+  background: var(--surface);
+  border: 1px solid var(--border-warm);
+  border-radius: 12px;
+  padding: 14px 12px;
+  color: var(--ink-deep);
+}
+.roster-name  { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; color: var(--ink-deep); }
+.roster-class { font-size: 11px; color: var(--warm-sand); font-style: italic; margin: 2px 0 6px; }
+.roster-stat  { font-size: 11px; color: var(--ink-mid); line-height: 1.6; }
+.roster-gold  { font-family: 'Cinzel', serif; font-size: 12px; color: #7a5a00; margin-top: 6px; }
+
+/* ══════════ CHARACTER SHEET ══════════ */
+.char-select-bar {
+  background: rgba(14,31,43,0.95);
+  border-bottom: 1px solid var(--border-warm);
+  padding: 10px 16px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.char-select-bar::-webkit-scrollbar { display: none; }
+.char-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-warm);
+  background: transparent;
+  color: var(--seafoam);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.char-btn.active { background: var(--teal); border-color: var(--teal-bright); color: #0e1f2b; font-weight: 600; }
+
+.section-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-warm);
+  background: rgba(26,51,68,0.7);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 8px;
+  position: sticky;
+  top: 45px;
+  z-index: 49;
+}
+.section-tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: rgba(244,237,216,0.5);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.cs-panel { padding: 16px; display: none; }
+.cs-panel.active { display: block; }
+
+/* HP */
+.hp-block { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.hp-display { display: flex; align-items: baseline; gap: 4px; flex: 1; }
+.hp-current { font-family: 'Cinzel', serif; font-size: 36px; font-weight: 600; line-height: 1; cursor: pointer; border-bottom: 2px dashed rgba(176,92,58,0.4); transition: color 0.3s; }
+.hp-current.healthy { color: var(--hp-green); }
+.hp-current.hurt    { color: #b8860b; }
+.hp-current.critical{ color: var(--hp-red); }
+.hp-sep { font-size: 20px; color: var(--warm-sand); }
+.hp-max { font-family: 'Cinzel', serif; font-size: 20px; color: var(--warm-sand); cursor: pointer; }
+.hp-label { font-size: 11px; color: var(--ocean-light); margin-top: 2px; }
+.hp-adjust-row { display: flex; gap: 8px; margin-top: 8px; }
+.hp-input-row { display: none; gap: 8px; margin-top: 8px; }
+.hp-input-row.show { display: flex; }
+.hp-input-row input { flex: 1; background: var(--parchment); border: 1px solid var(--warm-sand); border-radius: 8px; padding: 8px 12px; font-family: 'Lora', serif; font-size: 16px; color: var(--ink-deep); text-align: center; }
+
+/* Stats */
+.stat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.stat-box { background: var(--parchment); border: 1px solid var(--border-warm); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; }
+.stat-abbr  { font-family: 'Cinzel', serif; font-size: 9px; color: var(--ocean-light); letter-spacing: 0.05em; }
+.stat-score { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600; color: var(--ink-deep); line-height: 1.2; }
+.stat-mod   { font-size: 11px; color: var(--rust); font-family: 'Cinzel', serif; }
+.quick-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+.quick-stat { background: var(--parchment); border: 1px solid var(--border-warm); border-radius: 10px; padding: 8px 6px; text-align: center; cursor: pointer; }
+.quick-stat-val { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; color: var(--ink-deep); }
+.quick-stat-lbl { font-size: 9px; color: var(--ocean-light); font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
+
+/* Conditions */
+.conditions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.condition-pill { padding: 8px 10px; border-radius: 20px; border: 1.5px solid var(--border-warm); background: var(--parchment); text-align: center; cursor: pointer; font-family: 'Cinzel', serif; font-size: 10px; color: var(--ink-mid); letter-spacing: 0.04em; transition: all 0.2s; }
+.condition-pill.active { background: #6b2318 !important; border-color: #9c3a28 !important; color: #f4edd8 !important; font-weight: 600; }
+
+/* Skills */
+.skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.skill-row { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 6px; cursor: pointer; }
+.skill-pip { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--warm-sand); flex-shrink: 0; transition: all 0.15s; }
+.skill-pip.prof   { background: var(--teal); border-color: var(--teal-bright); }
+.skill-pip.expert { background: var(--gold); border-color: var(--gold); }
+.skill-name  { font-size: 12px; color: var(--ink-deep); flex: 1; }
+.skill-bonus { font-family: 'Cinzel', serif; font-size: 12px; color: var(--ocean-light); font-weight: 600; }
+.skill-attr  { font-size: 10px; color: var(--warm-sand); }
+
+/* Attacks */
+.attack-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-warm); }
+.attack-row:last-child { border-bottom: none; }
+.attack-name   { font-family: 'Lora', serif; font-size: 14px; color: var(--ink-deep); font-weight: 600; }
+.attack-detail { font-size: 11px; color: var(--warm-sand); }
+.attack-bonus  { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600; color: var(--teal); text-align: center; }
+.attack-damage { font-family: 'Cinzel', serif; font-size: 13px; color: var(--rust); text-align: right; }
+
+/* Spell slots */
+.spell-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.spell-level-label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--ocean-light); width: 45px; flex-shrink: 0; }
+.slot-pips { display: flex; gap: 6px; flex: 1; }
+.slot-pip { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--vote-purple); cursor: pointer; transition: all 0.15s; }
+.slot-pip.used      { background: rgba(139,111,196,0.15); border-color: rgba(139,111,196,0.3); }
+.slot-pip.available { background: var(--vote-purple); }
+
+/* Dice */
+.checks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.check-card { background: var(--parchment); border: 1px solid var(--border-warm); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+.check-card:active { background: #c4eaf0; transform: scale(0.97); }
+.check-val { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 600; color: var(--ocean-light); }
+.check-lbl { font-size: 11px; color: var(--warm-sand); font-family: 'Cinzel', serif; }
+.check-result { margin-top: 8px; background: #1a3344; border: 1px solid var(--teal); border-radius: 8px; padding: 12px; text-align: center; display: none; }
+.check-result.show { display: block; }
+.check-result-num { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 600; color: var(--teal-bright); }
+.check-result-lbl { font-size: 12px; color: var(--seafoam); margin-top: 2px; }
+
+/* Death saves */
+.death-saves { display: flex; gap: 16px; }
+.ds-group { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.ds-label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; }
+.ds-label.success { color: var(--hp-green); }
+.ds-label.fail    { color: var(--rust); }
+.ds-pips { display: flex; gap: 6px; }
+.ds-pip  { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid; cursor: pointer; transition: all 0.15s; }
+.ds-pip.success-pip { border-color: var(--hp-green); }
+.ds-pip.success-pip.marked { background: var(--hp-green); }
+.ds-pip.fail-pip { border-color: var(--rust); }
+.ds-pip.fail-pip.marked { background: var(--rust); }
+
+/* Inventory */
+.item-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-warm); }
+.item-row:last-child { border-bottom: none; }
+.item-star { font-size: 14px; cursor: pointer; opacity: 0.3; flex-shrink: 0; margin-top: 1px; color: var(--gold); transition: opacity 0.15s; }
+.item-star.starred { opacity: 1; }
+.item-info { flex: 1; min-width: 0; }
+.item-name { font-size: 14px; color: var(--ink-deep); font-weight: 600; line-height: 1.3; }
+.item-desc { font-size: 12px; color: var(--warm-sand); margin-top: 2px; }
+.item-qty  { font-family: 'Cinzel', serif; font-size: 13px; color: var(--ocean-light); flex-shrink: 0; }
+
+/* Coin rows */
+.gold-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-warm); }
+.gold-type   { font-family: 'Cinzel', serif; font-size: 11px; color: var(--warm-sand); width: 50px; }
+.gold-amount { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; flex: 1; cursor: pointer; color: var(--ink-deep); }
+.gold-amount.gold-color { color: #7a5a00; }
+.gold-adj { display: flex; gap: 6px; }
+
+/* Loot form */
+.loot-form { background: rgba(61,154,170,0.08); border: 1px dashed var(--teal); border-radius: 10px; padding: 12px; margin-top: 10px; display: none; }
+.loot-form.show { display: block; }
+.loot-form input, .loot-form textarea { width: 100%; background: var(--parchment); border: 1px solid var(--warm-sand); border-radius: 8px; padding: 8px 12px; font-family: 'Lora', serif; font-size: 14px; color: var(--ink-deep); margin-bottom: 8px; }
+.loot-form textarea { resize: none; height: 60px; }
+.loot-form-row { display: flex; gap: 8px; }
+.loot-form input.short { width: 90px; flex-shrink: 0; }
+
+/* Notes */
+.notes-area { width: 100%; background: var(--parchment); border: 1px solid var(--warm-sand); border-radius: 10px; padding: 12px; font-family: 'Lora', serif; font-size: 14px; color: var(--ink-deep); line-height: 1.6; resize: none; min-height: 140px; }
+.notes-meta { font-size: 11px; color: var(--warm-sand); margin-bottom: 6px; font-style: italic; }
+
+/* Inline edit modal */
+.inline-edit { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--ink-mid); border: 1px solid var(--gold); border-radius: 14px; padding: 16px; width: 290px; z-index: 400; box-shadow: 0 8px 40px rgba(0,0,0,0.6); display: none; }
+.inline-edit.show { display: block; }
+.inline-edit label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); display: block; margin-bottom: 8px; letter-spacing: 0.1em; }
+.inline-edit input { width: 100%; background: rgba(14,31,43,0.8); border: 1px solid var(--warm-sand); border-radius: 8px; padding: 10px 14px; font-family: 'Cinzel', serif; font-size: 24px; color: var(--cream); text-align: center; margin-bottom: 10px; }
+.edit-buttons { display: flex; gap: 8px; }
+
+/* ══════════ DM REPORT ══════════ */
+.dm-lock { text-align: center; padding: 30px 20px; }
+.dm-lock-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+.dm-input { background: rgba(14,31,43,0.8); border: 1px solid var(--warm-sand); border-radius: 10px; padding: 10px 16px; font-family: 'Lora', serif; font-size: 16px; color: var(--cream); text-align: center; width: 220px; letter-spacing: 0.1em; }
+.dm-input:focus { outline: none; border-color: var(--gold); }
+.dm-section { margin-bottom: 20px; }
+.dm-section-title { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(212,168,50,0.3); }
+.dm-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border-warm); font-size: 13px; color: var(--ink-deep); gap: 10px; }
+.dm-row:last-child { border-bottom: none; }
+.dm-key { color: var(--warm-sand); flex-shrink: 0; }
+.dm-val { color: var(--ink-mid); text-align: right; }
+.dm-refresh { display: flex; justify-content: center; margin-bottom: 16px; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="bg" id="bg"></div>
+
+<div class="app">
+
+  <!-- ══════════ SHIP'S LOG ══════════ -->
+  <div class="panel active" id="panel-log">
+    <div class="page-header">
+      <div class="page-title">⚓ Ship's Log</div>
+      <div class="page-sub">The Kaleidoscope · Port of Fenhollow</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div class="log-session-badge">Session 1 — Mimic Mayhem</div>
+        <div class="log-recap">
+          <p>The Kaleidoscope made port at Fenhollow after a stint at the Wandering Carnival of Vel in Crestmere. Before leaving, someone left a job on the captain's table — investigate the wreck of the Salted Meridian, reported drifting offshore.</p>
+          <p>Something happened at that carnival that nobody's quite talking about yet.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Gold on Hand</div>
+        <table class="gold-table">
+          <thead><tr><th>Character</th><th>Class</th><th>Gold (gp)</th></tr></thead>
+          <tbody>
+            <tr><td>Axel Flameborn</td><td style="color:var(--warm-sand);font-size:12px">Monk 3</td><td><span class="gold-amt">307</span></td></tr>
+            <tr><td>Quincy Schueb</td><td style="color:var(--warm-sand);font-size:12px">Ranger 4</td><td><span class="gold-amt">26</span></td></tr>
+            <tr><td>Rapha</td><td style="color:var(--warm-sand);font-size:12px">Paladin 2</td><td><span class="gold-amt">133</span></td></tr>
+            <tr><td>Wayne Kerr</td><td style="color:var(--warm-sand);font-size:12px">Wizard 3</td><td><span class="gold-amt">120</span></td></tr>
+            <tr><td>Myrtle</td><td style="color:var(--warm-sand);font-size:12px">Rogue</td><td><span class="gold-amt">0</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Next Voyage</div>
+        <div class="hook-card" style="margin:0">
+          <div class="hook-title">The Wreck of the Salted Meridian</div>
+          <div class="hook-body">A derelict ship, registered to a Captain Vess, has been spotted drifting half a mile off the Fenhollow coast. The harbour authority closed the file fast. Someone left a lantern burning.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ THE SHIP ══════════ -->
+  <div class="panel" id="panel-ship">
+    <div class="page-header">
+      <div class="page-title">🚢 The Kaleidoscope</div>
+      <div class="page-sub">Choose a location to explore</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="ship-locations">
+        <div class="location-btn" onclick="selectLocation('deck')" id="loc-deck">
+          <div class="loc-icon">⚓</div>
+          <div class="loc-name">Main Deck</div>
+          <div class="loc-npc"><span class="npc-dot" style="background:#52c5d5"></span>Kimchi</div>
+        </div>
+        <div class="location-btn" onclick="selectLocation('hold')" id="loc-hold">
+          <div class="loc-icon">📦</div>
+          <div class="loc-name">Ship's Hold</div>
+          <div class="loc-npc"><span class="npc-dot" style="background:#6de8d8"></span>Puddle</div>
+        </div>
+        <div class="location-btn" onclick="selectLocation('bow')" id="loc-bow">
+          <div class="loc-icon">🌊</div>
+          <div class="loc-name">The Bow</div>
+          <div class="loc-npc"><span class="npc-dot" style="background:#c890d8"></span>Dred'ban</div>
+        </div>
+        <div class="location-btn" onclick="selectLocation('galley')" id="loc-galley">
+          <div class="loc-icon">🗺️</div>
+          <div class="loc-name">The Galley</div>
+          <div class="loc-npc"><span class="npc-dot" style="background:#d4a832"></span>Darius</div>
+        </div>
+        <div class="location-btn" onclick="selectLocation('cabin')" id="loc-cabin" style="grid-column:span 2">
+          <div class="loc-icon">🧭</div>
+          <div class="loc-name">Captain's Cabin</div>
+          <div class="loc-npc" style="color:var(--warm-sand);opacity:0.6">Empty — charts & navigation</div>
+        </div>
+      </div>
+
+      <!-- Chat areas -->
+      <div id="chat-kimchi" class="card chat-area">
+        <div class="chat-header">
+          <span class="npc-dot" style="background:#52c5d5;width:10px;height:10px"></span>
+          <div><div class="chat-npc-name">Kimchi</div><div class="chat-npc-desc">First Mate · Main Deck, drink in hand</div></div>
+        </div>
+        <div class="chat-messages" id="msgs-kimchi"></div>
+        <div class="chat-typing" id="typing-kimchi"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="input-kimchi" placeholder="Say something..." onkeydown="if(event.key==='Enter')sendMsg('kimchi')"/>
+          <button onclick="sendMsg('kimchi')" style="padding:10px 16px;background:#1a3344;border:1px solid var(--teal);border-radius:10px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Send</button>
+        </div>
+        <div class="games-row">
+          <div class="game-btn" onclick="openGame('tides')">
+            <div class="game-title">🪙 The Tide's Truth</div>
+            <div class="game-desc">Predict 3 coin flips · 7:1</div>
+          </div>
+          <div class="game-btn" onclick="openGame('bvr')">
+            <div class="game-title">⚔️ Blade, Bottle, Rope</div>
+            <div class="game-desc">Best of 3 · 1:1 payout</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="chat-puddle" class="card chat-area">
+        <div class="chat-header">
+          <span class="npc-dot" style="background:#6de8d8;width:10px;height:10px"></span>
+          <div><div class="chat-npc-name">Puddle</div><div class="chat-npc-desc">Wild Magic Sorcerer · Ship's Hold</div></div>
+        </div>
+        <div class="chat-messages" id="msgs-puddle"></div>
+        <div class="chat-typing" id="typing-puddle"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="input-puddle" placeholder="Say something..." onkeydown="if(event.key==='Enter')sendMsg('puddle')"/>
+          <button onclick="sendMsg('puddle')" style="padding:10px 16px;background:#1a3344;border:1px solid var(--teal);border-radius:10px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Send</button>
+        </div>
+      </div>
+
+      <div id="chat-dredban" class="card chat-area">
+        <div class="chat-header">
+          <span class="npc-dot" style="background:#c890d8;width:10px;height:10px"></span>
+          <div><div class="chat-npc-name">Dred'ban</div><div class="chat-npc-desc">Fighter 4 · The Bow</div></div>
+        </div>
+        <div class="chat-messages" id="msgs-dredban"></div>
+        <div class="chat-typing" id="typing-dredban"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="input-dredban" placeholder="Say something..." onkeydown="if(event.key==='Enter')sendMsg('dredban')"/>
+          <button onclick="sendMsg('dredban')" style="padding:10px 16px;background:#1a3344;border:1px solid var(--teal);border-radius:10px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Send</button>
+        </div>
+      </div>
+
+      <div id="chat-darius" class="card chat-area">
+        <div class="chat-header">
+          <span class="npc-dot" style="background:#d4a832;width:10px;height:10px"></span>
+          <div><div class="chat-npc-name">Captain Darius</div><div class="chat-npc-desc">Captain · The Galley</div></div>
+        </div>
+        <div class="chat-messages" id="msgs-darius"></div>
+        <div class="chat-typing" id="typing-darius"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="input-darius" placeholder="Say something..." onkeydown="if(event.key==='Enter')sendMsg('darius')"/>
+          <button onclick="sendMsg('darius')" style="padding:10px 16px;background:#1a3344;border:1px solid var(--teal);border-radius:10px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Send</button>
+        </div>
+      </div>
+
+      <div id="chat-cabin" class="card chat-area">
+        <div style="text-align:center;padding:20px;color:var(--warm-sand);font-style:italic;font-size:14px">
+          Charts and navigation tools are spread across the table.<br>The captain isn't here right now.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ LETTERS ══════════ -->
+  <div class="panel" id="panel-letters">
+    <div class="page-header">
+      <div class="page-title">✉️ Letters</div>
+      <div class="page-sub">Personal — choose your character</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="letter-select">
+        <div class="letter-char-btn active" onclick="selectLetterChar('axel',this)">Axel</div>
+        <div class="letter-char-btn" onclick="selectLetterChar('quincy',this)">Quincy</div>
+        <div class="letter-char-btn" onclick="selectLetterChar('rapha',this)">Rapha</div>
+        <div class="letter-char-btn" onclick="selectLetterChar('wayne',this)">Wayne</div>
+        <div class="letter-char-btn" onclick="selectLetterChar('myrtle',this)">Myrtle</div>
+      </div>
+
+      <!-- Unlock prompt -->
+      <div class="card" id="letter-lock-card">
+        <div class="letter-unlock">
+          <span class="letter-seal">🔒</span>
+          <div class="letter-unlock-hint">Type your character's first name to unseal your letter.</div>
+          <input class="letter-input" id="letter-unlock-input" type="text" placeholder="Your name..." onkeydown="if(event.key==='Enter')tryUnlockLetter()"/>
+          <div style="margin-top:10px">
+            <button onclick="tryUnlockLetter()" style="padding:9px 24px;background:#1a3344;border:1px solid var(--gold);border-radius:9px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;letter-spacing:0.06em;">Open</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Letter contents (hidden until unlocked) -->
+      <div id="letter-axel" class="card letter-content">
+        <div class="letter-from">From: a note tucked under your hammock</div>
+        <div class="letter-body">The proprietor at the carnival recognised you before you gave your name. His hands were shaking when he returned your coin. Someone at that carnival knew who you were — and didn't say so.</div>
+        <div class="letter-mechanic"><strong>⚔ SESSION MECHANIC</strong>If you ask someone at the wreck whether they've heard of you, roll Intimidation at advantage. The fear in their eyes will tell you everything.</div>
+      </div>
+
+      <div id="letter-quincy" class="card letter-content">
+        <div class="letter-from">From: a folded page tucked into your quiver</div>
+        <div class="letter-body">Blue went completely still in the Hall of Mirrors. Wouldn't move. Just said: <em>"Not us."</em> She's been checking reflections ever since — still water, polished metal, glass. Every surface. You've noticed, even if you haven't asked.</div>
+        <div class="letter-mechanic"><strong>⚔ SESSION MECHANIC</strong>Once per session, Blue alerts you (no action required) to any mirror, still water, or reflective surface showing something unexpected. You don't have to act on it.</div>
+      </div>
+
+      <div id="letter-rapha" class="card letter-content">
+        <div class="letter-from">From: a sealed envelope with no markings</div>
+        <div class="letter-body">The fortune teller at the carnival looked at you for a long time before she spoke.<br><br><em>"You will be asked to choose between two people you care about. One of them will not survive either choice."</em><br><br>She paused. Then: <em>"Choose anyway."</em></div>
+        <div class="letter-mechanic"><strong>⚔ SESSION MECHANIC</strong>Once this session, you may automatically succeed on a saving throw made to protect another party member. Tell the DM when you use it.</div>
+      </div>
+
+      <div id="letter-wayne" class="card letter-content">
+        <div class="letter-from">From: folded inside your spellbook</div>
+        <div class="letter-body">You went backstage at the carnival. You found a manifest — partially written in script you don't recognise. Your name was near the bottom. There was a symbol beside it. You've never seen it before. You took the manifest. You haven't told anyone.</div>
+        <div class="letter-mechanic"><strong>⚔ SESSION MECHANIC</strong>Roll Arcana or History (DC 14) to identify the symbol. Success: a lore thread opens. Failure: you've seen it somewhere dangerous, and you can't remember where.</div>
+      </div>
+
+      <div id="letter-myrtle" class="card letter-content">
+        <div class="letter-from">From: you already know</div>
+        <div class="letter-body">You know what you did. You picked it off a man near the fire-breathers — he didn't notice, or pretended not to. The box settled into your hands like it had been waiting.<br><br>You haven't opened it. You're not sure you should. You can't stop thinking about it.</div>
+        <div class="letter-mechanic"><strong>⚔ SESSION MECHANIC</strong>Tell the DM privately when you decide to open the box. It was meant to be found — just maybe not by you.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ VOTE ══════════ -->
+  <div class="panel" id="panel-vote">
+    <div class="page-header">
+      <div class="page-title">⚖️ Captain's Table</div>
+      <div class="page-sub">Your vote shapes the voyage</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div class="card-title">Who are you?</div>
+        <div class="voter-select" id="voter-select">
+          <button class="voter-btn" onclick="selectVoter('Axel',this)">Axel</button>
+          <button class="voter-btn" onclick="selectVoter('Quincy',this)">Quincy</button>
+          <button class="voter-btn" onclick="selectVoter('Rapha',this)">Rapha</button>
+          <button class="voter-btn" onclick="selectVoter('Wayne',this)">Wayne</button>
+          <button class="voter-btn" onclick="selectVoter('Myrtle',this)">Myrtle</button>
+        </div>
+        <div id="voter-status" style="font-size:12px;color:var(--warm-sand);font-style:italic">Select your name before voting.</div>
+      </div>
+
+      <!-- Question 1 -->
+      <div class="card">
+        <div class="vote-question">
+          <div class="vote-q-text">How does the crew approach the Salted Meridian?</div>
+          <div class="vote-options" id="vote-q1">
+            <div class="vote-option" onclick="castVote(1,'a',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Row out at first light — visibility, but you're visible too</div><div class="vote-voters" id="voters-1-a"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(1,'b',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Approach after dark — cover, but the lantern was seen at night</div><div class="vote-voters" id="voters-1-b"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(1,'c',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Watch from shore one more day — info gathering, risk losing the job</div><div class="vote-voters" id="voters-1-c"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="card">
+        <div class="vote-question">
+          <div class="vote-q-text">Who stays with the Kaleidoscope?</div>
+          <div class="vote-options" id="vote-q2">
+            <div class="vote-option" onclick="castVote(2,'a',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Dred'ban guards the ship — max security, lose your heavy hitter</div><div class="vote-voters" id="voters-2-a"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(2,'b',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Puddle stays and documents — she will touch something</div><div class="vote-voters" id="voters-2-b"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(2,'c',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Everyone goes — full strength, ship unguarded</div><div class="vote-voters" id="voters-2-c"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="card">
+        <div class="vote-question">
+          <div class="vote-q-text">Does Myrtle open the locked carnival box before you go?</div>
+          <div class="vote-options" id="vote-q3">
+            <div class="vote-option" onclick="castVote(3,'a',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Yes — we need to know what's in it (Myrtle seems hesitant)</div><div class="vote-voters" id="voters-3-a"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(3,'b',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">After the wreck — it can wait</div><div class="vote-voters" id="voters-3-b"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(3,'c',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Myrtle's call — we don't ask (she notices)</div><div class="vote-voters" id="voters-3-c"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ MORE (placeholder, opened via menu) ══════════ -->
+  <div class="panel" id="panel-more"></div>
+
+  <!-- ══════════ NEW CREW ══════════ -->
+  <div class="panel" id="panel-newcrew">
+    <div class="page-header">
+      <div class="page-title">👥 New Crew</div>
+      <div class="page-sub">Recently joined the Kaleidoscope</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="crew-card">
+        <div class="crew-header">
+          <div class="crew-dot" style="background:#6de8d8"></div>
+          <div><div class="crew-name">Puddle</div><div class="crew-title">Oozling · Wild Magic Sorcerer 4</div></div>
+        </div>
+        <div class="crew-bio">Blue-green, translucent, constantly in motion. Divided from her parent "Splash" four years ago. Keeps a detailed journal called <em>Things Worth Knowing</em>. Joined after accidentally polymorphing a dockmaster's horse into a pelican. She's enthusiastic about everything and will absolutely touch things she shouldn't.</div>
+        <button class="crew-talk-btn" onclick="goToNPC('hold')">→ Find her in the Ship's Hold</button>
+      </div>
+      <div class="crew-card">
+        <div class="crew-header">
+          <div class="crew-dot" style="background:#c890d8"></div>
+          <div><div class="crew-name">Dred'ban</div><div class="crew-title">Blackhorn · Fighter 4 · Ship's Security</div></div>
+        </div>
+        <div class="crew-bio">Purple-shelled, cracked left shoulder, says very little. Has been re-upping his contract for three months without explanation. He watches everything. The silence isn't hostility — it's something else. Puddle has a whole chart for it.</div>
+        <button class="crew-talk-btn" onclick="goToNPC('bow')">→ Find him at the Bow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PROVISIONS ══════════ -->
+  <div class="panel" id="panel-provisions">
+    <div class="page-header">
+      <div class="page-title">🛒 Provisions</div>
+      <div class="page-sub">Curio's Curiosities & Dockside General</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div class="card-title">Curio's Curiosities</div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Potion of Healing</div><div class="shop-item-desc">Regain 2d4+2 HP</div></div><div class="shop-item-price">40 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Gloves of Thievery</div><div class="shop-item-desc">+5 to Sleight of Hand, invisible</div></div><div class="shop-item-price">250 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Driftglobe</div><div class="shop-item-desc">Light / Daylight on command, floats</div></div><div class="shop-item-price">200 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Cap of Water Breathing</div><div class="shop-item-desc">Breathe underwater while worn</div></div><div class="shop-item-price">250 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Wand of Magic Detection</div><div class="shop-item-desc">Detect Magic at will (3 charges/day)</div></div><div class="shop-item-price">200 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Pearl of Power (Lesser)</div><div class="shop-item-desc">Recover one 1st-level spell slot (1/day)</div></div><div class="shop-item-price">250 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Cloak of Billowing</div><div class="shop-item-desc">Billows dramatically on command. Purely cosmetic.</div></div><div class="shop-item-price">75 gp</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Dockside General</div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Healer's Kit</div><div class="shop-item-desc">Stabilise a creature, 10 uses</div></div><div class="shop-item-price">5 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Climber's Kit</div><div class="shop-item-desc">Pitons, gloves, harness, boot tips</div></div><div class="shop-item-price">25 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Grappling Hook</div><div class="shop-item-desc">Rope sold separately</div></div><div class="shop-item-price">2 gp</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CREW LEDGER ══════════ -->
+  <div class="panel" id="panel-ledger">
+    <div class="page-header">
+      <div class="page-title">📖 Crew Ledger</div>
+      <div class="page-sub">Moments worth remembering</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div class="ledger-entry"><div class="ledger-who">QUINCY</div><div class="ledger-text">"Blue went still in the Hall of Mirrors and said 'Not us.' Nobody's talked about it since."</div></div>
+        <div class="ledger-entry"><div class="ledger-who">WAYNE</div><div class="ledger-text">Came back from backstage at the carnival with a spellbook that was, according to Puddle, measurably heavier.</div></div>
+        <div class="ledger-entry"><div class="ledger-who">MYRTLE</div><div class="ledger-text">Picked up a box near the fire-breathers. It settled into her hands. She hasn't opened it.</div></div>
+        <div class="ledger-entry"><div class="ledger-who">AXEL</div><div class="ledger-text">The carnival proprietor recognised him before he gave his name. Hands were shaking.</div></div>
+        <div class="ledger-entry"><div class="ledger-who">PUDDLE</div><div class="ledger-text">Has begun a subsection in her journal: "Dred'ban: A Study in Silence." Current entries: 9. The nod was entry one.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CURIOSITIES ══════════ -->
+  <div class="panel" id="panel-curiosities">
+    <div class="page-header">
+      <div class="page-title">🔮 Curiosity Cabinet</div>
+      <div class="page-sub">Active lore items & mysteries</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div class="curio-item"><div class="curio-type">Mystery</div><div class="curio-name">Myrtle's Locked Box</div><div class="curio-desc">8×5in, dark lacquered wood. No visible keyhole. Faintly warm — about 8°C above ambient according to Puddle. Makes no sound when shaken. Myrtle says stop asking.</div></div>
+        <div class="curio-item"><div class="curio-type">Document</div><div class="curio-name">Wayne's Carnival Manifest</div><div class="curio-desc">Partially written in an unrecognised script. Wayne's name appears near the bottom. An unidentified symbol sits beside it. Wayne has it. Nobody else knows.</div></div>
+        <div class="curio-item"><div class="curio-type">Consumable</div><div class="curio-name">Cotton Candy Cloud</div><div class="curio-desc">Feather Fall for 1 round. Rapha's. From the carnival. Smells like spun sugar and something faintly electrical.</div></div>
+        <div class="curio-item"><div class="curio-type">Consumable</div><div class="curio-name">Glittercorn Popcorn</div><div class="curio-desc">DC 10 Con or blinded for 1 turn in a 10ft radius. Also with Rapha. She seems delighted by this.</div></div>
+        <div class="curio-item"><div class="curio-type">Tattoo · Permanent</div><div class="curio-name">Blazing Fists Tattoo (Axel)</div><div class="curio-desc">+1d6 fire damage on unarmed strikes for 1 minute. Costs 1 ki point. Once per long rest.</div></div>
+        <div class="curio-item"><div class="curio-type">Item</div><div class="curio-name">Charm of Spark (Wayne)</div><div class="curio-desc">Cast Lightning Bolt once per day as a 1st-level spell — no spell slot required.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PUDDLE'S JOURNAL ══════════ -->
+  <div class="panel" id="panel-journal">
+    <div class="page-header">
+      <div class="page-title">📔 Things Worth Knowing</div>
+      <div class="page-sub">Puddle's field journal</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div style="font-size:12px;color:var(--warm-sand);font-style:italic;margin-bottom:14px">"A scientific record of events aboard the Kaleidoscope. Cross-referenced. Mostly accurate. Some entries redacted for reasons Puddle considers obvious but won't explain."</div>
+        <div class="journal-entry">
+          <div class="journal-header" onclick="toggleJournal(this)">
+            <span class="journal-entry-num">Entry 1 — First Day Aboard</span>
+            <span class="journal-chevron">▼</span>
+          </div>
+          <div class="journal-body"><div class="journal-text">Smell of salt and wood-smoke. Good data. Dred'ban hasn't said anything yet. He nodded once when I came aboard. Filed under: Significant Gestures (Non-Verbal). Started new subsection: 'Dred'ban: A Study in Silence.' Entry one: the nod. Duration: approximately 1.2 seconds. Meaning: unclear. Hypothesis: positive.</div></div>
+        </div>
+        <div class="journal-entry">
+          <div class="journal-header" onclick="toggleJournal(this)">
+            <span class="journal-entry-num">Entry 7 — The Carnival at Crestmere</span>
+            <span class="journal-chevron">▼</span>
+          </div>
+          <div class="journal-body"><div class="journal-text">Fire-breather's fuel burns blue at the edges. Attempted to obtain sample. Access denied (Wayne said no). Blue went completely still in the Hall of Mirrors. Said: 'Not us.' Filed under: Inexplicable (Category: Quincy). Myrtle came back with a box. Told her it was 22°C warmer than ambient. She said 'Puddle. No.' Filing that under: Noted. Wayne's spellbook was heavier when he came back from backstage. Mass increase: approx 340g. Smells of incense. Filed under: Interesting (Category: VERY).</div></div>
+        </div>
+        <div class="journal-entry">
+          <div class="journal-header" onclick="toggleJournal(this)">
+            <span class="journal-entry-num">Entry 9 — Looking Ahead</span>
+            <span class="journal-chevron">▼</span>
+          </div>
+          <div class="journal-body"><div class="journal-text">Have been researching the Salted Meridian. Four theories. Three involve Captain Vess being alive. One involves something worse. Showed Dred'ban theory two. He did a very long silence — approximately 8.4 seconds. This is the longest recorded. Filing as: Confirmation (Probable). Also: three shipping manifests. The navigational instrument is not on the recovery list. Neither is the captain. Filed under: This Is A Problem.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ VOYAGE MAP ══════════ -->
+  <div class="panel" id="panel-map">
+    <div class="page-header">
+      <div class="page-title">🗺️ Voyage Map</div>
+      <div class="page-sub">Known waters — tap a port for details</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="map-wrap">
+          <svg class="map-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Ocean background -->
+            <rect width="400" height="300" fill="#0a1a28"/>
+            <!-- Grid lines -->
+            <line x1="0" y1="60" x2="400" y2="60" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="0" y1="120" x2="400" y2="120" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="0" y1="180" x2="400" y2="180" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="0" y1="240" x2="400" y2="240" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="80" y1="0" x2="80" y2="300" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="160" y1="0" x2="160" y2="300" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="240" y1="0" x2="240" y2="300" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <line x1="320" y1="0" x2="320" y2="300" stroke="rgba(82,197,213,0.07)" stroke-width="1"/>
+            <!-- Coastline suggestion -->
+            <path d="M 0,220 Q 60,200 100,210 Q 140,220 180,200 Q 220,180 260,195 Q 300,210 340,200 Q 370,192 400,195 L 400,300 L 0,300 Z" fill="rgba(61,154,170,0.12)"/>
+            <!-- Route line -->
+            <line x1="200" y1="195" x2="128" y2="138" stroke="rgba(82,197,213,0.25)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <line x1="200" y1="195" x2="224" y2="78" stroke="rgba(176,92,58,0.3)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <!-- Fenhollow (home) -->
+            <circle cx="200" cy="195" r="7" fill="#d4a832" opacity="0.9" class="port-dot" onclick="showPort('fenhollow')"/>
+            <circle cx="200" cy="195" r="12" fill="none" stroke="#d4a832" stroke-width="1" opacity="0.3"/>
+            <text x="210" y="193" class="port-label" font-size="9" fill="#d4a832">Fenhollow</text>
+            <text x="210" y="204" font-size="8" fill="rgba(212,168,50,0.6)" font-family="serif">Home Port</text>
+            <!-- Crestmere (visited) -->
+            <circle cx="128" cy="138" r="6" fill="#52c5d5" opacity="0.85" class="port-dot" onclick="showPort('crestmere')"/>
+            <text x="138" y="136" class="port-label" font-size="9" fill="rgba(82,197,213,0.9)">Crestmere</text>
+            <text x="138" y="147" font-size="8" fill="rgba(82,197,213,0.5)" font-family="serif">Visited</text>
+            <!-- Salted Meridian (next, pulsing) -->
+            <circle cx="224" cy="78" r="7" fill="#b05c3a" opacity="0.9" class="port-dot port-pulse" onclick="showPort('meridian')"/>
+            <text x="234" y="76" class="port-label" font-size="9" fill="#b05c3a">Salted Meridian</text>
+            <text x="234" y="87" font-size="8" fill="rgba(176,92,58,0.6)" font-family="serif">Next Voyage</text>
+          </svg>
+        </div>
+      </div>
+      <div class="card" id="port-info-card" style="display:none">
+        <div class="card-title" id="port-info-name"></div>
+        <div style="font-size:13px;line-height:1.7;color:var(--ink-mid)" id="port-info-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ THE CREW ══════════ -->
+  <div class="panel" id="panel-crew">
+    <div class="page-header">
+      <div class="page-title">⚔️ The Crew</div>
+      <div class="page-sub">Party roster — The Kaleidoscope</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="crew-roster">
+        <div class="roster-card">
+          <div class="roster-name">Axel Flameborn</div>
+          <div class="roster-class">Monk 3 · Dragonborn</div>
+          <div class="roster-stat">HP 24/24 · AC 16 · Speed 35ft</div>
+          <div class="roster-stat">STR 16 DEX 16 CON 14</div>
+          <div class="roster-gold">307 gp</div>
+        </div>
+        <div class="roster-card">
+          <div class="roster-name">Quincy Schueb</div>
+          <div class="roster-class">Ranger 4 · Wood Elf</div>
+          <div class="roster-stat">HP 32/32 · AC 15 · Speed 35ft</div>
+          <div class="roster-stat">DEX 18 WIS 14 INT 12</div>
+          <div class="roster-gold">26 gp</div>
+        </div>
+        <div class="roster-card">
+          <div class="roster-name">Rapha</div>
+          <div class="roster-class">Paladin 2 · Half-Elf</div>
+          <div class="roster-stat">HP 18/18 · AC 18 · Speed 30ft</div>
+          <div class="roster-stat">STR 16 CHA 16 CON 14</div>
+          <div class="roster-gold">133 gp</div>
+        </div>
+        <div class="roster-card">
+          <div class="roster-name">Wayne Kerr</div>
+          <div class="roster-class">Wizard 3 · Gnome</div>
+          <div class="roster-stat">HP 16/16 · AC 13 · Speed 25ft</div>
+          <div class="roster-stat">INT 18 CHA 19 DEX 14</div>
+          <div class="roster-gold">120 gp</div>
+        </div>
+        <div class="roster-card" style="grid-column:span 2">
+          <div class="roster-name">Myrtle</div>
+          <div class="roster-class">Rogue · Race Unknown</div>
+          <div class="roster-stat">HP 22/22 · AC 14 · Speed 30ft</div>
+          <div class="roster-stat">DEX 18 INT 14 WIS 13</div>
+          <div class="roster-gold">0 gp</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CHARACTER SHEET ══════════ -->
+  <div class="panel" id="panel-sheet">
+    <div class="char-select-bar">
+      <button class="char-btn active" onclick="selectChar(0)">Axel</button>
+      <button class="char-btn" onclick="selectChar(1)">Quincy</button>
+      <button class="char-btn" onclick="selectChar(2)">Rapha</button>
+      <button class="char-btn" onclick="selectChar(3)">Wayne</button>
+      <button class="char-btn" onclick="selectChar(4)">Myrtle</button>
+    </div>
+    <div class="section-tabs">
+      <button class="tab-btn active" onclick="showCSTab('vitals')">Vitals</button>
+      <button class="tab-btn" onclick="showCSTab('skills')">Saves & Skills</button>
+      <button class="tab-btn" onclick="showCSTab('combat')">Combat</button>
+      <button class="tab-btn" onclick="showCSTab('inventory')">Inventory</button>
+      <button class="tab-btn" onclick="showCSTab('notes')">Notes</button>
+    </div>
+
+    <!-- Vitals -->
+    <div class="cs-panel active" id="cs-vitals">
+      <div class="card">
+        <div class="card-title">Hit Points</div>
+        <div class="hp-block">
+          <div>
+            <div class="hp-display">
+              <span class="hp-current healthy" id="hp-current" onclick="openEdit('hp-current','Current HP')">24</span>
+              <span class="hp-sep">/</span>
+              <span class="hp-max" id="hp-max" onclick="openEdit('hp-max','Max HP')">24</span>
+            </div>
+            <div class="hp-label">HIT POINTS</div>
+          </div>
+          <div style="flex:1"></div>
+          <div style="text-align:center">
+            <div style="font-family:'Cinzel',serif;font-size:22px;font-weight:600;color:var(--ink-deep);cursor:pointer" id="temp-hp" onclick="openEdit('temp-hp','Temp HP')">—</div>
+            <div class="hp-label">TEMP</div>
+          </div>
+        </div>
+        <div class="hp-adjust-row">
+          <button onclick="showHPInput('dmg')" style="flex:1;padding:9px 8px;border-radius:9px;border:1px solid #9c3a28;background:#6b2318;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:0.04em;cursor:pointer;color:#f4edd8;-webkit-tap-highlight-color:transparent;">— Damage</button>
+          <button onclick="showHPInput('heal')" style="flex:1;padding:9px 8px;border-radius:9px;border:1px solid #27864d;background:#1a5c33;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:0.04em;cursor:pointer;color:#f4edd8;-webkit-tap-highlight-color:transparent;">+ Heal</button>
+          <button onclick="showHPInput('temp')" style="flex:1;padding:9px 8px;border-radius:9px;border:1px solid #2d7a9a;background:#1a4455;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:0.04em;cursor:pointer;color:#f4edd8;-webkit-tap-highlight-color:transparent;">~ Temp</button>
+        </div>
+        <div class="hp-input-row" id="hp-input-row">
+          <input type="number" id="hp-adj-input" placeholder="0" min="0" inputmode="numeric"/>
+          <button onclick="applyHP()" style="padding:8px 20px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:13px;color:var(--teal-bright);font-weight:600;cursor:pointer;">OK</button>
+        </div>
+        <div id="death-saves-block" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-warm)">
+          <div class="card-title" style="color:var(--rust);margin-bottom:8px">Death Saves</div>
+          <div class="death-saves">
+            <div class="ds-group">
+              <div class="ds-label success">SUCCESSES</div>
+              <div class="ds-pips">
+                <div class="ds-pip success-pip" onclick="this.classList.toggle('marked')"></div>
+                <div class="ds-pip success-pip" onclick="this.classList.toggle('marked')"></div>
+                <div class="ds-pip success-pip" onclick="this.classList.toggle('marked')"></div>
+              </div>
+            </div>
+            <div class="ds-group">
+              <div class="ds-label fail">FAILURES</div>
+              <div class="ds-pips">
+                <div class="ds-pip fail-pip" onclick="this.classList.toggle('marked')"></div>
+                <div class="ds-pip fail-pip" onclick="this.classList.toggle('marked')"></div>
+                <div class="ds-pip fail-pip" onclick="this.classList.toggle('marked')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Conditions</div>
+        <div class="conditions-grid">
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Blinded</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Charmed</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Deafened</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Exhausted</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Frightened</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Grappled</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Incapacitated</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Invisible</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Paralysed</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Petrified</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Poisoned</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Prone</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Restrained</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Stunned</div>
+          <div class="condition-pill" onclick="this.classList.toggle('active')">Unconscious</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Ability Scores</div>
+        <div class="stat-grid">
+          <div class="stat-box" onclick="openEdit('stat-str','STR')"><div class="stat-abbr">STR</div><div class="stat-score" id="stat-str">16</div><div class="stat-mod" id="mod-str">+3</div></div>
+          <div class="stat-box" onclick="openEdit('stat-dex','DEX')"><div class="stat-abbr">DEX</div><div class="stat-score" id="stat-dex">16</div><div class="stat-mod" id="mod-dex">+3</div></div>
+          <div class="stat-box" onclick="openEdit('stat-con','CON')"><div class="stat-abbr">CON</div><div class="stat-score" id="stat-con">14</div><div class="stat-mod" id="mod-con">+2</div></div>
+          <div class="stat-box" onclick="openEdit('stat-int','INT')"><div class="stat-abbr">INT</div><div class="stat-score" id="stat-int">10</div><div class="stat-mod" id="mod-int">+0</div></div>
+          <div class="stat-box" onclick="openEdit('stat-wis','WIS')"><div class="stat-abbr">WIS</div><div class="stat-score" id="stat-wis">14</div><div class="stat-mod" id="mod-wis">+2</div></div>
+          <div class="stat-box" onclick="openEdit('stat-cha','CHA')"><div class="stat-abbr">CHA</div><div class="stat-score" id="stat-cha">8</div><div class="stat-mod" id="mod-cha">−1</div></div>
+        </div>
+        <div class="quick-stats">
+          <div class="quick-stat" onclick="openEdit('qs-ac','AC')"><div class="quick-stat-val" id="qs-ac">16</div><div class="quick-stat-lbl">AC</div></div>
+          <div class="quick-stat" onclick="openEdit('qs-init','Initiative')"><div class="quick-stat-val" id="qs-init">+3</div><div class="quick-stat-lbl">Initiative</div></div>
+          <div class="quick-stat" onclick="openEdit('qs-speed','Speed')"><div class="quick-stat-val" id="qs-speed">35</div><div class="quick-stat-lbl">Speed ft</div></div>
+          <div class="quick-stat" onclick="openEdit('qs-pp','Pass. Perc')"><div class="quick-stat-val" id="qs-pp">14</div><div class="quick-stat-lbl">Pass. Perc</div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:stretch">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:10px;padding:8px 14px;text-align:center;cursor:pointer;flex-shrink:0" onclick="openEdit('prof-bonus','Proficiency Bonus')">
+            <div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)" id="prof-bonus">+2</div>
+            <div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif;letter-spacing:.04em">PROF</div>
+          </div>
+          <button id="insp-btn" onclick="toggleInspiration()" style="flex:1;padding:9px 8px;border-radius:9px;border:1px solid #a07800;background:#5a4200;font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:0.06em;cursor:pointer;color:#fde97a;-webkit-tap-highlight-color:transparent;">✦ INSPIRATION</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saves & Skills -->
+    <div class="cs-panel" id="cs-skills">
+      <div class="card"><div class="card-title">Saving Throws</div><div class="skills-grid" id="saves-grid"></div></div>
+      <div class="card"><div class="card-title">Skills — tap pip to toggle proficiency / expertise</div><div class="skills-grid" id="skills-grid"></div></div>
+    </div>
+
+    <!-- Combat -->
+    <div class="cs-panel" id="cs-combat">
+      <div class="card">
+        <div class="card-title">Attacks & Actions</div>
+        <div id="attacks-list"></div>
+        <button onclick="document.getElementById('attack-form').classList.toggle('show')" style="width:100%;margin-top:8px;padding:9px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;letter-spacing:0.05em;cursor:pointer;-webkit-tap-highlight-color:transparent;">+ Add Attack</button>
+        <div class="loot-form" id="attack-form">
+          <input type="text" id="atk-name" placeholder="Attack name"/>
+          <div class="loot-form-row">
+            <input type="text" class="short" id="atk-bonus" placeholder="+5"/>
+            <input type="text" style="flex:1" id="atk-dmg" placeholder="1d6+3 piercing"/>
+          </div>
+          <div class="loot-form-row">
+            <input type="text" style="flex:1" id="atk-range" placeholder="Melee / 20/60ft"/>
+            <button onclick="addAttack()" style="padding:8px 14px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Add</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="spell-slots-card">
+        <div class="card-title">Spell Slots — tap to use / restore</div>
+        <div id="spell-slots-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Dice</div>
+        <div class="checks-grid">
+          <div class="check-card" onclick="rollDice(20,'d20')"><div class="check-val">d20</div><div class="check-lbl">Roll</div></div>
+          <div class="check-card" onclick="rollDice(12,'d12')"><div class="check-val">d12</div><div class="check-lbl">Roll</div></div>
+          <div class="check-card" onclick="rollDice(10,'d10')"><div class="check-val">d10</div><div class="check-lbl">Roll</div></div>
+          <div class="check-card" onclick="rollDice(8,'d8')"><div class="check-val">d8</div><div class="check-lbl">Roll</div></div>
+          <div class="check-card" onclick="rollDice(6,'d6')"><div class="check-val">d6</div><div class="check-lbl">Roll</div></div>
+          <div class="check-card" onclick="rollDice(4,'d4')"><div class="check-val">d4</div><div class="check-lbl">Roll</div></div>
+        </div>
+        <div class="check-result" id="dice-result">
+          <div class="check-result-num" id="dice-num">—</div>
+          <div class="check-result-lbl" id="dice-lbl">—</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="adv-btn" onclick="toggleAdv('adv')" style="flex:1;padding:9px;border-radius:8px;border:1px solid #27864d;background:#1a5c33;font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:#a8f0c0;cursor:pointer;-webkit-tap-highlight-color:transparent;">Advantage</button>
+          <button id="dis-btn" onclick="toggleAdv('dis')" style="flex:1;padding:9px;border-radius:8px;border:1px solid #9c3a28;background:#6b2318;font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:#f4b8b0;cursor:pointer;-webkit-tap-highlight-color:transparent;">Disadvantage</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory -->
+    <div class="cs-panel" id="cs-inventory">
+      <div class="card">
+        <div class="card-title">Coin Purse</div>
+        <div id="coin-rows"></div>
+      </div>
+      <div class="card" id="starred-card">
+        <div class="card-title" style="color:#7a5a00">★ Key Items</div>
+        <div id="starred-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Pack — tap ★ to pin</div>
+        <div id="items-list"></div>
+        <button onclick="document.getElementById('loot-form').classList.toggle('show')" style="width:100%;margin-top:8px;padding:9px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;letter-spacing:0.05em;cursor:pointer;-webkit-tap-highlight-color:transparent;">+ Log Loot</button>
+        <div class="loot-form" id="loot-form">
+          <input type="text" id="loot-name" placeholder="Item name"/>
+          <textarea id="loot-desc" placeholder="Description (optional)"></textarea>
+          <div class="loot-form-row">
+            <input type="number" class="short" id="loot-qty" placeholder="Qty" value="1" min="1" inputmode="numeric"/>
+            <button onclick="addItem()" style="flex:1;padding:8px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Log It</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="cs-panel" id="cs-notes">
+      <div class="card">
+        <div class="card-title">Session Notes</div>
+        <div class="notes-meta" id="notes-date"></div>
+        <textarea class="notes-area" id="session-notes" placeholder="Jot things down as you play..."></textarea>
+      </div>
+      <div class="card">
+        <div class="card-title">Character Notes</div>
+        <textarea class="notes-area" id="char-notes" placeholder="Backstory threads, personal goals, DM secrets..."></textarea>
+      </div>
+      <div class="card">
+        <div class="card-title">Reminders</div>
+        <div id="reminders-list" style="margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="reminder-input" placeholder="Add a reminder..." style="flex:1;background:var(--parchment);border:1px solid var(--warm-sand);border-radius:8px;padding:8px 12px;font-family:'Lora',serif;font-size:14px;color:var(--ink-deep);"/>
+          <button onclick="addReminder()" style="padding:8px 14px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);font-weight:600;cursor:pointer;">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ DM REPORT ══════════ -->
+  <div class="panel" id="panel-dm">
+    <div class="page-header">
+      <div class="page-title">🔒 DM Report</div>
+      <div class="page-sub">Password required</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card" id="dm-lock-card">
+        <div class="dm-lock">
+          <span class="dm-lock-icon">⚓</span>
+          <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--ink-mid);margin-bottom:16px">Captain's eyes only.</div>
+          <input class="dm-input" type="password" id="dm-password" placeholder="Password" onkeydown="if(event.key==='Enter')tryDMUnlock()"/>
+          <div style="margin-top:12px">
+            <button onclick="tryDMUnlock()" style="padding:9px 24px;background:#1a3344;border:1px solid var(--gold);border-radius:9px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;letter-spacing:0.06em;">Unlock</button>
+          </div>
+        </div>
+      </div>
+      <div id="dm-content" style="display:none">
+        <div class="dm-refresh">
+          <button onclick="loadDMReport()" style="padding:9px 20px;background:#1a3344;border:1px solid var(--teal);border-radius:9px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">↻ Refresh</button>
+        </div>
+        <div class="card">
+          <div class="dm-section-title">⚖️ Votes</div>
+          <div id="dm-votes">Loading...</div>
+        </div>
+        <div class="card">
+          <div class="dm-section-title">🔍 Secrets Triggered</div>
+          <div id="dm-secrets">Loading...</div>
+        </div>
+        <div class="card">
+          <div class="dm-section-title">🎮 Game Results</div>
+          <div id="dm-games">Loading...</div>
+        </div>
+        <div class="card">
+          <div class="dm-section-title">🏦 Kimchi's Bank</div>
+          <div id="dm-bank">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="showPanel('log')" id="nav-log">
+    <span class="nav-icon">📜</span><span class="nav-label">Log</span>
+  </button>
+  <button class="nav-btn" onclick="showPanel('ship')" id="nav-ship">
+    <span class="nav-icon">🚢</span><span class="nav-label">The Ship</span>
+  </button>
+  <button class="nav-btn" onclick="showPanel('letters')" id="nav-letters">
+    <span class="nav-icon">✉️</span><span class="nav-label">Letters</span>
+  </button>
+  <button class="nav-btn" onclick="showPanel('vote')" id="nav-vote">
+    <span class="nav-icon">⚖️</span><span class="nav-label">Vote</span>
+  </button>
+  <button class="nav-btn" onclick="toggleMore()" id="nav-more">
+    <span class="nav-icon">⋯</span><span class="nav-label">More</span>
+  </button>
+</div>
+
+<!-- More menu -->
+<div class="more-overlay" id="more-overlay" onclick="closeMore()"></div>
+<div class="more-menu" id="more-menu">
+  <button class="more-item" onclick="showPanel('sheet');closeMore()">⚔️ My Sheet</button>
+  <button class="more-item" onclick="showPanel('newcrew');closeMore()">👥 New Crew</button>
+  <button class="more-item" onclick="showPanel('provisions');closeMore()">🛒 Provisions</button>
+  <button class="more-item" onclick="showPanel('ledger');closeMore()">📖 Crew Ledger</button>
+  <button class="more-item" onclick="showPanel('curiosities');closeMore()">🔮 Curiosities</button>
+  <button class="more-item" onclick="showPanel('journal');closeMore()">📔 Puddle's Journal</button>
+  <button class="more-item" onclick="showPanel('map');closeMore()">🗺️ Voyage Map</button>
+  <button class="more-item" onclick="showPanel('crew');closeMore()">👤 The Crew</button>
+  <button class="more-item" onclick="showPanel('dm');closeMore()">🔒 DM Report</button>
+</div>
+
+<!-- Inline edit modal -->
+<div class="inline-edit" id="edit-modal">
+  <label id="edit-label">Edit Value</label>
+  <input type="text" id="edit-input" inputmode="numeric"/>
+  <div class="edit-buttons">
+    <button onclick="saveEdit()" style="flex:1;padding:9px;background:var(--teal);border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:13px;color:var(--ink-deep);font-weight:600;cursor:pointer;">Save</button>
+    <button onclick="closeEdit()" style="padding:9px 14px;background:transparent;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:13px;color:var(--warm-sand);cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<!-- Games -->
+<div class="game-modal" id="game-tides">
+  <div class="game-panel">
+    <div class="game-panel-title">🪙 The Tide's Truth</div>
+    <div class="game-panel-sub">Kimchi watches, expressionless. "Predict the sequence. Get all three right."</div>
+    <div class="bet-row">
+      <label>Bet (gp)</label>
+      <input class="bet-input" type="number" id="tides-bet" value="1" min="1" inputmode="numeric"/>
+    </div>
+    <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--seafoam);letter-spacing:0.06em;margin-bottom:8px">YOUR PREDICTION — tap each coin</div>
+    <div class="coin-flip-row">
+      <div class="coin" id="coin-0" onclick="toggleCoin(0)">?</div>
+      <div class="coin" id="coin-1" onclick="toggleCoin(1)">?</div>
+      <div class="coin" id="coin-2" onclick="toggleCoin(2)">?</div>
+    </div>
+    <div id="tides-hint" style="font-size:12px;color:var(--warm-sand);font-style:italic;text-align:center;min-height:20px;margin-bottom:8px"></div>
+    <div id="tides-result" class="game-result" style="display:none"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="playTides()" style="flex:1;padding:11px;background:#1a3344;border:1px solid var(--teal);border-radius:10px;font-family:'Cinzel',serif;font-size:13px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.04em;">Flip the Coins</button>
+      <button onclick="closeGame('tides')" style="padding:11px 16px;background:transparent;border:1px solid var(--border-warm);border-radius:10px;font-family:'Cinzel',serif;font-size:12px;color:var(--warm-sand);cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="game-modal" id="game-bvr">
+  <div class="game-panel">
+    <div class="game-panel-title">⚔️ Blade, Bottle, Rope</div>
+    <div class="game-panel-sub">Best of three. Kimchi gives hints. Not all of them are true.</div>
+    <div class="bet-row">
+      <label>Bet (gp)</label>
+      <input class="bet-input" type="number" id="bvr-bet" value="1" min="1" inputmode="numeric"/>
+    </div>
+    <div id="bvr-score" style="font-family:'Cinzel',serif;font-size:11px;color:var(--seafoam);letter-spacing:0.06em;text-align:center;margin-bottom:8px">Round 1 of 3</div>
+    <div id="bvr-hint" style="font-size:13px;color:var(--warm-sand);font-style:italic;text-align:center;padding:10px;background:rgba(26,51,68,0.5);border-radius:8px;margin-bottom:12px;min-height:42px">Kimchi rolls his coin between his fingers.</div>
+    <div class="bvr-row">
+      <div class="bvr-btn" onclick="playBVR('blade')" id="bvr-blade"><div class="bvr-icon">⚔️</div><div class="bvr-label">Blade</div></div>
+      <div class="bvr-btn" onclick="playBVR('bottle')" id="bvr-bottle"><div class="bvr-icon">🍶</div><div class="bvr-label">Bottle</div></div>
+      <div class="bvr-btn" onclick="playBVR('rope')" id="bvr-rope"><div class="bvr-icon">🪢</div><div class="bvr-label">Rope</div></div>
+    </div>
+    <div id="bvr-round-result" style="font-size:13px;text-align:center;min-height:20px;color:var(--cream);margin-top:8px"></div>
+    <div id="bvr-result" class="game-result" style="display:none"></div>
+    <button onclick="closeGame('bvr')" style="width:100%;margin-top:12px;padding:10px;background:transparent;border:1px solid var(--border-warm);border-radius:10px;font-family:'Cinzel',serif;font-size:12px;color:var(--warm-sand);cursor:pointer;">Close</button>
+  </div>
+</div>
+
+<script>
+// ══════════ PARTICLES ══════════
+(function(){
+  const bg = document.getElementById('bg');
+  for(let i=0;i<12;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 4 + Math.random()*8;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${12+Math.random()*20}s;animation-delay:${Math.random()*15}s`;
+    bg.appendChild(p);
+  }
+})();
+
+// ══════════ NAV ══════════
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+  else document.getElementById('nav-more').classList.add('active');
+}
+
+function toggleMore() {
+  document.getElementById('more-menu').classList.toggle('show');
+  document.getElementById('more-overlay').classList.toggle('show');
+}
+function closeMore() {
+  document.getElementById('more-menu').classList.remove('show');
+  document.getElementById('more-overlay').classList.remove('show');
+}
+
+// ══════════ SHIP / CHAT ══════════
+let activeLocation = null;
+function selectLocation(loc) {
+  // hide all chats
+  document.querySelectorAll('.chat-area').forEach(c => c.classList.remove('show'));
+  document.querySelectorAll('.location-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('loc-' + loc).classList.add('active');
+
+  const chatMap = { deck:'kimchi', hold:'puddle', bow:'dredban', galley:'darius', cabin:'cabin' };
+  const chatId = 'chat-' + chatMap[loc];
+  document.getElementById(chatId).classList.add('show');
+  activeLocation = loc;
+
+  // Greet if first time
+  if (!chatGreeted[loc]) {
+    chatGreeted[loc] = true;
+    const greetings = {
+      kimchi: "Kimchi glances over without turning fully. His drink catches the light.",
+      puddle: "Puddle looks up from a labelled crate. She has at least three things in her hands. 'Oh! Hello. I was going to say hello first actually. I had a whole plan.'",
+      dredban: "Dred'ban is at the bow, watching the horizon. He doesn't turn around. But he knows you're there.",
+      darius: "Captain Darius looks up from his charts with a broad smile. 'Good timing. I was about to need someone to argue with about this map.'"
+    };
+    if (greetings[chatMap[loc]]) addMsg(chatMap[loc], greetings[chatMap[loc]], 'npc');
+  }
+}
+
+function goToNPC(loc) {
+  showPanel('ship');
+  setTimeout(() => selectLocation(loc), 100);
+}
+
+const chatGreeted = {};
+const chatHistory = { kimchi:[], puddle:[], dredban:[], darius:[] };
+
+// ══════════ NPC DATA ══════════
+const NPC_SECRETS = {
+  kimchi: [
+    { keywords:['eyepatch','eye patch','your eye','what happened to your eye','the patch'], response:"\"Occupational hazard.\" He pauses. \"The other guy looks worse.\"", reward:{name:"Kimchi's Non-Answer",type:"info"}, oneTime:false, id:'eyepatch' },
+    { keywords:['your past','where are you from','before this','pirate','spy','soldier','war'], response:"\"I did a few things. Some I got paid for. None relevant to what we're doing now.\" He sets down his cup. \"Mira. Harbour registry, two weeks east. Tell her Kimchi sent you.\"", reward:{name:'A Name',type:"info"}, oneTime:true, id:'kimchi-past' },
+    { keywords:['contact','contacts','know anyone','anyone useful','connections','favour','know a guy'], response:"\"Depends on what you need. And who's asking. And why.\"", reward:{name:"Kimchi's IOU",type:"item"}, oneTime:true, id:'kimchi-contacts' },
+    { keywords:['wreck','salted meridian','meridian','the wreck','lantern','wrecked ship'], response:"\"Go in the morning. Whatever left that lantern burning isn't shy. But the things that follow...\" He looks at the water. \"...prefer the dark.\"", reward:null, oneTime:false, id:'kimchi-wreck' },
+    { keywords:['drinking','always drinking','why are you drinking','buy you a drink','join you'], response:"\"It's quieter this way. You think about less.\" A pause. \"Sit down if you want.\"", reward:{name:'A Quiet Drink',type:"item"}, oneTime:false, id:'kimchi-drinking' }
+  ],
+  puddle: [
+    { keywords:['box','myrtle\'s box','locked box','the box','carnival box'], response:"\"Thermal anomaly! 22 degrees versus 14 ambient. I filed it under Thermal Anomalies of Unclear Origin, subsection: Myrtle Said Stop. Which is a subsection I have had to create more than once.\"", reward:{name:"Puddle's Thermal Notes",type:"info"}, oneTime:false, id:'carnival-box' },
+    { keywords:['manifest','wayne\'s book','backstage','carnival manifest','wayne found'], response:"\"Wayne's spellbook was thicker when he came back. Mass increase approximately 340 grams. Smells of incense. I have a VERY interesting subsection started.\"", reward:{name:"Puddle's Observation Log: Wayne",type:"info"}, oneTime:true, id:'wayne-manifest' },
+    { keywords:['wreck','salted meridian','meridian','the wreck','wrecked ship'], response:"\"Three manifests! Registered under Captain Vess. The navigational instrument isn't on the recovery list. NEITHER IS THE CAPTAIN. I have written 'ALIVE?' in the margin. In capital letters. With a question mark and also an exclamation point.\"", reward:{name:"Puddle's Research: The Meridian",type:"info"}, oneTime:false, id:'the-wreck-puddle' },
+    { keywords:['blue','sprite','quincy\'s sprite','blue the sprite'], response:"\"I have been trying to interview Blue for the journal but she keeps moving away. I have noted this as 'possibly a game.' It is a very long game.\"", reward:null, oneTime:false, id:'blue' },
+    { keywords:['dredban','dred\'ban','dred ban','what about dred','why is dred'], response:"\"I have a whole chart! Short silence equals agrees. Medium silence equals thinking. Long silence — more than seven seconds — means something is wrong that nobody has noticed yet. He has done four of those this week.\"", reward:{name:"Puddle's Silence Index",type:"info"}, oneTime:false, id:'dredban-silence' }
+  ],
+  dredban: [
+    { keywords:['wreck','salted meridian','meridian','the wreck','wrecked ship','derelict'], response:"\"Saw it. Three nights ago.\" He doesn't elaborate. Then: \"Ships don't drift like that without help.\"", reward:{name:"Dred'ban's Warning",type:"info"}, oneTime:false, id:'the-wreck-dredban' },
+    { keywords:['carnival','crestmere','the carnival','vel','wandering carnival'], response:"\"Didn't like it. Too many exits. Too many people watching other people watch things.\"", reward:null, oneTime:false, id:'carnival-dredban' },
+    { keywords:['fenhollow','home port','home','where we dock','our port'], response:"\"Lived there once.\" A long pause. \"Before the ship. Don't anymore.\"", reward:{name:'A Crack in the Shell',type:"info"}, oneTime:true, id:'fenhollow-dredban' },
+    { keywords:['trust','do you trust','the crew','your crew','these people','do you like'], response:"\"...\" He is quiet for a long time. \"They're still here. So am I.\"", reward:{name:"Dred'ban's Loyalty",type:"info"}, oneTime:false, id:'trust-dredban' },
+    { keywords:['danger','are we safe','worried','scared','threat','watch out','be careful'], response:"\"Always watching.\" He finally turns to look at you. \"You should be too.\"", reward:{name:"Dred'ban's Sea-Glass Token",type:"item"}, oneTime:true, id:'danger-dredban' }
+  ],
+  darius: [
+    { keywords:['never leave','never leaves','why don\'t you','why do you stay','leave the ship','stay on the ship'], response:"\"Ha.\" He laughs, but a little quickly. \"The ship needs a captain aboard. Always.\" His hand moves to the edge of the table.", reward:{name:"The Captain's Non-Answer",type:"info"}, oneTime:false, id:'never-leaves' },
+    { keywords:['wreck','salted meridian','meridian','the wreck'], response:"\"Unusual circumstances. Harbour authority closed the file fast.\" He taps his chart. \"I always thought that was interesting. Real location's about half a nautical mile closer to the trench than the official record.\"", reward:{name:"Captain's Chart Note",type:"info"}, oneTime:false, id:'darius-wreck' },
+    { keywords:['upgrade','improve the ship','fix the ship','ship upgrade','better equipment'], response:"\"Three things. Hull plating — 300 gold but she'd take twice the punishment. Crow's nest with a spyglass — 150. Second anchor chain — 40.\" He slides you the list.", reward:{name:"Darius's Upgrade List",type:"info"}, oneTime:false, id:'darius-upgrade' },
+    { keywords:['the crew','your crew','how long','trust them'], response:"\"They make decisions fast and they look after each other.\" He smiles into his mug. \"That matters more than experience.\"", reward:null, oneTime:false, id:'darius-crew' }
+  ]
+};
+
+const NPC_PERSONAS = {
+  kimchi: `You are Kimchi, First Mate of the Kaleidoscope. Human, thin, blue hair, eyepatch on the left eye. You are quiet, economical with words, slightly mysterious. Your past is undefined — you've done things, some of them paid, none you discuss. You drink alone. You're not unfriendly, just careful. Respond in character: short sentences, occasional silences (written as pauses or gestures), never explain yourself fully. The campaign is a D&D 5e nautical adventure called The Sailors.`,
+  puddle: `You are Puddle, an Oozling Wild Magic Sorcerer aboard the Kaleidoscope. Blue-green, translucent, enthusiastic to a fault. You divided from your parent Splash four years ago. You keep a journal called Things Worth Knowing and file everything under elaborate subsections. You talk in run-on sentences and get genuinely excited about data. You are warm, curious, and will absolutely touch things you shouldn't. The campaign is a D&D 5e nautical adventure called The Sailors.`,
+  dredban: `You are Dred'ban, a Blackhorn Fighter and ship's security aboard the Kaleidoscope. Purple shell, cracked left shoulder. You speak rarely — often in fragments of 1-5 words. You are not hostile, just very economical. You have been re-upping your contract for three months without explanation. Respond in character: fragments, silences, sparse and precise. Never overshare. The campaign is a D&D 5e nautical adventure called The Sailors.`,
+  darius: `You are Captain Darius, dwarf captain of the Kaleidoscope. Red hair going grey, weathered and warm. Dependable. You never leave the ship when in port — deflect this question with charm if asked, answer a little too quickly. You know more than you say but you're not secretive, just careful. Respond in character: warm, experienced, occasionally a dry joke. The campaign is a D&D 5e nautical adventure called The Sailors.`
+};
+
+const usedOneTimeSecrets = new Set();
+
+function checkSecrets(npc, msg) {
+  const lower = msg.toLowerCase();
+  const secrets = NPC_SECRETS[npc] || [];
+  for (const s of secrets) {
+    if (s.oneTime && usedOneTimeSecrets.has(s.id)) continue;
+    if (s.keywords.some(k => lower.includes(k))) {
+      if (s.oneTime) usedOneTimeSecrets.add(s.id);
+      // Log to backend
+      postEvent({ type:'secret_triggered', npc, secretId:s.id, reward: s.reward?.name || null, oneTime: s.oneTime });
+      return s;
+    }
+  }
+  return null;
+}
+
+function addMsg(npc, text, type, reward) {
+  const container = document.getElementById('msgs-' + npc);
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
+  let inner = `<div class="msg-bubble">${text}</div>`;
+  if (reward) inner += `<div style="margin-top:4px"><span class="secret-badge">✦ ${reward.name}</span></div>`;
+  div.innerHTML = inner;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendMsg(npc) {
+  const input = document.getElementById('input-' + npc);
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addMsg(npc, msg, 'player');
+  chatHistory[npc].push({ role:'user', content:msg });
+
+  // Check secrets first
+  const secret = checkSecrets(npc, msg);
+  if (secret) {
+    setTimeout(() => {
+      addMsg(npc, secret.response, 'secret', secret.reward);
+      chatHistory[npc].push({ role:'assistant', content:secret.response });
+    }, 600);
+    return;
+  }
+
+  // AI fallback
+  const typing = document.getElementById('typing-' + npc);
+  typing.textContent = npc === 'dredban' ? '...' : 'typing...';
+
+  try {
+    const res = await fetch('/.netlify/functions/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ npc, message: msg, history: chatHistory[npc].slice(-8), persona: NPC_PERSONAS[npc] })
+    });
+    const data = await res.json();
+    typing.textContent = '';
+    const reply = data.response || "...";
+    addMsg(npc, reply, 'npc');
+    chatHistory[npc].push({ role:'assistant', content:reply });
+  } catch(e) {
+    typing.textContent = '';
+    addMsg(npc, '...', 'npc');
+  }
+}
+
+// ══════════ LETTERS ══════════
+let currentLetterChar = 'axel';
+const unlockedLetters = new Set();
+
+function selectLetterChar(name, btn) {
+  currentLetterChar = name;
+  document.querySelectorAll('.letter-char-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('letter-unlock-input').value = '';
+
+  // Hide all letters
+  document.querySelectorAll('.letter-content').forEach(l => l.classList.remove('show'));
+  if (unlockedLetters.has(name)) {
+    document.getElementById('letter-' + name).classList.add('show');
+    document.getElementById('letter-lock-card').style.display = 'none';
+  } else {
+    document.getElementById('letter-lock-card').style.display = 'block';
+  }
+}
+
+function tryUnlockLetter() {
+  const val = document.getElementById('letter-unlock-input').value.trim().toLowerCase();
+  if (val === currentLetterChar) {
+    unlockedLetters.add(currentLetterChar);
+    document.getElementById('letter-lock-card').style.display = 'none';
+    document.getElementById('letter-' + currentLetterChar).classList.add('show');
+    postEvent({ type:'letter_opened', character: currentLetterChar });
+  } else {
+    document.getElementById('letter-unlock-input').style.borderColor = 'var(--rust)';
+    setTimeout(() => document.getElementById('letter-unlock-input').style.borderColor = '', 800);
+  }
+}
+
+// ══════════ VOTE ══════════
+let currentVoter = null;
+const votes = {}; // { "charName": { 1: 'a', 2: 'b', 3: 'c' } }
+const allVotes = { 1:{}, 2:{}, 3:{} }; // { optionKey: [voters] }
+
+function selectVoter(name, btn) {
+  currentVoter = name;
+  document.querySelectorAll('.voter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('voter-status').textContent = `Voting as ${name}`;
+  refreshVoteDisplay();
+}
+
+function castVote(qNum, option, el) {
+  if (!currentVoter) {
+    document.getElementById('voter-status').textContent = 'Select your name first.';
+    document.getElementById('voter-status').style.color = 'var(--rust)';
+    setTimeout(() => { document.getElementById('voter-status').style.color = ''; }, 1000);
+    return;
+  }
+  if (!votes[currentVoter]) votes[currentVoter] = {};
+
+  // Remove from old option
+  const oldOpt = votes[currentVoter][qNum];
+  if (oldOpt && allVotes[qNum][oldOpt]) {
+    allVotes[qNum][oldOpt] = allVotes[qNum][oldOpt].filter(v => v !== currentVoter);
+  }
+
+  // Add to new
+  votes[currentVoter][qNum] = option;
+  if (!allVotes[qNum][option]) allVotes[qNum][option] = [];
+  if (!allVotes[qNum][option].includes(currentVoter)) allVotes[qNum][option].push(currentVoter);
+
+  refreshVoteDisplay();
+  postEvent({ type:'vote_cast', player: currentVoter, questionId: qNum, optionId: option });
+}
+
+function refreshVoteDisplay() {
+  for (let q = 1; q <= 3; q++) {
+    ['a','b','c'].forEach(opt => {
+      const el = document.getElementById(`voters-${q}-${opt}`);
+      if (!el) return;
+      const voters = allVotes[q][opt] || [];
+      el.textContent = voters.length ? voters.join(', ') : '';
+
+      // Mark voted option for current voter
+      const optEl = el.closest('.vote-option');
+      if (optEl) {
+        const myVote = currentVoter && votes[currentVoter] && votes[currentVoter][q] === opt;
+        optEl.classList.toggle('voted', !!myVote);
+      }
+    });
+  }
+}
+
+// ══════════ JOURNAL ══════════
+function toggleJournal(header) {
+  const entry = header.parentElement;
+  entry.classList.toggle('open');
+}
+
+// ══════════ MAP ══════════
+const PORT_INFO = {
+  fenhollow: { name:'Fenhollow — Home Port', body:'Your registered home port. A working harbour with two distinct districts — the old fishing wharves and the newer merchant quarter. The Kaleidoscope berths at the east dock. Dockside General and Curio\'s Curiosities are both within walking distance.' },
+  crestmere: { name:'Crestmere — Visited', body:'A market town two days sail northwest. The Wandering Carnival of Vel was here when you passed through. Several things happened at that carnival that nobody is fully discussing yet.' },
+  meridian: { name:'The Salted Meridian — Next Voyage', body:'A derelict vessel, registered to a Captain Vess, spotted drifting approximately half a mile offshore. The harbour authority closed the salvage file unusually fast. A lantern has been seen burning on the wreck at night. The official charts have the location slightly wrong.' }
+};
+
+function showPort(id) {
+  const info = PORT_INFO[id];
+  if (!info) return;
+  const card = document.getElementById('port-info-card');
+  document.getElementById('port-info-name').textContent = info.name;
+  document.getElementById('port-info-body').textContent = info.body;
+  card.style.display = 'block';
+}
+
+// ══════════ GAMES ══════════
+let tidesState = { prediction: [null,null,null] };
+let bvrState = { playerScore:0, kimchiScore:0, round:1, bet:1, done:false };
+let kimchiBank = 100;
+
+function openGame(name) {
+  if (name === 'tides') { resetTides(); }
+  if (name === 'bvr')   { resetBVR(); }
+  document.getElementById('game-' + name).classList.add('show');
+}
+function closeGame(name) {
+  document.getElementById('game-' + name).classList.remove('show');
+}
+
+// TIDES
+function resetTides() {
+  tidesState.prediction = [null,null,null];
+  [0,1,2].forEach(i => {
+    const c = document.getElementById('coin-' + i);
+    c.textContent = '?';
+    c.className = 'coin';
+  });
+  document.getElementById('tides-result').style.display = 'none';
+  document.getElementById('tides-hint').textContent = 'Tap each coin to set H (heads) or T (tails).';
+}
+
+function toggleCoin(i) {
+  const states = [null,'H','T'];
+  const cur = tidesState.prediction[i];
+  const next = cur === null ? 'H' : cur === 'H' ? 'T' : null;
+  tidesState.prediction[i] = next;
+  const c = document.getElementById('coin-' + i);
+  c.textContent = next || '?';
+  c.className = 'coin' + (next === 'H' ? ' selected-h' : next === 'T' ? ' selected-t' : '');
+}
+
+function playTides() {
+  if (tidesState.prediction.some(p => p === null)) {
+    document.getElementById('tides-hint').textContent = 'Set all three coins first.';
+    return;
+  }
+  const bet = parseInt(document.getElementById('tides-bet').value) || 1;
+  const actual = [0,1,2].map(() => Math.random() < 0.5 ? 'H' : 'T');
+  const correct = tidesState.prediction.every((p,i) => p === actual[i]);
+  const net = correct ? bet * 7 : -bet;
+  kimchiBank = Math.max(0, kimchiBank - (correct ? bet*7 : 0));
+
+  const res = document.getElementById('tides-result');
+  res.style.display = 'block';
+  res.className = 'game-result ' + (correct ? 'win' : 'lose');
+  res.innerHTML = `<div class="game-result-big">${actual.join(' — ')}</div><div class="game-result-sub">${correct ? `You called it. +${bet*7} gp` : `You had ${tidesState.prediction.join(' — ')}. −${bet} gp`}</div>`;
+
+  postEvent({ type:'game_played', game:'tides', bet, outcome: correct?'win':'lose', net, kimchiBankAfter: kimchiBank });
+}
+
+// BVR
+const BVR_HINTS = {
+  blade: ["Kimchi's fingers still on the table.", "His eye flicks left.", "'This round will be quick.'", "He glances at your hands.", "'Steel cuts what it needs to.'"],
+  bottle: ["Kimchi exhales slowly.", "'Sometimes the soft thing wins.'", "He looks at the ceiling.", "'There's more than one way to stop something.'", "A small shrug."],
+  rope: ["Kimchi's knuckle taps the table once.", "'Patience.'", "He looks out at the water.", "'Binding is underrated.'", "His jaw tightens slightly."]
+};
+const BVR_BEATS = { blade:'rope', bottle:'blade', rope:'bottle' };
+
+function resetBVR() {
+  bvrState = { playerScore:0, kimchiScore:0, round:1, bet:1, done:false };
+  document.getElementById('bvr-result').style.display = 'none';
+  document.getElementById('bvr-round-result').textContent = '';
+  document.getElementById('bvr-score').textContent = 'Round 1 of 3';
+  const truthful = Math.random() < 0.4;
+  const choices = ['blade','bottle','rope'];
+  const kimchiChoice = choices[Math.floor(Math.random()*3)];
+  const hintArray = BVR_HINTS[truthful ? kimchiChoice : choices.filter(c=>c!==kimchiChoice)[Math.floor(Math.random()*2)]];
+  document.getElementById('bvr-hint').textContent = hintArray[Math.floor(Math.random()*hintArray.length)];
+  ['blade','bottle','rope'].forEach(c => document.getElementById('bvr-'+c).classList.remove('chosen'));
+}
+
+function playBVR(playerChoice) {
+  if (bvrState.done) return;
+  const choices = ['blade','bottle','rope'];
+  const kimchiChoice = choices[Math.floor(Math.random()*3)];
+  document.getElementById('bvr-' + playerChoice).classList.add('chosen');
+
+  let roundWinner = 'draw';
+  if (BVR_BEATS[playerChoice] === kimchiChoice) roundWinner = 'player';
+  else if (BVR_BEATS[kimchiChoice] === playerChoice) roundWinner = 'kimchi';
+
+  if (roundWinner === 'player') bvrState.playerScore++;
+  else if (roundWinner === 'kimchi') bvrState.kimchiScore++;
+
+  const resultText = roundWinner === 'player' ? `✓ Your ${playerChoice} beats his ${kimchiChoice}` :
+    roundWinner === 'kimchi' ? `✗ His ${kimchiChoice} beats your ${playerChoice}` :
+    `Draw — ${playerChoice} vs ${kimchiChoice}`;
+  document.getElementById('bvr-round-result').textContent = resultText;
+
+  const bet = parseInt(document.getElementById('bvr-bet').value) || 1;
+  bvrState.round++;
+
+  if (bvrState.playerScore >= 2 || bvrState.kimchiScore >= 2 || bvrState.round > 3) {
+    bvrState.done = true;
+    const playerWon = bvrState.playerScore > bvrState.kimchiScore;
+    const draw = bvrState.playerScore === bvrState.kimchiScore;
+    const net = playerWon ? bet : draw ? 0 : -bet;
+    kimchiBank = Math.max(0, kimchiBank - (playerWon ? bet : 0));
+
+    const res = document.getElementById('bvr-result');
+    res.style.display = 'block';
+    res.className = 'game-result ' + (playerWon ? 'win' : draw ? 'draw' : 'lose');
+    res.innerHTML = `<div class="game-result-big">${playerWon ? 'You win.' : draw ? 'Draw.' : 'Kimchi wins.'}</div><div class="game-result-sub">${playerWon ? `+${bet} gp` : draw ? 'No gold changes hands.' : `-${bet} gp`}</div>`;
+    document.getElementById('bvr-score').textContent = `${bvrState.playerScore} — ${bvrState.kimchiScore} (final)`;
+
+    postEvent({ type:'game_played', game:'bvr', bet, outcome: playerWon?'win':draw?'draw':'lose', net, kimchiBankAfter: kimchiBank });
+  } else {
+    document.getElementById('bvr-score').textContent = `Round ${bvrState.round} of 3 · You ${bvrState.playerScore}–${bvrState.kimchiScore} Kimchi`;
+    setTimeout(() => {
+      ['blade','bottle','rope'].forEach(c => document.getElementById('bvr-'+c).classList.remove('chosen'));
+      document.getElementById('bvr-round-result').textContent = '';
+      const truthful = Math.random() < 0.4;
+      const kimchiNext = choices[Math.floor(Math.random()*3)];
+      const hintArr = BVR_HINTS[truthful ? kimchiNext : choices.filter(c=>c!==kimchiNext)[Math.floor(Math.random()*2)]];
+      document.getElementById('bvr-hint').textContent = hintArr[Math.floor(Math.random()*hintArr.length)];
+    }, 1200);
+  }
+}
+
+// ══════════ BACKEND ══════════
+async function postEvent(data) {
+  try {
+    await fetch('/.netlify/functions/event', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+  } catch(e) {}
+}
+
+async function postVote(player, questionId, optionId) {
+  try {
+    await fetch('/.netlify/functions/vote', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ player, questionId, optionId })
+    });
+  } catch(e) {}
+}
+
+// ══════════ DM REPORT ══════════
+function tryDMUnlock() {
+  const val = document.getElementById('dm-password').value;
+  if (val === 'kaleidoscope') {
+    document.getElementById('dm-lock-card').style.display = 'none';
+    document.getElementById('dm-content').style.display = 'block';
+    loadDMReport();
+  } else {
+    document.getElementById('dm-password').style.borderColor = 'var(--rust)';
+    setTimeout(() => document.getElementById('dm-password').style.borderColor = '', 800);
+  }
+}
+
+async function loadDMReport() {
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+
+    // Votes
+    const voteEvents = (data.events || []).filter(e => e.type === 'vote_cast');
+    const voteMap = {};
+    voteEvents.forEach(e => {
+      const key = `Q${e.questionId}`;
+      if (!voteMap[key]) voteMap[key] = {};
+      voteMap[key][e.optionId] = voteMap[key][e.optionId] || [];
+      if (!voteMap[key][e.optionId].includes(e.player)) voteMap[key][e.optionId].push(e.player);
+    });
+    const voteLabels = {
+      1:{ a:'First light', b:'After dark', c:'Watch from shore' },
+      2:{ a:"Dred'ban stays", b:'Puddle stays', c:'Everyone goes' },
+      3:{ a:'Open the box', b:'After the wreck', c:"Myrtle's call" }
+    };
+    let votesHtml = '';
+    [1,2,3].forEach(q => {
+      const qKey = `Q${q}`;
+      ['a','b','c'].forEach(opt => {
+        const voters = voteMap[qKey]?.[opt] || [];
+        if (voters.length) votesHtml += `<div class="dm-row"><span class="dm-key">Q${q} — ${voteLabels[q][opt]}</span><span class="dm-val">${voters.join(', ')}</span></div>`;
+      });
+    });
+    document.getElementById('dm-votes').innerHTML = votesHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No votes yet.</div>';
+
+    // Secrets
+    const secretEvents = (data.events || []).filter(e => e.type === 'secret_triggered');
+    let secretsHtml = secretEvents.map(e => `<div class="dm-row"><span class="dm-key">${e.npc} → ${e.player || '?'}</span><span class="dm-val">${e.secretId}${e.reward ? ' · ' + e.reward : ''}${e.oneTime ? ' 🔒' : ''}</span></div>`).join('');
+    document.getElementById('dm-secrets').innerHTML = secretsHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No secrets triggered yet.</div>';
+
+    // Games
+    const gameEvents = (data.events || []).filter(e => e.type === 'game_played');
+    let gamesHtml = gameEvents.map(e => `<div class="dm-row"><span class="dm-key">${e.game} · ${e.player || '?'}</span><span class="dm-val">${e.outcome} · bet ${e.bet}gp · net ${e.net > 0 ? '+' : ''}${e.net}gp</span></div>`).join('');
+    document.getElementById('dm-games').innerHTML = gamesHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No games played yet.</div>';
+
+    // Bank
+    const bank = data.globalState?.kimchiBank ?? 100;
+    document.getElementById('dm-bank').innerHTML = `<div class="dm-row"><span class="dm-key">Kimchi's remaining bank</span><span class="dm-val" style="font-family:'Cinzel',serif;font-size:16px;color:#7a5a00">${bank} gp</span></div>`;
+  } catch(e) {
+    document.getElementById('dm-votes').innerHTML = '<div style="color:var(--rust);font-size:13px">Could not load state.</div>';
+  }
+}
+
+// ══════════ CHARACTER SHEET ══════════
+const CHARS = [
+  { name:'Axel', class:'Monk 3', race:'Dragonborn', str:16, dex:16, con:14, int:10, wis:14, cha:8, hp:24, maxHp:24, ac:16, speed:35, pp:14, prof:2, attacks:[{name:'Flurry Strike',bonus:'+5',dmg:'1d6+3 bludgeoning',range:'Melee'},{name:'Blazing Fists',bonus:'+5',dmg:'1d6+3 + 1d6 fire',range:'Melee (1 ki)'}], slots:[], coins:{gp:307,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Blazing Fists Tattoo',desc:'+1d6 fire unarmed, 1 ki, 1/long rest',qty:1,star:true}] },
+  { name:'Quincy', class:'Ranger 4', race:'Wood Elf', str:10, dex:18, con:12, int:12, wis:14, cha:10, hp:32, maxHp:32, ac:15, speed:35, pp:14, prof:2, attacks:[{name:'Longbow',bonus:'+6',dmg:'1d8+4 piercing',range:'150/600ft'},{name:'Shortsword',bonus:'+6',dmg:'1d6+4 piercing',range:'Melee'}], slots:[{lvl:'1st',total:3,used:0}], coins:{gp:26,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Blue (Sprite)',desc:'Animal companion, tiny fey',qty:1,star:true}] },
+  { name:'Rapha', class:'Paladin 2', race:'Half-Elf', str:16, dex:10, con:14, int:10, wis:12, cha:16, hp:18, maxHp:18, ac:18, speed:30, pp:11, prof:2, attacks:[{name:'Longsword',bonus:'+5',dmg:'1d8+3 slashing',range:'Melee'},{name:'Divine Smite',bonus:'—',dmg:'2d8 radiant',range:'On hit'}], slots:[{lvl:'1st',total:2,used:0}], coins:{gp:133,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Cotton Candy Cloud',desc:'Feather Fall 1 round',qty:1,star:true},{name:'Glittercorn Popcorn',desc:'DC 10 Con or blinded 10ft',qty:1,star:false}] },
+  { name:'Wayne', class:'Wizard 3', race:'Gnome', str:8, dex:14, con:12, int:18, wis:13, cha:19, hp:16, maxHp:16, ac:13, speed:25, pp:13, prof:2, attacks:[{name:'Fire Bolt',bonus:'+6',dmg:'1d10 fire',range:'120ft'},{name:'Staff',bonus:'+1',dmg:'1d6−1 bludgeoning',range:'Melee'}], slots:[{lvl:'1st',total:4,used:0},{lvl:'2nd',total:2,used:0}], coins:{gp:120,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Charm of Spark',desc:'Lightning Bolt 1/day, no slot',qty:1,star:true},{name:'Carnival Manifest',desc:'Partially unknown script, Wayne\'s name at bottom',qty:1,star:true}] },
+  { name:'Myrtle', class:'Rogue ~3', race:'Unknown', str:10, dex:18, con:12, int:14, wis:13, cha:12, hp:22, maxHp:22, ac:14, speed:30, pp:14, prof:2, attacks:[{name:'Dagger',bonus:'+6',dmg:'1d4+4 piercing',range:'Melee / 20ft'},{name:'Sneak Attack',bonus:'—',dmg:'+2d6 on eligible hit',range:'—'}], slots:[], coins:{gp:0,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Locked Carnival Box',desc:'Dark lacquered, no keyhole, faintly warm',qty:1,star:true},{name:'Silent Steps Tattoo',desc:'Advantage on Stealth checks, permanent',qty:1,star:true}] }
+];
+const SAVES = ['STR','DEX','CON','INT','WIS','CHA'];
+const SKILLS_DEF = [
+  {name:'Acrobatics',attr:'DEX'},{name:'Animal Handling',attr:'WIS'},{name:'Arcana',attr:'INT'},{name:'Athletics',attr:'STR'},
+  {name:'Deception',attr:'CHA'},{name:'History',attr:'INT'},{name:'Insight',attr:'WIS'},{name:'Intimidation',attr:'CHA'},
+  {name:'Investigation',attr:'INT'},{name:'Medicine',attr:'WIS'},{name:'Nature',attr:'INT'},{name:'Perception',attr:'WIS'},
+  {name:'Performance',attr:'CHA'},{name:'Persuasion',attr:'CHA'},{name:'Religion',attr:'INT'},{name:'Sleight of Hand',attr:'DEX'},
+  {name:'Stealth',attr:'DEX'},{name:'Survival',attr:'WIS'}
+];
+
+let currentChar = 0;
+let editTarget = null;
+let hpAdjMode = null;
+let advMode = null;
+let inspiration = false;
+let proficiencies = {};
+
+const getMod = s => Math.floor((s - 10) / 2);
+const fmtMod = n => n >= 0 ? '+' + n : '' + n;
+const getAttrMod = (c, attr) => getMod({STR:c.str,DEX:c.dex,CON:c.con,INT:c.int,WIS:c.wis,CHA:c.cha}[attr] || 10);
+
+function loadChar(i) {
+  const c = CHARS[i];
+  const pct = c.hp / c.maxHp;
+  const hpEl = document.getElementById('hp-current');
+  hpEl.textContent = c.hp;
+  hpEl.className = 'hp-current ' + (pct > 0.5 ? 'healthy' : pct > 0.25 ? 'hurt' : 'critical');
+  document.getElementById('hp-max').textContent = c.maxHp;
+  document.getElementById('temp-hp').textContent = c.tempHp || '—';
+  document.getElementById('death-saves-block').style.display = c.hp <= 0 ? 'block' : 'none';
+  ['str','dex','con','int','wis','cha'].forEach(a => {
+    document.getElementById('stat-' + a).textContent = c[a];
+    document.getElementById('mod-' + a).textContent = fmtMod(getMod(c[a]));
+  });
+  document.getElementById('qs-ac').textContent = c.ac;
+  document.getElementById('qs-init').textContent = fmtMod(getMod(c.dex));
+  document.getElementById('qs-speed').textContent = c.speed;
+  document.getElementById('qs-pp').textContent = c.pp;
+  document.getElementById('prof-bonus').textContent = fmtMod(c.prof);
+
+  // Saves
+  const sg = document.getElementById('saves-grid');
+  sg.innerHTML = '';
+  SAVES.forEach(attr => {
+    const key = i + '-save-' + attr;
+    const p = proficiencies[key] || 0;
+    const bonus = getAttrMod(c, attr) + (p === 2 ? c.prof * 2 : p === 1 ? c.prof : 0);
+    const row = document.createElement('div');
+    row.className = 'skill-row';
+    row.innerHTML = `<div class="skill-pip ${p===2?'expert':p===1?'prof':''}" onclick="cyclePip(this,'${key}',${i},'save')"></div><span class="skill-name">${attr} Save</span><span class="skill-bonus">${fmtMod(bonus)}</span>`;
+    sg.appendChild(row);
+  });
+
+  // Skills
+  const kg = document.getElementById('skills-grid');
+  kg.innerHTML = '';
+  SKILLS_DEF.forEach(s => {
+    const key = i + '-skill-' + s.name;
+    const p = proficiencies[key] || 0;
+    const bonus = getAttrMod(c, s.attr) + (p === 2 ? c.prof * 2 : p === 1 ? c.prof : 0);
+    const row = document.createElement('div');
+    row.className = 'skill-row';
+    row.innerHTML = `<div class="skill-pip ${p===2?'expert':p===1?'prof':''}" onclick="cyclePip(this,'${key}',${i},'skill')"></div><div style="flex:1"><span class="skill-name">${s.name}</span><span class="skill-attr"> (${s.attr})</span></div><span class="skill-bonus">${fmtMod(bonus)}</span>`;
+    kg.appendChild(row);
+  });
+
+  // Attacks
+  const al = document.getElementById('attacks-list');
+  al.innerHTML = '';
+  (c.attacks || []).forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'attack-row';
+    row.innerHTML = `<div><div class="attack-name">${a.name}</div><div class="attack-detail">${a.range}</div></div><div class="attack-bonus">${a.bonus}</div><div class="attack-damage">${a.dmg}</div>`;
+    al.appendChild(row);
+  });
+
+  // Spell slots
+  const sc = document.getElementById('spell-slots-card');
+  if (!(c.slots || []).length) { sc.style.display = 'none'; } else {
+    sc.style.display = 'block';
+    const sl = document.getElementById('spell-slots-list');
+    sl.innerHTML = '';
+    c.slots.forEach((s, si) => {
+      if (!s.total) return;
+      const row = document.createElement('div'); row.className = 'spell-row';
+      let pips = '';
+      for (let x = 0; x < s.total; x++) pips += `<div class="slot-pip ${x < s.used ? 'used' : 'available'}" onclick="toggleSlot(${i},${si},${x})"></div>`;
+      row.innerHTML = `<span class="spell-level-label">${s.lvl}</span><div class="slot-pips">${pips}</div>`;
+      sl.appendChild(row);
+    });
+  }
+
+  // Coins
+  const cr = document.getElementById('coin-rows');
+  cr.innerHTML = '';
+  [['gp','Gold'],['sp','Silver'],['cp','Copper'],['ep','Electrum'],['pp','Platinum']].forEach(([k,l]) => {
+    const row = document.createElement('div'); row.className = 'gold-row';
+    row.innerHTML = `<span class="gold-type">${l}</span><span class="gold-amount ${k==='gp'?'gold-color':''}" id="coin-${k}" onclick="openEdit('coin-${k}','${l}')">${c.coins[k]||0}</span><div class="gold-adj"><button onclick="adjustCoin('${k}',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--teal);background:#1a3344;font-size:18px;cursor:pointer;color:var(--teal-bright);font-weight:600;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;">−</button><button onclick="adjustCoin('${k}',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--teal);background:#1a3344;font-size:18px;cursor:pointer;color:var(--teal-bright);font-weight:600;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;">+</button></div>`;
+    cr.appendChild(row);
+  });
+
+  renderItems(c);
+}
+
+function renderItems(c) {
+  const all = c.items || [];
+  const starred = all.filter(x => x.star);
+  const sc = document.getElementById('starred-card');
+  sc.style.display = starred.length ? 'block' : 'none';
+  document.getElementById('starred-list').innerHTML = '';
+  starred.forEach(it => document.getElementById('starred-list').appendChild(makeItemRow(it, c.items.indexOf(it))));
+  document.getElementById('items-list').innerHTML = '';
+  all.forEach((it, idx) => document.getElementById('items-list').appendChild(makeItemRow(it, idx)));
+}
+
+function makeItemRow(it, idx) {
+  const row = document.createElement('div'); row.className = 'item-row';
+  row.innerHTML = `<span class="item-star ${it.star?'starred':''}" onclick="toggleStar(${idx})">★</span><div class="item-info"><div class="item-name">${it.name}</div>${it.desc?`<div class="item-desc">${it.desc}</div>`:''}</div><span class="item-qty">×${it.qty}</span>`;
+  return row;
+}
+
+function toggleStar(idx) { const c = CHARS[currentChar]; if(c.items[idx]) c.items[idx].star = !c.items[idx].star; renderItems(c); }
+function adjustCoin(type, delta) { const c = CHARS[currentChar]; c.coins[type] = Math.max(0,(c.coins[type]||0)+delta); document.getElementById('coin-'+type).textContent = c.coins[type]; }
+function cyclePip(el, key, ci, type) {
+  proficiencies[key] = ((proficiencies[key]||0)+1)%3;
+  el.className = 'skill-pip '+(proficiencies[key]===2?'expert':proficiencies[key]===1?'prof':'');
+  const c = CHARS[ci]; const be = el.parentElement.querySelector('.skill-bonus'); const ne = el.parentElement.querySelector('.skill-name');
+  if(!be||!ne) return;
+  const name = ne.textContent; const p = proficiencies[key];
+  const base = type==='save' ? getAttrMod(c,name.replace(' Save','')) : getAttrMod(c,(SKILLS_DEF.find(s=>s.name===name)||{attr:'STR'}).attr);
+  be.textContent = fmtMod(base+(p===2?c.prof*2:p===1?c.prof:0));
+}
+function toggleSlot(ci,si,pi) { const s=CHARS[ci].slots[si]; s.used=pi<s.used?pi:pi+1; if(s.used>s.total)s.used=0; loadChar(ci); }
+function selectChar(i) { currentChar=i; document.querySelectorAll('.char-btn').forEach((b,bi)=>b.classList.toggle('active',bi===i)); loadChar(i); }
+function showCSTab(tab) {
+  document.querySelectorAll('.cs-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cs-'+tab).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>{ if(b.textContent.toLowerCase().replace(/[^a-z]/g,'').includes(tab.replace(/-/g,''))) b.classList.add('active'); });
+}
+function openEdit(id,label) { editTarget=id; const el=document.getElementById(id); document.getElementById('edit-label').textContent='Set '+label; document.getElementById('edit-input').value=el?el.textContent.replace(/[+×—]/g,''):''; document.getElementById('edit-modal').classList.add('show'); setTimeout(()=>document.getElementById('edit-input').focus(),100); }
+function saveEdit() {
+  const val=document.getElementById('edit-input').value.trim(); if(!val){closeEdit();return;}
+  const c=CHARS[currentChar]; const n=parseInt(val,10);
+  const map={'hp-current':()=>{c.hp=Math.min(n,c.maxHp);},'hp-max':()=>{c.maxHp=n;},'temp-hp':()=>{c.tempHp=n;},'stat-str':()=>{c.str=n;},'stat-dex':()=>{c.dex=n;},'stat-con':()=>{c.con=n;},'stat-int':()=>{c.int=n;},'stat-wis':()=>{c.wis=n;},'stat-cha':()=>{c.cha=n;},'qs-ac':()=>{c.ac=n;},'qs-speed':()=>{c.speed=n;},'qs-pp':()=>{c.pp=n;},'prof-bonus':()=>{c.prof=n;}};
+  if(map[editTarget])map[editTarget]();
+  else if(editTarget.startsWith('coin-'))c.coins[editTarget.replace('coin-','')]=Math.max(0,n);
+  closeEdit(); loadChar(currentChar);
+}
+function closeEdit() { document.getElementById('edit-modal').classList.remove('show'); editTarget=null; }
+function showHPInput(mode) { hpAdjMode=mode; document.getElementById('hp-input-row').classList.add('show'); document.getElementById('hp-adj-input').value=''; document.getElementById('hp-adj-input').focus(); }
+function applyHP() { const val=parseInt(document.getElementById('hp-adj-input').value,10)||0; const c=CHARS[currentChar]; if(hpAdjMode==='dmg')c.hp=Math.max(0,c.hp-val); else if(hpAdjMode==='heal')c.hp=Math.min(c.maxHp,c.hp+val); else c.tempHp=val; document.getElementById('hp-input-row').classList.remove('show'); loadChar(currentChar); }
+function toggleInspiration() { inspiration=!inspiration; const btn=document.getElementById('insp-btn'); btn.textContent=inspiration?'✦ INSPIRED!':'✦ INSPIRATION'; btn.style.background=inspiration?'#7a5a00':'#5a4200'; btn.style.borderColor=inspiration?'#d4a832':'#a07800'; btn.style.color=inspiration?'#fff8d0':'#fde97a'; }
+function toggleAdv(mode) { advMode=advMode===mode?null:mode; const ab=document.getElementById('adv-btn'),db=document.getElementById('dis-btn'); ab.style.background=advMode==='adv'?'#1e8449':'#1a5c33'; ab.style.borderColor=advMode==='adv'?'#52d68a':'#27864d'; db.style.background=advMode==='dis'?'#9c3a28':'#6b2318'; db.style.borderColor=advMode==='dis'?'#e05a44':'#9c3a28'; }
+function rollDice(sides,label) { let r,note=''; if(advMode==='adv'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.max(a,b);note=` (${a}, ${b})`;} else if(advMode==='dis'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.min(a,b);note=` (${a}, ${b})`;} else r=Math.ceil(Math.random()*sides); document.getElementById('dice-result').classList.add('show'); document.getElementById('dice-num').textContent=r+note; document.getElementById('dice-lbl').textContent=label+(advMode?' with '+(advMode==='adv'?'advantage':'disadvantage'):''); }
+function addAttack() { const name=document.getElementById('atk-name').value.trim(); if(!name)return; CHARS[currentChar].attacks.push({name,bonus:document.getElementById('atk-bonus').value.trim()||'+0',dmg:document.getElementById('atk-dmg').value.trim()||'—',range:document.getElementById('atk-range').value.trim()||'Melee'}); ['atk-name','atk-bonus','atk-dmg','atk-range'].forEach(id=>document.getElementById(id).value=''); document.getElementById('attack-form').classList.remove('show'); loadChar(currentChar); }
+function addItem() { const name=document.getElementById('loot-name').value.trim(); if(!name)return; CHARS[currentChar].items.push({name,desc:document.getElementById('loot-desc').value.trim(),qty:parseInt(document.getElementById('loot-qty').value,10)||1,star:false}); document.getElementById('loot-name').value=''; document.getElementById('loot-desc').value=''; document.getElementById('loot-qty').value='1'; document.getElementById('loot-form').classList.remove('show'); renderItems(CHARS[currentChar]); }
+function addReminder() { const inp=document.getElementById('reminder-input'),text=inp.value.trim(); if(!text)return; const list=document.getElementById('reminders-list'),item=document.createElement('div'); item.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-warm)'; item.innerHTML=`<div onclick="this.parentElement.remove()" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--warm-sand);cursor:pointer;flex-shrink:0;background:var(--parchment);"></div><span style="font-size:13px;color:var(--ink-deep);flex:1">${text}</span>`; list.appendChild(item); inp.value=''; }
+
+// Keyboard
+document.getElementById('edit-input').addEventListener('keydown', e => { if(e.key==='Enter')saveEdit(); if(e.key==='Escape')closeEdit(); });
+document.getElementById('hp-adj-input').addEventListener('keydown', e => { if(e.key==='Enter')applyHP(); });
+document.getElementById('reminder-input').addEventListener('keydown', e => { if(e.key==='Enter')addReminder(); });
+document.getElementById('letter-unlock-input').addEventListener('keydown', e => { if(e.key==='Enter')tryUnlockLetter(); });
+
+// ══════════ INIT ══════════
+document.getElementById('notes-date').textContent = 'Session — ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+loadChar(0);
+</script>
+</body>
 </html>
