@@ -15,46 +15,43 @@ export default async function handler(req, context) {
   try {
     const body = await req.json();
 
-    // Load existing events
     let events = [];
     try { events = await store.get("events", { type: "json" }) || []; } catch (e) { events = []; }
 
-    // Load existing globalState
     let globalState = { usedSecrets: [], foundSecrets: [], kimchiBank: 100 };
     try { globalState = await store.get("globalState", { type: "json" }) || globalState; } catch (e) {}
 
-    // Stamp timestamp
     const event = { ...body, timestamp: new Date().toISOString() };
 
-    // Side effects per event type
-    if (body.type === "secret_triggered" || body.type === "found_secret") {
-      // Normalise to secret_triggered
+    // Normalise legacy 'found_secret' to 'secret_triggered'
+    if (event.type === "found_secret") {
       event.type = "secret_triggered";
-      const secretId = body.secretId || body.secret;
-      if (secretId && !globalState.foundSecrets.includes(secretId)) {
-        globalState.foundSecrets.push(secretId);
+      event.secretId = event.secretId || event.secret;
+    }
+
+    // Track found secrets in globalState
+    if (event.type === "secret_triggered") {
+      const id = event.secretId || event.secret;
+      if (id && !globalState.foundSecrets.includes(id)) {
+        globalState.foundSecrets.push(id);
       }
     }
 
-    if (body.type === "use_secret") {
-      const secretId = body.secretId || body.secret;
-      if (secretId) {
-        globalState.foundSecrets = globalState.foundSecrets.filter(s => s !== secretId);
-        if (!globalState.usedSecrets.includes(secretId)) globalState.usedSecrets.push(secretId);
+    // Track used secrets
+    if (event.type === "use_secret") {
+      const id = event.secretId || event.secret;
+      if (id) {
+        globalState.foundSecrets = globalState.foundSecrets.filter(s => s !== id);
+        if (!globalState.usedSecrets.includes(id)) globalState.usedSecrets.push(id);
       }
     }
 
-    if (body.type === "game_played") {
-      const net = body.net || 0;
-      if (net > 0) {
-        globalState.kimchiBank = Math.max(0, (globalState.kimchiBank || 100) - net);
-      }
+    // Update kimchi bank on game win
+    if (event.type === "game_played" && event.net > 0) {
+      globalState.kimchiBank = Math.max(0, (globalState.kimchiBank ?? 100) - event.net);
     }
 
-    // Append event and save
     events.push(event);
-
-    // Keep last 500 events to avoid blob bloat
     if (events.length > 500) events = events.slice(-500);
 
     await store.setJSON("events", events);

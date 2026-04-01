@@ -318,6 +318,25 @@ body {
   border-color: #2a8a5a;
   color: #7afdc0;
 }
+.vote-toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--vote-purple);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 8px 20px;
+  border-radius: 20px;
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.vote-toast.show { opacity: 1; }
 
 .chat-input-row {
   display: flex;
@@ -1723,6 +1742,9 @@ body {
 
 </div><!-- /app -->
 
+<!-- Vote toast -->
+<div class="vote-toast" id="vote-toast"></div>
+
 <!-- Bottom Nav -->
 <div class="bottom-nav">
   <button class="nav-btn active" onclick="showPanel('log')" id="nav-log">
@@ -1881,31 +1903,84 @@ const chatHistory = { kimchi:[], puddle:[], dredban:[], darius:[] };
 // ══════════ NPC DATA ══════════
 const NPC_SECRETS = {
   kimchi: [
-    { keywords:['eyepatch','eye patch','your eye','what happened to your eye','the patch'], response:"\"Occupational hazard.\" He pauses. \"The other guy looks worse.\"", reward:{name:"Kimchi's Non-Answer",type:"info"}, oneTime:false, id:'eyepatch' },
-    { keywords:['your past','where are you from','before this','pirate','spy','soldier','war'], response:"\"I did a few things. Some I got paid for. None relevant to what we're doing now.\" He sets down his cup. \"Mira. Harbour registry, two weeks east. Tell her Kimchi sent you.\"", reward:{name:'A Name',type:"info"}, oneTime:true, id:'kimchi-past' },
-    { keywords:['contact','contacts','know anyone','anyone useful','connections','favour','know a guy'], response:"\"Depends on what you need. And who's asking. And why.\"", reward:{name:"Kimchi's IOU",type:"item"}, oneTime:true, id:'kimchi-contacts' },
-    { keywords:['wreck','salted meridian','meridian','the wreck','lantern','wrecked ship'], response:"\"Go in the morning. Whatever left that lantern burning isn't shy. But the things that follow...\" He looks at the water. \"...prefer the dark.\"", reward:null, oneTime:false, id:'kimchi-wreck' },
-    { keywords:['drinking','always drinking','why are you drinking','buy you a drink','join you'], response:"\"It's quieter this way. You think about less.\" A pause. \"Sit down if you want.\"", reward:{name:'A Quiet Drink',type:"item"}, oneTime:false, id:'kimchi-drinking' }
+    { keywords:['eyepatch','eye patch','your eye','what happened to your eye','the patch'],
+      response:"\"Occupational hazard.\" He pauses. \"The other guy looks worse.\"",
+      reward:{name:"Kimchi's Non-Answer", type:"info", desc:"He deflected completely. The eye, the pause, the line — all rehearsed. Whatever happened, he's told this story before. The real answer is somewhere he's not going."},
+      oneTime:false, id:'eyepatch' },
+    { keywords:['your past','where are you from','before this','pirate','spy','soldier','war'],
+      response:"\"I did a few things. Some I got paid for. None relevant to what we're doing now.\" He sets down his cup. \"Mira. Harbour registry, two weeks east. Tell her Kimchi sent you.\"",
+      reward:{name:'A Name', type:"info", desc:"Mira. Harbour registry. Two weeks east of here. Kimchi said to use his name. He wouldn't give this out lightly — whoever Mira is, she owes him something, or he owes her. One-time offer."},
+      oneTime:true, id:'kimchi-past' },
+    { keywords:['contact','contacts','know anyone','anyone useful','connections','favour','know a guy'],
+      response:"\"Depends on what you need. And who's asking. And why.\"",
+      reward:{name:"Kimchi's IOU", type:"item", desc:"A foreign coin with a notch filed in the edge. Kimchi pressed it into your hand without looking at you. Present this at the next port and he'll make a problem go away. He didn't say which problem. He didn't need to."},
+      oneTime:true, id:'kimchi-contacts' },
+    { keywords:['wreck','salted meridian','meridian','the wreck','lantern','wrecked ship'],
+      response:"\"Go in the morning. Whatever left that lantern burning isn't shy. But the things that follow...\" He looks at the water. \"...prefer the dark.\"",
+      reward:null, oneTime:false, id:'kimchi-wreck' },
+    { keywords:['drinking','always drinking','why are you drinking','buy you a drink','join you'],
+      response:"\"It's quieter this way. You think about less.\" A pause. \"Sit down if you want.\"",
+      reward:{name:'A Quiet Drink', type:"item", desc:"You sat with him for a while. He didn't say much. Neither did you. +1 to your next Insight check — something about the silence made you pay attention to everything else."},
+      oneTime:false, id:'kimchi-drinking' }
   ],
   puddle: [
-    { keywords:['box','myrtle\'s box','locked box','the box','carnival box'], response:"\"Thermal anomaly! 22 degrees versus 14 ambient. I filed it under Thermal Anomalies of Unclear Origin, subsection: Myrtle Said Stop. Which is a subsection I have had to create more than once.\"", reward:{name:"Puddle's Thermal Notes",type:"info"}, oneTime:false, id:'carnival-box' },
-    { keywords:['manifest','wayne\'s book','backstage','carnival manifest','wayne found'], response:"\"Wayne's spellbook was thicker when he came back. Mass increase approximately 340 grams. Smells of incense. I have a VERY interesting subsection started.\"", reward:{name:"Puddle's Observation Log: Wayne",type:"info"}, oneTime:true, id:'wayne-manifest' },
-    { keywords:['wreck','salted meridian','meridian','the wreck','wrecked ship'], response:"\"Three manifests! Registered under Captain Vess. The navigational instrument isn't on the recovery list. NEITHER IS THE CAPTAIN. I have written 'ALIVE?' in the margin. In capital letters. With a question mark and also an exclamation point.\"", reward:{name:"Puddle's Research: The Meridian",type:"info"}, oneTime:false, id:'the-wreck-puddle' },
-    { keywords:['blue','sprite','quincy\'s sprite','blue the sprite'], response:"\"I have been trying to interview Blue for the journal but she keeps moving away. I have noted this as 'possibly a game.' It is a very long game.\"", reward:null, oneTime:false, id:'blue' },
-    { keywords:['dredban','dred\'ban','dred ban','what about dred','why is dred'], response:"\"I have a whole chart! Short silence equals agrees. Medium silence equals thinking. Long silence — more than seven seconds — means something is wrong that nobody has noticed yet. He has done four of those this week.\"", reward:{name:"Puddle's Silence Index",type:"info"}, oneTime:false, id:'dredban-silence' }
+    { keywords:['box','myrtle\'s box','locked box','the box','carnival box'],
+      response:"\"Thermal anomaly! 22 degrees versus 14 ambient. I filed it under Thermal Anomalies of Unclear Origin, subsection: Myrtle Said Stop. Which is a subsection I have had to create more than once.\"",
+      reward:{name:"Puddle's Thermal Notes", type:"info", desc:"Puddle measured the box at 22°C when ambient was 14°C. She notes it was consistent — not warming up, not cooling down. Whatever is inside maintains its own temperature. She asked Myrtle twice. Myrtle said stop both times."},
+      oneTime:false, id:'carnival-box' },
+    { keywords:['manifest','wayne\'s book','backstage','carnival manifest','wayne found'],
+      response:"\"Wayne's spellbook was thicker when he came back. Mass increase approximately 340 grams. Smells of incense. I have a VERY interesting subsection started.\"",
+      reward:{name:"Puddle's Observation Log: Wayne", type:"info", desc:"Mass increase: ~340g. Faint smell of incense — not Wayne's normal components. Puddle clocked it the moment he came back from backstage at the carnival. The spellbook gained something. Wayne hasn't mentioned it. Filed under: Interesting (Category: VERY)."},
+      oneTime:true, id:'wayne-manifest' },
+    { keywords:['wreck','salted meridian','meridian','the wreck','wrecked ship'],
+      response:"\"Three manifests! Registered under Captain Vess. The navigational instrument isn't on the recovery list. NEITHER IS THE CAPTAIN. I have written 'ALIVE?' in the margin. In capital letters. With a question mark and also an exclamation point.\"",
+      reward:{name:"Puddle's Research: The Meridian", type:"info", desc:"Three shipping manifests, all registered to Captain Vess. The navigational instrument — a sextant — doesn't appear on the official recovery list. Neither does Vess himself. Puddle's margin note: 'ALIVE?' The harbour authority closed the file unusually fast."},
+      oneTime:false, id:'the-wreck-puddle' },
+    { keywords:['blue','sprite','quincy\'s sprite','blue the sprite'],
+      response:"\"I have been trying to interview Blue for the journal but she keeps moving away. I have noted this as 'possibly a game.' It is a very long game.\"",
+      reward:null, oneTime:false, id:'blue' },
+    { keywords:['dredban','dred\'ban','dred ban','what about dred','why is dred'],
+      response:"\"I have a whole chart! Short silence equals agrees. Medium silence equals thinking. Long silence — more than seven seconds — means something is wrong that nobody has noticed yet. He has done four of those this week.\"",
+      reward:{name:"Puddle's Silence Index", type:"info", desc:"Puddle's chart: short silence (<3s) = agrees. Medium (3-7s) = thinking. Long (>7s) = something is wrong that nobody has noticed yet. She's recorded four long silences from Dred'ban this week. She considers this data. You should probably consider it too."},
+      oneTime:false, id:'dredban-silence' }
   ],
   dredban: [
-    { keywords:['wreck','salted meridian','meridian','the wreck','wrecked ship','derelict'], response:"\"Saw it. Three nights ago.\" He doesn't elaborate. Then: \"Ships don't drift like that without help.\"", reward:{name:"Dred'ban's Warning",type:"info"}, oneTime:false, id:'the-wreck-dredban' },
-    { keywords:['carnival','crestmere','the carnival','vel','wandering carnival'], response:"\"Didn't like it. Too many exits. Too many people watching other people watch things.\"", reward:null, oneTime:false, id:'carnival-dredban' },
-    { keywords:['fenhollow','home port','home','where we dock','our port'], response:"\"Lived there once.\" A long pause. \"Before the ship. Don't anymore.\"", reward:{name:'A Crack in the Shell',type:"info"}, oneTime:true, id:'fenhollow-dredban' },
-    { keywords:['trust','do you trust','the crew','your crew','these people','do you like'], response:"\"...\" He is quiet for a long time. \"They're still here. So am I.\"", reward:{name:"Dred'ban's Loyalty",type:"info"}, oneTime:false, id:'trust-dredban' },
-    { keywords:['danger','are we safe','worried','scared','threat','watch out','be careful'], response:"\"Always watching.\" He finally turns to look at you. \"You should be too.\"", reward:{name:"Dred'ban's Sea-Glass Token",type:"item"}, oneTime:true, id:'danger-dredban' }
+    { keywords:['wreck','salted meridian','meridian','the wreck','wrecked ship','derelict'],
+      response:"\"Saw it. Three nights ago.\" He doesn't elaborate. Then: \"Ships don't drift like that without help.\"",
+      reward:{name:"Dred'ban's Warning", type:"info", desc:"He saw the Salted Meridian three nights ago. Ships don't drift the way it was drifting — not without something steering them, or something holding them. He made eye contact for exactly three seconds when he said it. That's the most he's said in a week."},
+      oneTime:false, id:'the-wreck-dredban' },
+    { keywords:['carnival','crestmere','the carnival','vel','wandering carnival'],
+      response:"\"Didn't like it. Too many exits. Too many people watching other people watch things.\"",
+      reward:null, oneTime:false, id:'carnival-dredban' },
+    { keywords:['fenhollow','home port','home','where we dock','our port'],
+      response:"\"Lived there once.\" A long pause. \"Before the ship. Don't anymore.\"",
+      reward:{name:'A Crack in the Shell', type:"info", desc:"He lived in Fenhollow before the ship. He said it quietly, like it cost something. Then he stopped. He's never said anything personal to anyone aboard before this. You're the first."},
+      oneTime:true, id:'fenhollow-dredban' },
+    { keywords:['trust','do you trust','the crew','your crew','these people','do you like'],
+      response:"\"...\" He is quiet for a long time. \"They're still here. So am I.\"",
+      reward:{name:"Dred'ban's Loyalty", type:"info", desc:"He was quiet for a long time — a real silence, not a short one. Then: 'They're still here. So am I.' For Dred'ban that's a declaration. His shoulders dropped a fraction when he said it. Puddle would call that significant."},
+      oneTime:false, id:'trust-dredban' },
+    { keywords:['danger','are we safe','worried','scared','threat','watch out','be careful'],
+      response:"\"Always watching.\" He finally turns to look at you. \"You should be too.\"",
+      reward:{name:"Dred'ban's Sea-Glass Token", type:"item", desc:"A small piece of sea-glass, pale green, worn smooth. He pressed it into your hand without ceremony. It means he's watching your back specifically. +1 to Perception checks until your next long rest."},
+      oneTime:true, id:'danger-dredban' }
   ],
   darius: [
-    { keywords:['never leave','never leaves','why don\'t you','why do you stay','leave the ship','stay on the ship'], response:"\"Ha.\" He laughs, but a little quickly. \"The ship needs a captain aboard. Always.\" His hand moves to the edge of the table.", reward:{name:"The Captain's Non-Answer",type:"info"}, oneTime:false, id:'never-leaves' },
-    { keywords:['wreck','salted meridian','meridian','the wreck'], response:"\"Unusual circumstances. Harbour authority closed the file fast.\" He taps his chart. \"I always thought that was interesting. Real location's about half a nautical mile closer to the trench than the official record.\"", reward:{name:"Captain's Chart Note",type:"info"}, oneTime:false, id:'darius-wreck' },
-    { keywords:['upgrade','improve the ship','fix the ship','ship upgrade','better equipment'], response:"\"Three things. Hull plating — 300 gold but she'd take twice the punishment. Crow's nest with a spyglass — 150. Second anchor chain — 40.\" He slides you the list.", reward:{name:"Darius's Upgrade List",type:"info"}, oneTime:false, id:'darius-upgrade' },
-    { keywords:['the crew','your crew','how long','trust them'], response:"\"They make decisions fast and they look after each other.\" He smiles into his mug. \"That matters more than experience.\"", reward:null, oneTime:false, id:'darius-crew' }
+    { keywords:['never leave','never leaves','why don\'t you','why do you stay','leave the ship','stay on the ship'],
+      response:"\"Ha.\" He laughs, but a little quickly. \"The ship needs a captain aboard. Always.\" His hand moves to the edge of the table.",
+      reward:{name:"The Captain's Non-Answer", type:"info", desc:"He laughed a half-second too fast. His hand moved to the table edge — steadying himself, or reaching for something that wasn't there. 'The ship needs a captain aboard' is true of any ship. It's not a reason. It's a line."},
+      oneTime:false, id:'never-leaves' },
+    { keywords:['wreck','salted meridian','meridian','the wreck'],
+      response:"\"Unusual circumstances. Harbour authority closed the file fast.\" He taps his chart. \"I always thought that was interesting. Real location's about half a nautical mile closer to the trench than the official record.\"",
+      reward:{name:"Captain's Chart Note", type:"info", desc:"The official record puts the Salted Meridian half a nautical mile from its actual position. Darius knows the real coordinates — half a mile closer to the sea trench. The harbour authority closed the file unusually fast. He finds that interesting. You should find it alarming."},
+      oneTime:false, id:'darius-wreck' },
+    { keywords:['upgrade','improve the ship','fix the ship','ship upgrade','better equipment'],
+      response:"\"Three things. Hull plating — 300 gold but she'd take twice the punishment. Crow's nest with a spyglass — 150. Second anchor chain — 40.\" He slides you the list.",
+      reward:{name:"Darius's Upgrade List", type:"info", desc:"Ship upgrade costs from Darius: Hull Plating 300gp (doubles damage threshold), Crow's Nest with Spyglass 150gp (advantage on Perception at sea), Second Anchor Chain 40gp (emergency mooring). Tell the DM when you want to invest."},
+      oneTime:false, id:'darius-upgrade' },
+    { keywords:['the crew','your crew','how long','trust them'],
+      response:"\"They make decisions fast and they look after each other.\" He smiles into his mug. \"That matters more than experience.\"",
+      reward:null, oneTime:false, id:'darius-crew' }
   ]
 };
 
@@ -1950,7 +2025,7 @@ function addMsg(npc, text, type, reward) {
     if (isItem && claimedCharacter !== null) {
       const alreadyHas = CHARS[claimedCharacter].items.some(i => i.name === reward.name);
       if (!alreadyHas) {
-        CHARS[claimedCharacter].items.push({ name: reward.name, desc: 'Found via ' + npc + ' conversation', qty: 1, star: true });
+        CHARS[claimedCharacter].items.push({ name: reward.name, desc: reward.desc || ('Found via conversation with ' + npc), qty: 1, star: true });
         saveCharToServer(claimedCharacter, 'items', null, null);
         // Show a brief confirmation
         setTimeout(() => {
@@ -1966,7 +2041,7 @@ function addMsg(npc, text, type, reward) {
     if (!isItem && claimedCharacter !== null) {
       const alreadyHas = CHARS[claimedCharacter].items.some(i => i.name === reward.name);
       if (!alreadyHas) {
-        CHARS[claimedCharacter].items.push({ name: reward.name, desc: 'Intel from ' + npc, qty: 1, star: true });
+        CHARS[claimedCharacter].items.push({ name: reward.name, desc: reward.desc || ('Intel from ' + npc), qty: 1, star: true });
         saveCharToServer(claimedCharacter, 'items', null, null);
       }
     }
@@ -2077,6 +2152,9 @@ function castVote(qNum, option, el) {
   if (!allVotes[qNum][option]) allVotes[qNum][option] = [];
   if (!allVotes[qNum][option].includes(currentVoter)) allVotes[qNum][option].push(currentVoter);
   refreshVoteDisplay();
+  // Show brief "vote changed" toast if this was a change
+  const isChange = oldOpt && oldOpt !== option;
+  if (isChange) showVoteToast('Vote updated');
   // Post to backend via unified event store
   postEvent({ type:'vote_cast', player: currentVoter, questionId: qNum, optionId: option });
 }
@@ -2119,6 +2197,14 @@ async function loadVotesFromServer() {
     });
     refreshVoteDisplay();
   } catch(e) {}
+}
+
+// ══════════ VOTE TOAST ══════════
+function showVoteToast(msg) {
+  const t = document.getElementById('vote-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
 }
 
 // ══════════ JOURNAL ══════════
@@ -2322,9 +2408,18 @@ async function loadDMReport() {
     });
     document.getElementById('dm-votes').innerHTML = votesHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No votes yet.</div>';
 
-    // Secrets
-    const secretEvents = (data.events || []).filter(e => e.type === 'secret_triggered');
-    let secretsHtml = secretEvents.map(e => `<div class="dm-row"><span class="dm-key">${e.npc} → ${e.player || '?'}</span><span class="dm-val">${e.secretId}${e.reward ? ' · ' + e.reward : ''}${e.oneTime ? ' 🔒' : ''}</span></div>`).join('');
+    // Secrets — accept both 'secret_triggered' (new) and 'found_secret' (legacy GPT format)
+    const secretEvents = (data.events || []).filter(e => e.type === 'secret_triggered' || e.type === 'found_secret');
+    let secretsHtml = secretEvents.map(e => {
+      const npc = e.npc || '?';
+      const player = e.player || '?';
+      // Support both secretId (new) and secret (legacy)
+      const secretId = e.secretId || e.secret || '?';
+      const reward = e.reward || null;
+      const oneTime = e.oneTime || false;
+      const time = e.timestamp ? new Date(e.timestamp).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="dm-row"><span class="dm-key">${npc} → ${player}</span><span class="dm-val">${secretId}${reward ? ' · ' + reward : ''}${oneTime ? ' 🔒' : ''} <span style="color:var(--warm-sand);font-size:10px">${time}</span></span></div>`;
+    }).join('');
     document.getElementById('dm-secrets').innerHTML = secretsHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No secrets triggered yet.</div>';
 
     // Games
