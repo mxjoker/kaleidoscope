@@ -513,9 +513,10 @@ body {
   font-size: 11px;
   padding: 7px 16px;
   border-radius: 20px;
-  border: 1px solid var(--border-warm);
-  background: transparent;
-  color: var(--seafoam);
+  border: 1px solid var(--warm-sand);
+  background: rgba(196,168,122,0.15);
+  color: var(--ink-deep);
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
@@ -901,10 +902,10 @@ body {
         <div class="log-recap">
           <p>The crew investigated the wreck of the Salted Meridian and found Captain Vess alive in the debris. They pulled him out and paid 3gp to get him care at the local inn.</p>
           <p>Wayne used Kimchi's IOU to get the harbormaster talking — Vess's box had been sold for 50gp. The party took the gold back. Wayne's carnival manifest turned out to contain a sigil linked to a cult of elemental worshippers.</p>
-          <p>They tracked a woman named Maren Thoss to the Carrow Arms. After a failed con and Myrtle getting caught picking Thoss's pocket, she fled. The guards investigated but the party talked their way out. Thoss is still wanted. <em>Myrtle is wanted by the Port Carrow guards.</em></p>
+          <p>They tracked a woman named Maren Thoss to the Carrow Arms. After a failed con and Myrtle getting caught picking Thoss's pocket, she fled. The guards investigated but the party talked their way out. Thoss was on the run. <em>Myrtle is wanted by the Port Carrow guards.</em></p>
           <p>The crew chased Thoss to the Ironside Inn — broke in the back, waterboarded the front desk, kicked in the door — and found her in the middle of something they interrupted before they could see it through. They killed Thoss. Wayne used Rope Trick to shunt the chest into a pocket dimension before anything could get out. Whatever was in there is still in there. Nobody has discussed what that means.</p>
           <p>Total haul: 180gp split seven ways. The captain's personal box is still missing — known to contain a magic sextant. Next session: <strong>Ratstew Gap</strong>.</p>
-          <p><em>Note: Half the crew came down with something in the days after. Probably the water. Probably nothing. Everyone's running at half strength heading into the next job.</em></p>
+          <p><em>Note: Most of the crew came down with something in the days after. Probably the water. Probably nothing. Everyone's running at half health heading into the next job.</em></p>
         </div>
       </div>
       <div class="card">
@@ -912,11 +913,11 @@ body {
         <table class="gold-table">
           <thead><tr><th>Character</th><th>Class</th><th>Gold (gp)</th></tr></thead>
           <tbody>
-            <tr><td>Axel Flameborn</td><td style="color:var(--warm-sand);font-size:12px">Monk 3</td><td><span class="gold-amt">354</span></td></tr>
+            <tr><td>Axel Flameborn</td><td style="color:var(--warm-sand);font-size:12px">Monk 4</td><td><span class="gold-amt">354</span></td></tr>
             <tr><td>Quincy Schueb</td><td style="color:var(--warm-sand);font-size:12px">Ranger 4</td><td><span class="gold-amt">283</span></td></tr>
-            <tr><td>Rapha</td><td style="color:var(--warm-sand);font-size:12px">Paladin 2</td><td><span class="gold-amt">120</span></td></tr>
-            <tr><td>Wayne Kerr</td><td style="color:var(--warm-sand);font-size:12px">Wizard 3</td><td><span class="gold-amt">150</span></td></tr>
-            <tr><td>Myrtle</td><td style="color:var(--warm-sand);font-size:12px">Rogue 3</td><td><span class="gold-amt">51</span></td></tr>
+            <tr><td>Rapha</td><td style="color:var(--warm-sand);font-size:12px">Paladin 4</td><td><span class="gold-amt">120</span></td></tr>
+            <tr><td>Wayne Kerr</td><td style="color:var(--warm-sand);font-size:12px">Wizard 4</td><td><span class="gold-amt">150</span></td></tr>
+            <tr><td>Myrtle</td><td style="color:var(--warm-sand);font-size:12px">Rogue 4</td><td><span class="gold-amt">51</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -1115,26 +1116,6 @@ body {
         <div id="voter-status" style="font-size:12px;color:var(--warm-sand);font-style:italic">Select your name before voting.</div>
       </div>
 
-      <!-- Question 1 -->
-      <div class="card">
-        <div class="vote-question">
-          <div class="vote-q-text">How does the crew approach the Salted Meridian?</div>
-          <div class="vote-options" id="vote-q1">
-            <div class="vote-option" onclick="castVote(1,'a',this)">
-              <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Row out at first light — visibility, but you're visible too</div><div class="vote-voters" id="voters-1-a"></div></div>
-            </div>
-            <div class="vote-option" onclick="castVote(1,'b',this)">
-              <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Approach after dark — cover, but the lantern was seen at night</div><div class="vote-voters" id="voters-1-b"></div></div>
-            </div>
-            <div class="vote-option" onclick="castVote(1,'c',this)">
-              <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Watch from shore one more day — info gathering, risk losing the job</div><div class="vote-voters" id="voters-1-c"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Question 1 -->
       <div class="card">
@@ -1205,103 +1186,6 @@ body {
   <div class="panel" id="panel-more"></div>
 
   <!-- ══════════ NEW CREW ══════════ -->
-  <div class="panel" id="panel-newcrew">
-    <div class="page-header">
-      <div class="page-title">👥 New Crew</div>
-      <div class="page-sub">Full sheets — available for guest players</div>
-    </div>
-    <div style="padding:0 16px 16px">
-
-      <!-- PUDDLE -->
-      <div class="card">
-        <div class="crew-header">
-          <div class="crew-dot" style="background:#6de8d8"></div>
-          <div>
-            <div class="crew-name">Puddle</div>
-            <div class="crew-title">Oozling · Wild Magic Sorcerer 4 · CG</div>
-          </div>
-        </div>
-        <div class="crew-bio">Blue-green, translucent, constantly in motion. Keeps a journal called <em>Things Worth Knowing.</em> Joined after polymorphing a dockmaster's horse into a pelican. She's warm, curious, and will absolutely touch things she shouldn't.</div>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0">
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">STR</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">7</div><div style="font-size:10px;color:var(--rust)">−2</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">DEX</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">14</div><div style="font-size:10px;color:var(--rust)">+2</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CON</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">14</div><div style="font-size:10px;color:var(--rust)">+2</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">INT</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">13</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">WIS</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CHA</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">17</div><div style="font-size:10px;color:var(--rust)">+3</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">26</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">HP</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">AC</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">30ft</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">SPEED</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">+5</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">SPELL ATK</div></div>
-        </div>
-        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">SPELLS · Save DC 13</div>
-        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8;margin-bottom:10px">
-          <strong>Cantrips:</strong> Fire Bolt (+5, 1d10 fire, 120ft) · Minor Illusion · Prestidigitation · Detect Magic<br>
-          <strong>1st (4 slots):</strong> Charm Person · Mage Armor · Thunderwave (2d8, DC 13 Con)<br>
-          <strong>2nd (3 slots):</strong> Misty Step · Shatter (3d8, DC 13 Con, 10ft sphere)
-        </div>
-        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">SORCERY · 4 points</div>
-        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8;margin-bottom:10px">
-          <strong>Bend Luck (reaction):</strong> Spend 2 points — add or subtract 1d4 from any roll you can see<br>
-          <strong>Tides of Chaos:</strong> Advantage on one attack, check, or save (1/long rest)<br>
-          <strong>Wild Magic Surge:</strong> Roll d20 after casting — on 1, roll the Wild Magic table (DM rolls)
-        </div>
-        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">RACIAL TRAITS</div>
-        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8">
-          <strong>Magic Resistance:</strong> Advantage on saves vs spells and magical effects<br>
-          <strong>Gelatinous:</strong> Can move through spaces of larger creatures<br>
-          <strong>Malleable Form:</strong> Disguise Self 1/long rest
-        </div>
-        <button class="crew-talk-btn" style="margin-top:12px" onclick="goToNPC('hold')">→ Find her in the Ship's Hold</button>
-      </div>
-
-      <!-- DRED'BAN -->
-      <div class="card">
-        <div class="crew-header">
-          <div class="crew-dot" style="background:#c890d8"></div>
-          <div>
-            <div class="crew-name">Dred'ban</div>
-            <div class="crew-title">Blackhorn · Champion Fighter 4 · LN</div>
-          </div>
-        </div>
-        <div class="crew-bio">Deep matte purple shell, cracked along the left shoulder. Ship's security. Speaks rarely — in fragments when he does. Has been re-upping his contract for three months without explaining why. He watches everything. The silence isn't hostility.</div>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0">
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">STR</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">18</div><div style="font-size:10px;color:var(--rust)">+4</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">DEX</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CON</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">16</div><div style="font-size:10px;color:var(--rust)">+3</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">INT</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">10</div><div style="font-size:10px;color:var(--rust)">+0</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">WIS</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">13</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CHA</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">7</div><div style="font-size:10px;color:var(--rust)">−2</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">42</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">HP</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">18</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">AC</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">25ft</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">SPEED</div></div>
-          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">+6</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">ATK BONUS</div></div>
-        </div>
-        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">ATTACKS</div>
-        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8;margin-bottom:10px">
-          <strong>Warhammer (two-hand):</strong> +6 to hit · 1d8+4 bludgeoning<br>
-          <strong>Gore (horn strike):</strong> +6 to hit · 1d6+4 piercing<br>
-          <strong>Handaxe (thrown):</strong> +6 to hit · 1d6+4 slashing · range 20/60ft<br>
-          <strong>Charge:</strong> Move 20ft straight + Gore — extra 1d8, STR save (DC 18) or knocked prone
-        </div>
-        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">CLASS & RACIAL FEATURES</div>
-        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8">
-          <strong>Action Surge:</strong> Take one additional action on your turn (1/short rest)<br>
-          <strong>Second Wind:</strong> Bonus action — regain 1d10+4 HP (1/short rest)<br>
-          <strong>Improved Critical:</strong> Weapon attacks crit on 19–20<br>
-          <strong>Hard Shell:</strong> Permanent +1 AC bonus (included above)<br>
-          <strong>Saving Throws:</strong> STR +6 · CON +5
-        </div>
-        <button class="crew-talk-btn" style="margin-top:12px" onclick="goToNPC('bow')">→ Find him at the Bow</button>
-      </div>
-
-    </div>
-  </div>
-
   <!-- ══════════ PROVISIONS ══════════ -->
   <div class="panel" id="panel-provisions">
     <div class="page-header">
@@ -1468,49 +1352,88 @@ body {
     </div>
   </div>
 
-  <!-- ══════════ THE CREW ══════════ -->
+  <!-- ══════════ THE CREW (merged with New Crew) ══════════ -->
   <div class="panel" id="panel-crew">
     <div class="page-header">
-      <div class="page-title">⚔️ The Crew</div>
-      <div class="page-sub">Party roster — The Kaleidoscope</div>
+      <div class="page-title">👥 The Crew</div>
+      <div class="page-sub">The Kaleidoscope</div>
     </div>
-    <div style="padding:0 16px 16px">
-      <div class="crew-roster">
-        <div class="roster-card">
-          <div class="roster-name">Axel Flameborn</div>
-          <div class="roster-class">Monk 3 · Dragonborn</div>
-          <div class="roster-stat">HP 24/24 · AC 16 · Speed 35ft</div>
-          <div class="roster-stat">STR 16 DEX 16 CON 14</div>
-          <div class="roster-gold">307 gp</div>
+    <!-- Sub-tabs -->
+    <div style="display:flex;border-bottom:1px solid var(--border-warm);background:rgba(26,51,68,0.7);padding:0 8px">
+      <button class="tab-btn active" id="crew-tab-party" onclick="switchCrewTab('party')" style="font-size:11px;padding:10px 18px">The Party</button>
+      <button class="tab-btn" id="crew-tab-new" onclick="switchCrewTab('new')" style="font-size:11px;padding:10px 18px">New Crew</button>
+    </div>
+
+    <!-- Party tab -->
+    <div id="crew-panel-party" style="padding:12px 16px">
+      <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:10px;text-align:center">Live stats — updates when players edit their sheets</div>
+      <div class="crew-roster" id="live-roster">
+        <!-- populated by renderLiveRoster() -->
+      </div>
+    </div>
+
+    <!-- New Crew tab -->
+    <div id="crew-panel-new" style="padding:12px 16px;display:none">
+      <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:10px;text-align:center">Recently joined — available for guest players</div>
+      <!-- PUDDLE -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="crew-header">
+          <div class="crew-dot" style="background:#6de8d8"></div>
+          <div><div class="crew-name">Puddle</div><div class="crew-title">Oozling · Wild Magic Sorcerer 4 · CG</div></div>
         </div>
-        <div class="roster-card">
-          <div class="roster-name">Quincy Schueb</div>
-          <div class="roster-class">Ranger 4 · Wood Elf</div>
-          <div class="roster-stat">HP 32/32 · AC 15 · Speed 35ft</div>
-          <div class="roster-stat">DEX 18 WIS 14 INT 12</div>
-          <div class="roster-gold">26 gp</div>
+        <div class="crew-bio">Blue-green, translucent, constantly in motion. Keeps a journal called <em>Things Worth Knowing.</em> Joined after polymorphing a dockmaster's horse into a pelican. Warm, curious, will absolutely touch things she shouldn't.</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:10px 0">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">STR</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">7</div><div style="font-size:9px;color:var(--rust)">−2</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">DEX</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">14</div><div style="font-size:9px;color:var(--rust)">+2</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">CON</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">14</div><div style="font-size:9px;color:var(--rust)">+2</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">INT</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">13</div><div style="font-size:9px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">WIS</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:9px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">CHA</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">17</div><div style="font-size:9px;color:var(--rust)">+3</div></div>
         </div>
-        <div class="roster-card">
-          <div class="roster-name">Rapha</div>
-          <div class="roster-class">Paladin 2 · Half-Elf</div>
-          <div class="roster-stat">HP 18/18 · AC 18 · Speed 30ft</div>
-          <div class="roster-stat">STR 16 CHA 16 CON 14</div>
-          <div class="roster-gold">133 gp</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">26</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">HP</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">AC</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:var(--ink-deep)">30ft</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">SPEED</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">+5</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">SPELL</div></div>
         </div>
-        <div class="roster-card">
-          <div class="roster-name">Wayne Kerr</div>
-          <div class="roster-class">Wizard 3 · Gnome</div>
-          <div class="roster-stat">HP 16/16 · AC 13 · Speed 25ft</div>
-          <div class="roster-stat">INT 18 CHA 19 DEX 14</div>
-          <div class="roster-gold">120 gp</div>
+        <div style="font-size:11px;color:var(--ink-mid);line-height:1.8;margin-bottom:8px">
+          <strong>Cantrips:</strong> Fire Bolt (+5, 1d10) · Minor Illusion · Prestidigitation · Detect Magic<br>
+          <strong>1st (4 slots):</strong> Charm Person · Mage Armor · Thunderwave (2d8, DC 13)<br>
+          <strong>2nd (3 slots):</strong> Misty Step · Shatter (3d8, DC 13, 10ft)<br>
+          <strong>Bend Luck:</strong> 2 sorcery pts → add/subtract 1d4 from any roll (reaction)<br>
+          <strong>Magic Resistance:</strong> Advantage on saves vs spells
         </div>
-        <div class="roster-card" style="grid-column:span 2">
-          <div class="roster-name">Myrtle</div>
-          <div class="roster-class">Rogue · Race Unknown</div>
-          <div class="roster-stat">HP 22/22 · AC 14 · Speed 30ft</div>
-          <div class="roster-stat">DEX 18 INT 14 WIS 13</div>
-          <div class="roster-gold">0 gp</div>
+        <button class="crew-talk-btn" onclick="showPanel('ship');setTimeout(()=>selectLocation('hold'),100)">→ Find her in the Ship's Hold</button>
+      </div>
+      <!-- DRED'BAN -->
+      <div class="card">
+        <div class="crew-header">
+          <div class="crew-dot" style="background:#c890d8"></div>
+          <div><div class="crew-name">Dred'ban</div><div class="crew-title">Blackhorn · Champion Fighter 4 · LN</div></div>
         </div>
+        <div class="crew-bio">Deep matte purple shell, cracked left shoulder. Ship's security. Speaks in fragments. Has been re-upping his contract for three months. He watches everything. The silence isn't hostility.</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:10px 0">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">STR</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">18</div><div style="font-size:9px;color:var(--rust)">+4</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">DEX</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:9px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">CON</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">16</div><div style="font-size:9px;color:var(--rust)">+3</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">INT</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">10</div><div style="font-size:9px;color:var(--rust)">+0</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">WIS</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">13</div><div style="font-size:9px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:5px 3px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:8px;color:var(--ocean-light)">CHA</div><div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-deep)">7</div><div style="font-size:9px;color:var(--rust)">−2</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">42</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">HP</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">18</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">AC</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:var(--ink-deep)">25ft</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">SPEED</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:7px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">+6</div><div style="font-size:8px;color:var(--ocean-light);font-family:'Cinzel',serif">ATK</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--ink-mid);line-height:1.8;margin-bottom:8px">
+          <strong>Warhammer (2H):</strong> +6, 1d8+4 bludgeoning · <strong>Gore:</strong> +6, 1d6+4 piercing<br>
+          <strong>Handaxe (thrown):</strong> +6, 1d6+4, 20/60ft<br>
+          <strong>Charge:</strong> Move 20ft + Gore → +1d8, DC 18 STR or prone<br>
+          <strong>Action Surge:</strong> Extra action 1/short rest · <strong>Second Wind:</strong> 1d10+4 HP (bonus action)<br>
+          <strong>Improved Critical:</strong> Crits on 19–20 · Saves: STR +6, CON +5
+        </div>
+        <button class="crew-talk-btn" onclick="showPanel('ship');setTimeout(()=>selectLocation('bow'),100)">→ Find him at the Bow</button>
       </div>
     </div>
   </div>
@@ -1770,6 +1693,57 @@ body {
     </div>
   </div>
 
+
+<!-- ══════════ IDENTITY OVERLAY ══════════ -->
+<div id="identity-overlay" style="position:fixed;inset:0;z-index:1000;background:rgba(8,16,24,0.96);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div style="text-align:center;max-width:340px;width:100%">
+    <div style="font-size:40px;margin-bottom:12px">⚓</div>
+    <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:600;color:var(--cream);letter-spacing:0.06em;margin-bottom:6px">The Kaleidoscope</div>
+    <div style="font-size:13px;color:var(--seafoam);font-style:italic;margin-bottom:28px">Who are you?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px" id="identity-btns">
+      <button onclick="setIdentity('Axel')" style="padding:16px 12px;background:rgba(26,51,68,0.9);border:1px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s">Axel<div style="font-size:10px;color:var(--warm-sand);margin-top:3px;font-weight:400">Monk 4 · Dragonborn</div></button>
+      <button onclick="setIdentity('Quincy')" style="padding:16px 12px;background:rgba(26,51,68,0.9);border:1px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s">Quincy<div style="font-size:10px;color:var(--warm-sand);margin-top:3px;font-weight:400">Ranger 4 · Wood Elf</div></button>
+      <button onclick="setIdentity('Rapha')" style="padding:16px 12px;background:rgba(26,51,68,0.9);border:1px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s">Rapha<div style="font-size:10px;color:var(--warm-sand);margin-top:3px;font-weight:400">Paladin 4 · Half-Elf</div></button>
+      <button onclick="setIdentity('Wayne')" style="padding:16px 12px;background:rgba(26,51,68,0.9);border:1px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s">Wayne<div style="font-size:10px;color:var(--warm-sand);margin-top:3px;font-weight:400">Wizard 3 · Gnome</div></button>
+      <button onclick="setIdentity('Myrtle')" style="grid-column:span 2;padding:16px 12px;background:rgba(26,51,68,0.9);border:1px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s">Myrtle<div style="font-size:10px;color:var(--warm-sand);margin-top:3px;font-weight:400">Rogue 3 · Halfling</div></button>
+    </div>
+    <div style="font-size:11px;color:rgba(196,168,122,0.5);font-style:italic">Your choice is remembered on this device</div>
+  </div>
+</div>
+
+
+<!-- ══════════ IDENTITY OVERLAY ══════════ -->
+<div id="identity-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(8,16,24,0.96);align-items:center;justify-content:center;flex-direction:column;padding:24px">
+  <div style="max-width:380px;width:100%;text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">⚓</div>
+    <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:600;color:var(--cream);letter-spacing:0.06em;margin-bottom:6px">Welcome Aboard</div>
+    <div style="font-size:14px;color:var(--seafoam);font-style:italic;margin-bottom:28px">Who are you?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <button onclick="setIdentity('Axel')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
+        <div style="font-size:20px;margin-bottom:6px">🐉</div>Axel
+      </button>
+      <button onclick="setIdentity('Quincy')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
+        <div style="font-size:20px;margin-bottom:6px">🌿</div>Quincy
+      </button>
+      <button onclick="setIdentity('Rapha')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
+        <div style="font-size:20px;margin-bottom:6px">⚔️</div>Rapha
+      </button>
+      <button onclick="setIdentity('Wayne')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
+        <div style="font-size:20px;margin-bottom:6px">🧙</div>Wayne
+      </button>
+    </div>
+    <button onclick="setIdentity('Myrtle')" style="width:100%;padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s;margin-bottom:20px" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
+      <div style="font-size:20px;margin-bottom:6px">🗡️</div>Myrtle
+    </button>
+    <div style="font-size:11px;color:rgba(244,237,216,0.3)">Your choice is saved on this device. You can change it any time in settings.</div>
+  </div>
+</div>
+
+<!-- Identity badge (top right, tap to change) -->
+<div id="identity-badge" style="display:none;position:fixed;top:10px;right:10px;z-index:90;background:rgba(14,31,43,0.9);border:1px solid var(--border-warm);border-radius:20px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(8px)" onclick="showIdentityOverlay()">
+  <span style="font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);letter-spacing:0.06em" id="identity-badge-name"></span>
+</div>
+
 </div><!-- /app -->
 
 <!-- Bottom Nav -->
@@ -1795,7 +1769,6 @@ body {
 <div class="more-overlay" id="more-overlay" onclick="closeMore()"></div>
 <div class="more-menu" id="more-menu">
   <button class="more-item" onclick="showPanel('sheet');closeMore()" style="color:var(--gold);border-bottom:1px solid var(--border-warm);margin-bottom:4px;padding-bottom:14px">⚔️ My Sheet</button>
-  <button class="more-item" onclick="showPanel('newcrew');closeMore()">👥 New Crew</button>
   <button class="more-item" onclick="showPanel('provisions');closeMore()">🛒 Provisions</button>
   <button class="more-item" onclick="showPanel('ledger');closeMore()">📖 Crew Ledger</button>
   <button class="more-item" onclick="showPanel('curiosities');closeMore()">🔮 Curiosities</button>
@@ -1881,6 +1854,8 @@ function showPanel(name) {
   const navEl = document.getElementById('nav-' + name);
   if (navEl) navEl.classList.add('active');
   else document.getElementById('nav-more').classList.add('active');
+  // Auto-load live roster when opening crew panel
+  if (name === 'crew') renderLiveRoster();
 }
 
 function toggleMore() {
@@ -1974,7 +1949,7 @@ function checkSecrets(npc, msg) {
     if (s.keywords.some(k => lower.includes(k))) {
       if (s.oneTime) usedOneTimeSecrets.add(s.id);
       // Log to backend
-      postEvent({ type:'secret_triggered', npc, secretId:s.id, reward: s.reward?.name || null, oneTime: s.oneTime });
+      postEvent({ type:'secret_triggered', player: PLAYER_NAME || 'unknown', npc, secretId:s.id, reward: s.reward?.name || null, oneTime: s.oneTime });
       return s;
     }
   }
@@ -2216,7 +2191,7 @@ function playTides() {
   res.className = 'game-result ' + (correct ? 'win' : 'lose');
   res.innerHTML = `<div class="game-result-big">${actual.join(' — ')}</div><div class="game-result-sub">${correct ? `You called it. +${bet*7} gp` : `You had ${tidesState.prediction.join(' — ')}. −${bet} gp`}</div>`;
 
-  postEvent({ type:'game_played', game:'tides', bet, outcome: correct?'win':'lose', net, kimchiBankAfter: kimchiBank });
+  postEvent({ type:'game_played', player: PLAYER_NAME || 'unknown', game:'tides', bet, outcome: correct?'win':'lose', net, kimchiBankAfter: kimchiBank });
 }
 
 // BVR
@@ -2274,7 +2249,7 @@ function playBVR(playerChoice) {
     res.innerHTML = `<div class="game-result-big">${playerWon ? 'You win.' : draw ? 'Draw.' : 'Kimchi wins.'}</div><div class="game-result-sub">${playerWon ? `+${bet} gp` : draw ? 'No gold changes hands.' : `-${bet} gp`}</div>`;
     document.getElementById('bvr-score').textContent = `${bvrState.playerScore} — ${bvrState.kimchiScore} (final)`;
 
-    postEvent({ type:'game_played', game:'bvr', bet, outcome: playerWon?'win':draw?'draw':'lose', net, kimchiBankAfter: kimchiBank });
+    postEvent({ type:'game_played', player: PLAYER_NAME || 'unknown', game:'bvr', bet, outcome: playerWon?'win':draw?'draw':'lose', net, kimchiBankAfter: kimchiBank });
   } else {
     document.getElementById('bvr-score').textContent = `Round ${bvrState.round} of 3 · You ${bvrState.playerScore}–${bvrState.kimchiScore} Kimchi`;
     setTimeout(() => {
@@ -2380,7 +2355,7 @@ async function loadDMReport() {
 // ══════════ CHARACTER SHEET ══════════
 // CHARS holds the in-memory working state. On load, server state overlays these defaults.
 const CHAR_DEFAULTS = [
-  { name:'Axel', class:'Monk 3', race:'Dragonborn (Blue — Lightning)',
+  { name:'Axel', class:'monk 4', race:'Dragonborn (Blue — Lightning)',
     str:10, dex:15, con:14, int:10, wis:16, cha:13,
     hp:21, maxHp:21, tempHp:0, ac:15, speed:40, pp:13, prof:2,
     attacks:[
@@ -2414,7 +2389,7 @@ const CHAR_DEFAULTS = [
       {name:'Health Potion',        desc:'2d4+2 HP',                          qty:1, star:false}
     ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
 
-  { name:'Rapha', class:'Paladin 2', race:'Half-Elf',
+  { name:'Rapha', class:'Paladin 4', race:'Half-Elf',
     str:14, dex:12, con:8, int:11, wis:12, cha:15,
     hp:24, maxHp:24, tempHp:0, ac:16, speed:30, pp:13, prof:2,
     attacks:[
@@ -2694,10 +2669,75 @@ document.getElementById('hp-adj-input').addEventListener('keydown', e => { if(e.
 document.getElementById('reminder-input').addEventListener('keydown', e => { if(e.key==='Enter')addReminder(); });
 document.getElementById('letter-unlock-input').addEventListener('keydown', e => { if(e.key==='Enter')tryUnlockLetter(); });
 
+// ══════════ IDENTITY / LOGIN ══════════
+const CHAR_INDEX = { Axel:0, Quincy:1, Rapha:2, Wayne:3, Myrtle:4 };
+let PLAYER_NAME = localStorage.getItem('kaleidoscope_player') || null;
+
+function setIdentity(name) {
+  PLAYER_NAME = name;
+  localStorage.setItem('kaleidoscope_player', name);
+  document.getElementById('identity-overlay').style.display = 'none';
+  // Auto-select voter and sheet
+  document.querySelectorAll('.voter-btn').forEach(b => {
+    if (b.textContent.trim().startsWith(name)) { b.classList.add('active'); currentVoter = name; }
+  });
+  document.getElementById('voter-status').textContent = 'Voting as ' + name;
+  const idx = CHAR_INDEX[name];
+  if (idx !== undefined) {
+    document.querySelectorAll('.char-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+    claimCharacter(idx);
+  }
+  refreshVoteDisplay();
+}
+
+function checkIdentityOnLoad() {
+  if (!PLAYER_NAME) {
+    document.getElementById('identity-overlay').style.display = 'flex';
+  } else {
+    setIdentity(PLAYER_NAME);
+  }
+}
+
+// ══════════ CREW TAB SWITCHER ══════════
+function switchCrewTab(tab) {
+  document.getElementById('crew-panel-party').style.display = tab === 'party' ? 'block' : 'none';
+  document.getElementById('crew-panel-new').style.display = tab === 'new' ? 'block' : 'none';
+  document.getElementById('crew-tab-party').classList.toggle('active', tab === 'party');
+  document.getElementById('crew-tab-new').classList.toggle('active', tab === 'new');
+  if (tab === 'party') renderLiveRoster();
+}
+
+// ══════════ LIVE ROSTER ══════════
+async function renderLiveRoster() {
+  const roster = document.getElementById('live-roster');
+  roster.innerHTML = '<div style="font-size:12px;color:var(--warm-sand);text-align:center;padding:12px">Loading...</div>';
+  const names = ['axel','quincy','rapha','wayne','myrtle'];
+  const labels = ['Monk 4 · Dragonborn','Ranger 4 · Wood Elf','Paladin 4 · Half-Elf','Wizard 3 · Gnome','Rogue 3 · Halfling'];
+  const results = await Promise.all(names.map(n =>
+    fetch('/.netlify/functions/character_state?character=' + n)
+      .then(r => r.ok ? r.json() : null).catch(() => null)
+  ));
+  roster.innerHTML = '';
+  results.forEach((c, i) => {
+    if (!c) c = CHARS[i];
+    const pct = c.hp / c.maxHp;
+    const hpCol = pct > 0.5 ? 'var(--hp-green)' : pct > 0.25 ? '#b8860b' : 'var(--hp-red)';
+    const card = document.createElement('div');
+    card.className = 'roster-card';
+    card.style.gridColumn = i === 4 ? 'span 2' : '';
+    card.innerHTML = '<div class="roster-name">' + c.name + '</div>' +
+      '<div class="roster-class">' + labels[i] + '</div>' +
+      '<div class="roster-stat" style="color:' + hpCol + ';font-weight:600">' + c.hp + ' / ' + c.maxHp + ' HP</div>' +
+      '<div class="roster-stat">AC ' + c.ac + ' · ' + c.speed + 'ft</div>' +
+      '<div class="roster-gold">' + (c.coins?.gp ?? 0) + ' gp</div>';
+    roster.appendChild(card);
+  });
+}
+
 // ══════════ INIT ══════════
 document.getElementById('notes-date').textContent = 'Session — ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-claimCharacter(0);
-loadVotesFromServer(); // pull existing votes so all players see live results
+checkIdentityOnLoad();
+loadVotesFromServer();
 </script>
 </body>
 </html>
