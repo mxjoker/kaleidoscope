@@ -160,32 +160,9 @@ function setupCharacterNotesAutosave() {
   });
 }
 
-// Setup auto-save for conditions
+// Setup auto-save for conditions — handled directly by toggleCondition() in index.html
 function setupCharacterConditionsAutosave() {
-  const conditionPills = document.querySelectorAll('.condition-pill');
-  
-  conditionPills.forEach(pill => {
-    pill.addEventListener('click', function() {
-      setTimeout(() => {
-        const character = getActiveCharKey();
-        if (!character) return;
-        const conditionName = this.textContent.trim();
-        const isActive = this.classList.contains('active');
-        
-        fetch(`/.netlify/functions/character_state?character=${character}`)
-          .then(r => r.json())
-          .then(state => {
-            let conditions = state.conditions || [];
-            if (isActive) {
-              if (!conditions.includes(conditionName)) conditions.push(conditionName);
-            } else {
-              conditions = conditions.filter(c => c !== conditionName);
-            }
-            saveCharacterField(character, 'conditions', conditions);
-          });
-      }, 100);
-    });
-  });
+  // No-op: conditions are saved via toggleCondition() which writes to CHARS and calls saveCharToServer
 }
 
 // Setup auto-save for death saves

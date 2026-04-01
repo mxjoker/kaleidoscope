@@ -1541,21 +1541,21 @@ body {
       <div class="card">
         <div class="card-title">Conditions</div>
         <div class="conditions-grid">
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Blinded</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Charmed</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Deafened</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Exhausted</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Frightened</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Grappled</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Incapacitated</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Invisible</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Paralysed</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Petrified</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Poisoned</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Prone</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Restrained</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Stunned</div>
-          <div class="condition-pill" onclick="this.classList.toggle('active')">Unconscious</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Blinded</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Charmed</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Deafened</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Exhausted</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Frightened</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Grappled</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Incapacitated</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Invisible</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Paralysed</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Petrified</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Poisoned</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Prone</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Restrained</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Stunned</div>
+          <div class="condition-pill" onclick="toggleCondition(this)">Unconscious</div>
         </div>
       </div>
       <div class="card">
@@ -2596,7 +2596,13 @@ async function claimCharacter(idx) {
         items: serverState.items || CHARS[idx].items,
         slots: serverState.slots || CHARS[idx].slots,
         coins: serverState.coins || CHARS[idx].coins,
-        proficiencies: serverState.proficiencies || {}
+        proficiencies: serverState.proficiencies || {},
+        conditions: serverState.conditions || [],
+        deathSaves: serverState.deathSaves || { successes: 0, failures: 0 },
+        notes: serverState.notes || '',
+        sessionNotes: serverState.sessionNotes || '',
+        reminders: serverState.reminders || [],
+        inspiration: serverState.inspiration || false
       };
       proficiencies = { ...proficiencies, ...CHARS[idx].proficiencies };
       // Restore notes and reminders to DOM
@@ -2608,6 +2614,20 @@ async function claimCharacter(idx) {
       if (remindersList && Array.isArray(serverState.reminders)) {
         remindersList.innerHTML = '';
         serverState.reminders.forEach(text => appendReminderItem(text));
+      }
+      // Restore conditions
+      document.querySelectorAll('.condition-pill').forEach(pill => {
+        const active = (serverState.conditions || []).includes(pill.textContent.trim());
+        pill.classList.toggle('active', active);
+      });
+      // Restore inspiration
+      inspiration = serverState.inspiration || false;
+      const inspBtn = document.getElementById('insp-btn');
+      if (inspBtn) {
+        inspBtn.textContent = inspiration ? '✦ INSPIRED!' : '✦ INSPIRATION';
+        inspBtn.style.background = inspiration ? '#7a5a00' : '#5a4200';
+        inspBtn.style.borderColor = inspiration ? '#d4a832' : '#a07800';
+        inspBtn.style.color = inspiration ? '#fff8d0' : '#fde97a';
       }
     }
   } catch(e) { /* use defaults */ }
@@ -2696,10 +2716,10 @@ function loadChar(i) {
   // Attacks
   const al = document.getElementById('attacks-list');
   al.innerHTML = '';
-  (c.attacks || []).forEach(a => {
+  (c.attacks || []).forEach((a, atkIdx) => {
     const row = document.createElement('div');
     row.className = 'attack-row';
-    row.innerHTML = `<div><div class="attack-name">${a.name}</div><div class="attack-detail">${a.range}</div></div><div class="attack-bonus">${a.bonus}</div><div class="attack-damage">${a.dmg}</div>`;
+    row.innerHTML = `<div style="flex:1"><div class="attack-name">${a.name}</div><div class="attack-detail">${a.range}</div></div><div class="attack-bonus">${a.bonus}</div><div class="attack-damage">${a.dmg}</div><button onclick="deleteAttack(${atkIdx})" style="margin-left:8px;background:transparent;border:none;color:var(--warm-sand);font-size:16px;cursor:pointer;padding:0 4px;-webkit-tap-highlight-color:transparent;" title="Remove">✕</button>`;
     al.appendChild(row);
   });
 
@@ -2751,11 +2771,16 @@ function renderItems(c) {
   unstarred.forEach((it) => document.getElementById('items-list').appendChild(makeItemRow(it, c.items.indexOf(it))));
 }
 
+function deleteAttack(idx) { CHARS[currentChar].attacks.splice(idx,1); loadChar(currentChar); saveCharToServer(currentChar,'attacks',null,null); }
+
 function makeItemRow(it, idx) {
   const row = document.createElement('div'); row.className = 'item-row';
-  row.innerHTML = `<span class="item-star ${it.star?'starred':''}" onclick="toggleStar(${idx})">★</span><div class="item-info"><div class="item-name">${it.name}</div>${it.desc?`<div class="item-desc">${it.desc}</div>`:''}</div><span class="item-qty">×${it.qty}</span>`;
+  row.innerHTML = `<span class="item-star ${it.star?'starred':''}" onclick="toggleStar(${idx})">★</span><div class="item-info" style="flex:1"><div class="item-name">${it.name}</div>${it.desc?`<div class="item-desc">${it.desc}</div>`:''}</div><div style="display:flex;align-items:center;gap:4px"><button onclick="adjustItemQty(${idx},-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border-warm);background:#1a2a38;color:var(--cream);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">−</button><span class="item-qty" style="min-width:24px;text-align:center">×${it.qty}</span><button onclick="adjustItemQty(${idx},1)" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border-warm);background:#1a2a38;color:var(--cream);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">+</button><button onclick="deleteItem(${idx})" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border-warm);background:transparent;color:var(--warm-sand);font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;">✕</button></div>`;
   return row;
 }
+
+function adjustItemQty(idx, delta) { const c=CHARS[currentChar]; if(!c.items[idx]) return; c.items[idx].qty=Math.max(0,c.items[idx].qty+delta); if(c.items[idx].qty===0){c.items.splice(idx,1);} renderItems(c); saveCharToServer(currentChar,'items',null,null); }
+function deleteItem(idx) { CHARS[currentChar].items.splice(idx,1); renderItems(CHARS[currentChar]); saveCharToServer(currentChar,'items',null,null); }
 
 function toggleStar(idx) { const c=CHARS[currentChar]; if(c.items[idx]) c.items[idx].star=!c.items[idx].star; renderItems(c); saveCharToServer(currentChar,'items',null,null); }
 function adjustCoin(type,delta) { const c=CHARS[currentChar]; const old=c.coins[type]||0; c.coins[type]=Math.max(0,old+delta); document.getElementById('coin-'+type).textContent=c.coins[type]; saveCharToServer(currentChar,`coins.${type}`,old,c.coins[type]); }
@@ -2811,7 +2836,14 @@ function applyHP() {
   document.getElementById('hp-input-row').classList.remove('show');
   loadChar(currentChar);
 }
-function toggleInspiration() { inspiration=!inspiration; const btn=document.getElementById('insp-btn'); btn.textContent=inspiration?'✦ INSPIRED!':'✦ INSPIRATION'; btn.style.background=inspiration?'#7a5a00':'#5a4200'; btn.style.borderColor=inspiration?'#d4a832':'#a07800'; btn.style.color=inspiration?'#fff8d0':'#fde97a'; }
+function toggleCondition(pill) {
+  pill.classList.toggle('active');
+  if (claimedCharacter === null) return;
+  const active = Array.from(document.querySelectorAll('.condition-pill.active')).map(p => p.textContent.trim());
+  CHARS[claimedCharacter].conditions = active;
+  saveCharToServer(claimedCharacter, 'conditions', null, active);
+}
+function toggleInspiration() { inspiration=!inspiration; const btn=document.getElementById('insp-btn'); btn.textContent=inspiration?'✦ INSPIRED!':'✦ INSPIRATION'; btn.style.background=inspiration?'#7a5a00':'#5a4200'; btn.style.borderColor=inspiration?'#d4a832':'#a07800'; btn.style.color=inspiration?'#fff8d0':'#fde97a'; if(claimedCharacter!==null){CHARS[claimedCharacter].inspiration=inspiration;saveCharToServer(claimedCharacter,'inspiration',!inspiration,inspiration);} }
 function toggleAdv(mode) { advMode=advMode===mode?null:mode; const ab=document.getElementById('adv-btn'),db=document.getElementById('dis-btn'); ab.style.background=advMode==='adv'?'#1e8449':'#1a5c33'; ab.style.borderColor=advMode==='adv'?'#52d68a':'#27864d'; db.style.background=advMode==='dis'?'#9c3a28':'#6b2318'; db.style.borderColor=advMode==='dis'?'#e05a44':'#9c3a28'; }
 function rollDice(sides,label) { let r,note=''; if(advMode==='adv'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.max(a,b);note=` (${a}, ${b})`;} else if(advMode==='dis'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.min(a,b);note=` (${a}, ${b})`;} else r=Math.ceil(Math.random()*sides); document.getElementById('dice-result').classList.add('show'); document.getElementById('dice-num').textContent=r+note; document.getElementById('dice-lbl').textContent=label+(advMode?' with '+(advMode==='adv'?'advantage':'disadvantage'):''); }
 function addAttack() { const name=document.getElementById('atk-name').value.trim(); if(!name)return; CHARS[currentChar].attacks.push({name,bonus:document.getElementById('atk-bonus').value.trim()||'+0',dmg:document.getElementById('atk-dmg').value.trim()||'—',range:document.getElementById('atk-range').value.trim()||'Melee'}); ['atk-name','atk-bonus','atk-dmg','atk-range'].forEach(id=>document.getElementById(id).value=''); document.getElementById('attack-form').classList.remove('show'); loadChar(currentChar); saveCharToServer(currentChar,'attacks',null,null); }
