@@ -1068,19 +1068,19 @@ body {
         </div>
       </div>
 
-      <div id="chat-cabin" class="card" style="padding:0;overflow:hidden">
+      <div id="chat-cabin" class="card chat-area" style="padding:0;overflow:hidden">
         <div style="padding:14px 16px 10px;border-bottom:1px solid var(--border-warm)">
           <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">⚖️ The Wager Board</div>
           <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">Kimchi doesn't announce it. He just watches. At the next port, the one who wagered most on a single bet will find something waiting.</div>
         </div>
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border-warm)">
-          <button onclick="toggleWagerBoard()" id="wager-toggle-btn" style="width:100%;padding:9px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">📊 REVEAL THE STANDINGS</button>
-        </div>
         <div id="wager-board-rows" style="padding:12px 16px;display:none">
           <div style="text-align:center;color:var(--warm-sand);font-size:13px;font-style:italic;padding:12px 0">Loading...</div>
         </div>
-        <div style="padding:10px 16px 14px;border-top:1px solid var(--border-warm)">
-          <div style="font-size:10px;color:rgba(196,168,122,0.5);font-style:italic;text-align:center">Updates live · Highest single bet per player · All games count</div>
+        <div id="wager-board-locked" style="padding:16px;text-align:center;color:rgba(196,168,122,0.5);font-size:12px;font-style:italic">
+          The standings will be posted at the next port.
+        </div>
+        <div style="padding:8px 16px 14px;border-top:1px solid var(--border-warm)">
+          <div style="font-size:10px;color:rgba(196,168,122,0.4);font-style:italic;text-align:center">Highest single bet per player · All games count</div>
         </div>
       </div>
     </div>
@@ -2037,13 +2037,16 @@ function selectLocation(loc) {
   document.getElementById(chatId).classList.add('show');
   activeLocation = loc;
 
-  // Reset wager board visibility when entering cabin
+  // Load wager board when entering cabin — respects DM reveal state
   if (loc === 'cabin') {
-    wagerBoardVisible = false;
-    const el = document.getElementById('wager-board-rows');
-    const btn = document.getElementById('wager-toggle-btn');
-    if (el) el.style.display = 'none';
-    if (btn) btn.textContent = '📊 REVEAL THE STANDINGS';
+    if (wagerPrizeRevealed) {
+      document.getElementById('wager-board-rows').style.display = 'block';
+      document.getElementById('wager-board-locked').style.display = 'none';
+      loadWagerBoard();
+    } else {
+      document.getElementById('wager-board-rows').style.display = 'none';
+      document.getElementById('wager-board-locked').style.display = 'block';
+    }
   }
 
   // Greet if first time
@@ -2529,21 +2532,6 @@ function playBVR(playerChoice) {
 }
 
 // ══════════ WAGER BOARD ══════════
-let wagerBoardVisible = false;
-function toggleWagerBoard() {
-  wagerBoardVisible = !wagerBoardVisible;
-  const el = document.getElementById('wager-board-rows');
-  const btn = document.getElementById('wager-toggle-btn');
-  if (wagerBoardVisible) {
-    el.style.display = 'block';
-    if (btn) btn.textContent = '🔒 HIDE STANDINGS';
-    loadWagerBoard();
-  } else {
-    el.style.display = 'none';
-    if (btn) btn.textContent = '📊 REVEAL THE STANDINGS';
-  }
-}
-
 async function loadWagerBoard() {
   const el = document.getElementById('wager-board-rows');
   if (!el) return;
@@ -2597,8 +2585,19 @@ function toggleWagerPrize() {
   wagerPrizeRevealed = !wagerPrizeRevealed;
   localStorage.setItem('wagerPrizeRevealed', wagerPrizeRevealed);
   updateWagerPrizeUI();
-  // Refresh wager board if open so it picks up the new state
-  if (wagerBoardVisible) loadWagerBoard();
+  // Update player-facing board if cabin is currently visible
+  const rows = document.getElementById('wager-board-rows');
+  const locked = document.getElementById('wager-board-locked');
+  if (rows && locked) {
+    if (wagerPrizeRevealed) {
+      rows.style.display = 'block';
+      locked.style.display = 'none';
+      loadWagerBoard();
+    } else {
+      rows.style.display = 'none';
+      locked.style.display = 'block';
+    }
+  }
 }
 function updateWagerPrizeUI() {
   const btn = document.getElementById('dm-prize-btn');
