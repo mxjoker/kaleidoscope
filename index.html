@@ -2077,11 +2077,7 @@ function castVote(qNum, option, el) {
   if (!allVotes[qNum][option]) allVotes[qNum][option] = [];
   if (!allVotes[qNum][option].includes(currentVoter)) allVotes[qNum][option].push(currentVoter);
   refreshVoteDisplay();
-  // Post to backend
-  fetch('/.netlify/functions/vote', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ player: currentVoter, questionId: qNum, optionId: option })
-  }).catch(()=>{});
+  // Post to backend via unified event store
   postEvent({ type:'vote_cast', player: currentVoter, questionId: qNum, optionId: option });
 }
 
@@ -2282,15 +2278,7 @@ async function postEvent(data) {
   } catch(e) {}
 }
 
-async function postVote(player, questionId, optionId) {
-  try {
-    await fetch('/.netlify/functions/vote', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ player, questionId, optionId })
-    });
-  } catch(e) {}
-}
+// vote posting handled via postEvent
 
 // ══════════ DM REPORT ══════════
 function tryDMUnlock() {
@@ -2596,12 +2584,21 @@ function loadChar(i) {
 function renderItems(c) {
   const all = c.items || [];
   const starred = all.filter(x => x.star);
+  const unstarred = all.filter(x => !x.star);
   const sc = document.getElementById('starred-card');
   sc.style.display = starred.length ? 'block' : 'none';
   document.getElementById('starred-list').innerHTML = '';
   starred.forEach(it => document.getElementById('starred-list').appendChild(makeItemRow(it, c.items.indexOf(it))));
   document.getElementById('items-list').innerHTML = '';
-  all.forEach((it, idx) => document.getElementById('items-list').appendChild(makeItemRow(it, idx)));
+  // Pack shows unstarred items — starred items live in Key Items above
+  // Show a hint if everything is starred
+  if (unstarred.length === 0 && starred.length > 0) {
+    const hint = document.createElement('div');
+    hint.style.cssText = 'font-size:12px;color:var(--warm-sand);font-style:italic;padding:8px 0';
+    hint.textContent = 'All items pinned to Key Items. Tap ★ to unpin.';
+    document.getElementById('items-list').appendChild(hint);
+  }
+  unstarred.forEach((it) => document.getElementById('items-list').appendChild(makeItemRow(it, c.items.indexOf(it))));
 }
 
 function makeItemRow(it, idx) {

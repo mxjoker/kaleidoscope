@@ -1,90 +1,69 @@
-// /netlify/functions/event.js
 import { getStore } from "@netlify/blobs";
 
-const store = getStore("game-data");
+const CORS = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type"
+};
 
-async function getJSON(key, fallback) {
-  const data = await store.get(key, { type: "json" });
-  return data || fallback;
-}
+export default async function handler(req, context) {
+  if (req.method === "OPTIONS") return new Response("", { status: 200, headers: CORS });
 
-async function setJSON(key, value) {
-  await store.set(key, JSON.stringify(value));
-}
+  const store = getStore("kaleidoscope");
 
-export async function handler(req) {
   try {
-    if (req.method !== "POST") {
-      return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
+    const body = await req.json();
+
+    // Load existing events
+    let events = [];
+    try { events = await store.get("events", { type: "json" }) || []; } catch (e) { events = []; }
+
+    // Load existing globalState
+    let globalState = { usedSecrets: [], foundSecrets: [], kimchiBank: 100 };
+    try { globalState = await store.get("globalState", { type: "json" }) || globalState; } catch (e) {}
+
+    // Stamp timestamp
+    const event = { ...body, timestamp: new Date().toISOString() };
+
+    // Side effects per event type
+    if (body.type === "secret_triggered" || body.type === "found_secret") {
+      // Normalise to secret_triggered
+      event.type = "secret_triggered";
+      const secretId = body.secretId || body.secret;
+      if (secretId && !globalState.foundSecrets.includes(secretId)) {
+        globalState.foundSecrets.push(secretId);
+      }
     }
 
-    const body = JSON.parse(await req.text());
-    const { type, player } = body;
-
-    if (!type || !player) {
-      return { statusCode: 400, body: JSON.stringify({ error: "Missing type or player" }) };
+    if (body.type === "use_secret") {
+      const secretId = body.secretId || body.secret;
+      if (secretId) {
+        globalState.foundSecrets = globalState.foundSecrets.filter(s => s !== secretId);
+        if (!globalState.usedSecrets.includes(secretId)) globalState.usedSecrets.push(secretId);
+      }
     }
 
-    const events = await getJSON("events", []);
-    const globalState = await getJSON("globalState", {
-      usedSecrets: [],
-      foundSecrets: [],
-      kimchiBank: 100
-    });
-
-    let message = "";
-
-    switch (type) {
-      case "found_secret":
-        if (body.secret && !globalState.foundSecrets.includes(body.secret)) {
-          globalState.foundSecrets.push(body.secret);
-          message = `${player} found secret "${body.secret}"`;
-        }
-        break;
-
-      case "used_secret":
-        if (body.secret) {
-          const i = globalState.foundSecrets.indexOf(body.secret);
-          if (i !== -1) {
-            globalState.foundSecrets.splice(i, 1);
-            globalState.usedSecrets.push(body.secret);
-            message = `${player} used secret "${body.secret}"`;
-          }
-        }
-        break;
-
-      case "treasure_found":
-        globalState.kimchiBank += body.amount || 0;
-        message = `${player} found ${body.amount} kimchi`;
-        break;
-
-      case "puzzle_solved":
-        globalState.kimchiBank += body.reward || 0;
-        message = `${player} solved puzzle for ${body.reward} kimchi`;
-        break;
-
-      case "mini_game_played":
-        globalState.kimchiBank -= body.cost || 0;
-        message = `${player} spent ${body.cost} kimchi`;
-        break;
-
-      default:
-        message = `${player} triggered ${type}`;
+    if (body.type === "game_played") {
+      const net = body.net || 0;
+      if (net > 0) {
+        globalState.kimchiBank = Math.max(0, (globalState.kimchiBank || 100) - net);
+      }
     }
 
-    const newEvent = { ...body, timestamp: new Date().toISOString() };
-    events.push(newEvent);
+    // Append event and save
+    events.push(event);
 
-    await setJSON("events", events);
-    await setJSON("globalState", globalState);
+    // Keep last 500 events to avoid blob bloat
+    if (events.length > 500) events = events.slice(-500);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message, globalState, event: newEvent })
-    };
+    await store.setJSON("events", events);
+    await store.setJSON("globalState", globalState);
 
-  } catch (err) {
-    console.error(err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    return new Response(JSON.stringify({ ok: true, event }), { status: 200, headers: CORS });
+
+  } catch (e) {
+    console.error("event.js error:", e);
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: CORS });
   }
 }
