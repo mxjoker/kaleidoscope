@@ -1714,6 +1714,10 @@ body {
           <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:8px">HP, gold, and stat edits made by players during the session.</div>
           <div id="dm-sheet-changes">Loading...</div>
         </div>
+        <div class="card">
+          <div class="dm-section-title" style="color:var(--warm-sand)">🔧 Raw Events (last 10) — debug</div>
+          <div id="dm-debug">Loading...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -2181,19 +2185,23 @@ async function loadVotesFromServer() {
     const res = await fetch('/.netlify/functions/state');
     const data = await res.json();
     const voteEvents = (data.events || []).filter(e => e.type === 'vote_cast');
-    // Rebuild vote state from events (last vote per player per question wins)
+    // Build final vote per player per question (last event wins)
+    const finalVotes = {};
     voteEvents.forEach(e => {
-      const { player, questionId, optionId } = e;
-      if (!votes[player]) votes[player] = {};
-      // Remove old vote for this player/question
-      const oldOpt = votes[player][questionId];
-      if (oldOpt && allVotes[questionId]?.[oldOpt]) {
-        allVotes[questionId][oldOpt] = allVotes[questionId][oldOpt].filter(v => v !== player);
-      }
-      votes[player][questionId] = optionId;
-      if (!allVotes[questionId]) allVotes[questionId] = {};
-      if (!allVotes[questionId][optionId]) allVotes[questionId][optionId] = [];
-      if (!allVotes[questionId][optionId].includes(player)) allVotes[questionId][optionId].push(player);
+      if (!finalVotes[e.player]) finalVotes[e.player] = {};
+      finalVotes[e.player][e.questionId] = e.optionId;
+    });
+    // Reset allVotes and rebuild from final votes only
+    [1,2,3].forEach(q => { allVotes[q] = {}; });
+    Object.entries(finalVotes).forEach(([player, qs]) => {
+      votes[player] = {};
+      Object.entries(qs).forEach(([qId, opt]) => {
+        const q = parseInt(qId);
+        votes[player][q] = opt;
+        if (!allVotes[q]) allVotes[q] = {};
+        if (!allVotes[q][opt]) allVotes[q][opt] = [];
+        if (!allVotes[q][opt].includes(player)) allVotes[q][opt].push(player);
+      });
     });
     refreshVoteDisplay();
   } catch(e) {}
@@ -2384,14 +2392,23 @@ async function loadDMReport() {
     const res = await fetch('/.netlify/functions/state');
     const data = await res.json();
 
-    // Votes
+    // Votes — last vote per player per question wins
     const voteEvents = (data.events || []).filter(e => e.type === 'vote_cast');
-    const voteMap = {};
+    // First pass: build final vote per player per question
+    const finalVotes = {}; // { player: { questionId: optionId } }
     voteEvents.forEach(e => {
-      const key = `Q${e.questionId}`;
-      if (!voteMap[key]) voteMap[key] = {};
-      voteMap[key][e.optionId] = voteMap[key][e.optionId] || [];
-      if (!voteMap[key][e.optionId].includes(e.player)) voteMap[key][e.optionId].push(e.player);
+      if (!finalVotes[e.player]) finalVotes[e.player] = {};
+      finalVotes[e.player][e.questionId] = e.optionId;
+    });
+    // Second pass: build display map from final votes only
+    const voteMap = {};
+    Object.entries(finalVotes).forEach(([player, qs]) => {
+      Object.entries(qs).forEach(([qId, opt]) => {
+        const key = `Q${qId}`;
+        if (!voteMap[key]) voteMap[key] = {};
+        if (!voteMap[key][opt]) voteMap[key][opt] = [];
+        if (!voteMap[key][opt].includes(player)) voteMap[key][opt].push(player);
+      });
     });
     const voteLabels = {
       1:{ a:'Push through', b:'Rest one more day', c:'Investigate the sickness' },
@@ -2427,9 +2444,10 @@ async function loadDMReport() {
     let gamesHtml = gameEvents.map(e => `<div class="dm-row"><span class="dm-key">${e.game} · ${e.player || '?'}</span><span class="dm-val">${e.outcome} · bet ${e.bet}gp · net ${e.net > 0 ? '+' : ''}${e.net}gp</span></div>`).join('');
     document.getElementById('dm-games').innerHTML = gamesHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No games played yet.</div>';
 
-    // Bank
-    const bank = data.globalState?.kimchiBank ?? 100;
-    document.getElementById('dm-bank').innerHTML = `<div class="dm-row"><span class="dm-key">Kimchi's remaining bank</span><span class="dm-val" style="font-family:'Cinzel',serif;font-size:16px;color:#7a5a00">${bank} gp</span></div>`;
+    // Bank — calculate from game events rather than globalState (old event.js doesn't update globalState)
+    const gameWins = (data.events || []).filter(e => e.type === 'game_played' && e.net > 0).reduce((sum, e) => sum + (e.net || 0), 0);
+    const bank = Math.max(0, 100 - gameWins);
+    document.getElementById('dm-bank').innerHTML = `<div class="dm-row"><span class="dm-key">Kimchi's remaining bank</span><span class="dm-val" style="font-family:'Cinzel',serif;font-size:16px;color:#7a5a00">${bank} gp</span></div><div class="dm-row"><span class="dm-key">Total paid out</span><span class="dm-val">${gameWins} gp</span></div>`;
 
     // Sheet changes
     const sheetEvents = (data.events || []).filter(e => e.type === 'sheet_change' && e.field && e.oldValue !== null && e.newValue !== null && e.oldValue !== e.newValue);
@@ -2438,8 +2456,15 @@ async function loadDMReport() {
       return `<div class="dm-row"><span class="dm-key">${e.character} · ${e.field}</span><span class="dm-val">${e.oldValue} → ${e.newValue} <span style="color:var(--warm-sand);font-size:10px">${time}</span></span></div>`;
     }).join('');
     document.getElementById('dm-sheet-changes').innerHTML = sheetHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No sheet changes yet.</div>';
+
+    // Debug: show raw last 10 events so we can diagnose missing secrets
+    const debugEl = document.getElementById('dm-debug');
+    if (debugEl) {
+      const last10 = (data.events || []).slice(-10).reverse();
+      debugEl.innerHTML = last10.map(e => `<div class="dm-row" style="font-size:10px"><span class="dm-key" style="color:var(--warm-sand)">${e.type}</span><span class="dm-val" style="font-size:10px;color:var(--ink-mid)">${JSON.stringify(e).substring(0,120)}</span></div>`).join('') || '<div style="color:var(--warm-sand);font-size:12px;font-style:italic">No events yet.</div>';
+    }
   } catch(e) {
-    document.getElementById('dm-votes').innerHTML = '<div style="color:var(--rust);font-size:13px">Could not load state.</div>';
+    document.getElementById('dm-votes').innerHTML = '<div style="color:var(--rust);font-size:13px">Could not load: ' + e.message + '</div>';
   }
 }
 
