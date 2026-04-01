@@ -1067,7 +1067,10 @@ body {
           <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">⚖️ The Wager Board</div>
           <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">Kimchi doesn't announce it. He just watches. At the next port, the one who wagered most on a single bet will find something waiting.</div>
         </div>
-        <div id="wager-board-rows" style="padding:12px 16px">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--border-warm)">
+          <button onclick="toggleWagerBoard()" id="wager-toggle-btn" style="width:100%;padding:9px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">📊 REVEAL THE STANDINGS</button>
+        </div>
+        <div id="wager-board-rows" style="padding:12px 16px;display:none">
           <div style="text-align:center;color:var(--warm-sand);font-size:13px;font-style:italic;padding:12px 0">Loading...</div>
         </div>
         <div style="padding:10px 16px 14px;border-top:1px solid var(--border-warm)">
@@ -1772,6 +1775,15 @@ body {
           <div id="dm-bank">Loading...</div>
         </div>
         <div class="card">
+          <div class="dm-section-title">⚖️ Wager Prize — DM Control</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:10px">When you're ready to announce the prize at the next port, toggle this on. Players will see the winner named on the Wager Board.</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <button onclick="toggleWagerPrize()" id="dm-prize-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--gold);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🎁 PRIZE NOT YET REVEALED</button>
+            <span id="dm-prize-status" style="font-size:11px;color:var(--warm-sand);font-style:italic"></span>
+          </div>
+          <div id="dm-prize-leader" style="margin-top:10px;font-size:12px;color:var(--cream)"></div>
+        </div>
+        <div class="card">
           <div class="dm-section-title">📋 Sheet Changes</div>
           <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:8px">HP, gold, and stat edits made by players during the session.</div>
           <div id="dm-sheet-changes">Loading...</div>
@@ -1953,8 +1965,14 @@ function selectLocation(loc) {
   document.getElementById(chatId).classList.add('show');
   activeLocation = loc;
 
-  // Load wager board when cabin selected
-  if (loc === 'cabin') loadWagerBoard();
+  // Reset wager board visibility when entering cabin
+  if (loc === 'cabin') {
+    wagerBoardVisible = false;
+    const el = document.getElementById('wager-board-rows');
+    const btn = document.getElementById('wager-toggle-btn');
+    if (el) el.style.display = 'none';
+    if (btn) btn.textContent = '📊 REVEAL THE STANDINGS';
+  }
 
   // Greet if first time
   if (!chatGreeted[loc]) {
@@ -2439,6 +2457,21 @@ function playBVR(playerChoice) {
 }
 
 // ══════════ WAGER BOARD ══════════
+let wagerBoardVisible = false;
+function toggleWagerBoard() {
+  wagerBoardVisible = !wagerBoardVisible;
+  const el = document.getElementById('wager-board-rows');
+  const btn = document.getElementById('wager-toggle-btn');
+  if (wagerBoardVisible) {
+    el.style.display = 'block';
+    if (btn) btn.textContent = '🔒 HIDE STANDINGS';
+    loadWagerBoard();
+  } else {
+    el.style.display = 'none';
+    if (btn) btn.textContent = '📊 REVEAL THE STANDINGS';
+  }
+}
+
 async function loadWagerBoard() {
   const el = document.getElementById('wager-board-rows');
   if (!el) return;
@@ -2480,9 +2513,35 @@ async function loadWagerBoard() {
           <div style="font-size:10px;color:${outcomeColour}">${d.outcome}</div>
         </div>
       </div>`;
-    }).join('') + (ranked.length > 0 ? `<div style="margin-top:10px;padding:10px;background:rgba(51,39,20,0.4);border-radius:8px;border:1px dashed rgba(212,168,50,0.25)"><div style="font-size:11px;color:var(--warm-sand);font-style:italic;line-height:1.6">Kimchi hasn't said anything. But at the next port, <span style="color:var(--gold);font-weight:600">${ranked[0][0]}</span> will find something waiting at the dock.</div></div>` : '');
+    }).join('') + (wagerPrizeRevealed && ranked.length > 0 ? `<div style="margin-top:10px;padding:10px;background:rgba(51,39,20,0.4);border-radius:8px;border:1px dashed rgba(212,168,50,0.25)"><div style="font-size:11px;color:var(--warm-sand);font-style:italic;line-height:1.6">Kimchi hasn't said anything. But at the next port, <span style="color:var(--gold);font-weight:600">${ranked[0][0]}</span> will find something waiting at the dock.</div></div>` : ranked.length > 0 ? `<div style="margin-top:10px;padding:10px;background:rgba(20,30,40,0.4);border-radius:8px;border:1px dashed rgba(196,168,122,0.15)"><div style="font-size:11px;color:rgba(196,168,122,0.5);font-style:italic;text-align:center">The prize will be announced at the next port.</div></div>` : '');
   } catch(e) {
     el.innerHTML = '<div style="color:var(--rust);font-size:12px;text-align:center">Could not load wager board.</div>';
+  }
+}
+
+// DM-controlled prize reveal — stored in localStorage so it persists across DM refreshes
+let wagerPrizeRevealed = localStorage.getItem('wagerPrizeRevealed') === 'true';
+function toggleWagerPrize() {
+  wagerPrizeRevealed = !wagerPrizeRevealed;
+  localStorage.setItem('wagerPrizeRevealed', wagerPrizeRevealed);
+  updateWagerPrizeUI();
+  // Refresh wager board if open so it picks up the new state
+  if (wagerBoardVisible) loadWagerBoard();
+}
+function updateWagerPrizeUI() {
+  const btn = document.getElementById('dm-prize-btn');
+  const status = document.getElementById('dm-prize-status');
+  if (!btn) return;
+  if (wagerPrizeRevealed) {
+    btn.textContent = '✅ PRIZE REVEALED TO PLAYERS';
+    btn.style.borderColor = 'var(--hp-green)';
+    btn.style.color = 'var(--hp-green)';
+    if (status) status.textContent = 'Players can see the winner named on the Wager Board.';
+  } else {
+    btn.textContent = '🎁 PRIZE NOT YET REVEALED';
+    btn.style.borderColor = 'var(--gold)';
+    btn.style.color = 'var(--gold)';
+    if (status) status.textContent = 'Prize is hidden. Toggle when you arrive at port.';
   }
 }
 
@@ -2506,6 +2565,7 @@ function tryDMUnlock() {
     document.getElementById('dm-lock-card').style.display = 'none';
     document.getElementById('dm-content').style.display = 'block';
     loadDMReport();
+    updateWagerPrizeUI();
   } else {
     document.getElementById('dm-password').style.borderColor = 'var(--rust)';
     setTimeout(() => document.getElementById('dm-password').style.borderColor = '', 800);
