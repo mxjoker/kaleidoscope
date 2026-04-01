@@ -1722,9 +1722,17 @@ body {
           <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:8px">HP, gold, and stat edits made by players during the session.</div>
           <div id="dm-sheet-changes">Loading...</div>
         </div>
-        <div class="card">
-          <div class="dm-section-title" style="color:var(--warm-sand)">🔧 Raw Events (last 10) — debug</div>
-          <div id="dm-debug">Loading...</div>
+        <div class="debug-panel">
+          <div class="debug-panel-header">
+            <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
+            <span class="debug-panel-toggle">▶</span>
+          </div>
+          <div class="debug-panel-content">
+            <div class="card">
+              <div class="dm-section-title" style="color:var(--warm-sand)">🔧 Raw Events (last 10) — debug</div>
+              <div id="dm-debug">Loading...</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2300,6 +2308,7 @@ function playTides() {
   res.innerHTML = `<div class="game-result-big">${actual.join(' — ')}</div><div class="game-result-sub">${correct ? `You called it. +${bet*7} gp` : `You had ${tidesState.prediction.join(' — ')}. −${bet} gp`}</div>`;
 
   postEvent({ type:'game_played', player: PLAYER_NAME || 'unknown', game:'tides', bet, outcome: correct?'win':'lose', net, kimchiBankAfter: kimchiBank });
+  if (typeof updatePlayerGoldAfterGame === 'function') updatePlayerGoldAfterGame(PLAYER_NAME, net);
 }
 
 // BVR
@@ -2358,6 +2367,7 @@ function playBVR(playerChoice) {
     document.getElementById('bvr-score').textContent = `${bvrState.playerScore} — ${bvrState.kimchiScore} (final)`;
 
     postEvent({ type:'game_played', player: PLAYER_NAME || 'unknown', game:'bvr', bet, outcome: playerWon?'win':draw?'draw':'lose', net, kimchiBankAfter: kimchiBank });
+    if (typeof updatePlayerGoldAfterGame === 'function') updatePlayerGoldAfterGame(PLAYER_NAME, net);
   } else {
     document.getElementById('bvr-score').textContent = `Round ${bvrState.round} of 3 · You ${bvrState.playerScore}–${bvrState.kimchiScore} Kimchi`;
     setTimeout(() => {

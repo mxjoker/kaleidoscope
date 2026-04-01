@@ -127,6 +127,19 @@ async function saveCharacterField(character, field, newValue) {
   }
 }
 
+// Helper: get current character key from PLAYER_NAME global
+function getActiveCharKey() {
+  const charMap = {
+    'Axel': 'axel', 'Axel Flameborn': 'axel',
+    'Quincy': 'quincy', 'Quincy Schueb': 'quincy',
+    'Rapha': 'rapha',
+    'Wayne': 'wayne', 'Wayne Kerr': 'wayne',
+    'Myrtle': 'myrtle', 'Myrtle Beetlebite': 'myrtle'
+  };
+  const name = (typeof PLAYER_NAME !== 'undefined' ? PLAYER_NAME : '') || localStorage.getItem('kaleidoscope_player') || '';
+  return charMap[name.trim()] || null;
+}
+
 // Setup auto-save for notes field with debounce
 function setupCharacterNotesAutosave() {
   const notesAreas = document.querySelectorAll('.notes-area');
@@ -135,11 +148,9 @@ function setupCharacterNotesAutosave() {
   notesAreas.forEach(textarea => {
     textarea.addEventListener('input', function() {
       clearTimeout(saveTimeout);
-      
-      const character = this.closest('[data-char]')?.dataset.char;
-      if (!character) return;
-      
       saveTimeout = setTimeout(() => {
+        const character = getActiveCharKey();
+        if (!character) return;
         saveCharacterField(character, 'notes', this.value);
       }, 1000);
     });
@@ -153,26 +164,20 @@ function setupCharacterConditionsAutosave() {
   conditionPills.forEach(pill => {
     pill.addEventListener('click', function() {
       setTimeout(() => {
-        const character = this.closest('[data-char]')?.dataset.char;
+        const character = getActiveCharKey();
+        if (!character) return;
         const conditionName = this.textContent.trim();
         const isActive = this.classList.contains('active');
         
-        if (!character) return;
-        
-        // Get current conditions from server
         fetch(`/.netlify/functions/character_state?character=${character}`)
           .then(r => r.json())
           .then(state => {
             let conditions = state.conditions || [];
-            
             if (isActive) {
-              if (!conditions.includes(conditionName)) {
-                conditions.push(conditionName);
-              }
+              if (!conditions.includes(conditionName)) conditions.push(conditionName);
             } else {
               conditions = conditions.filter(c => c !== conditionName);
             }
-            
             saveCharacterField(character, 'conditions', conditions);
           });
       }, 100);
@@ -187,28 +192,21 @@ function setupCharacterDeathSavesAutosave() {
   deathSavePips.forEach(pip => {
     pip.addEventListener('click', function() {
       setTimeout(() => {
-        const character = this.closest('[data-char]')?.dataset.char;
-        const dsGroup = this.closest('.ds-group');
-        const isSuccess = dsGroup?.querySelector('.ds-label.success');
-        const isMarked = this.classList.contains('marked');
-        
+        const character = getActiveCharKey();
         if (!character) return;
         
-        // Get current death saves
+        // Count marked pips after toggle
+        const allPips = document.querySelectorAll('.ds-pip');
+        const successPips = document.querySelectorAll('.success-pip.marked').length;
+        const failurePips = document.querySelectorAll('.fail-pip.marked').length;
+        
         fetch(`/.netlify/functions/character_state?character=${character}`)
           .then(r => r.json())
           .then(state => {
-            const deathSaves = state.deathSaves || { successes: 0, failures: 0 };
-            
-            const successPips = dsGroup?.parentElement?.querySelector('.ds-group:nth-child(1) .ds-pip.marked').length || 0;
-            const failurePips = dsGroup?.parentElement?.querySelector('.ds-group:nth-child(2) .ds-pip.marked').length || 0;
-            
-            deathSaves.successes = successPips;
-            deathSaves.failures = failurePips;
-            
+            const deathSaves = { successes: successPips, failures: failurePips };
             saveCharacterField(character, 'deathSaves', deathSaves);
           });
-      }, 100);
+      }, 150);
     });
   });
 }
