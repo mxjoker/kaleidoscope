@@ -302,15 +302,21 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(240,208,96,0.15);
-  border: 1px solid rgba(240,208,96,0.4);
+  background: #3a2a00;
+  border: 1px solid #a07800;
   border-radius: 20px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--secret-glow);
-  margin-top: 6px;
+  color: #fde97a;
+  margin-top: 8px;
+}
+.secret-badge.item {
+  background: #1a3a2a;
+  border-color: #2a8a5a;
+  color: #7afdc0;
 }
 
 .chat-input-row {
@@ -1712,36 +1718,7 @@ body {
 </div>
 
 
-<!-- ══════════ IDENTITY OVERLAY ══════════ -->
-<div id="identity-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(8,16,24,0.96);align-items:center;justify-content:center;flex-direction:column;padding:24px">
-  <div style="max-width:380px;width:100%;text-align:center">
-    <div style="font-size:36px;margin-bottom:12px">⚓</div>
-    <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:600;color:var(--cream);letter-spacing:0.06em;margin-bottom:6px">Welcome Aboard</div>
-    <div style="font-size:14px;color:var(--seafoam);font-style:italic;margin-bottom:28px">Who are you?</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <button onclick="setIdentity('Axel')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
-        <div style="font-size:20px;margin-bottom:6px">🐉</div>Axel
-      </button>
-      <button onclick="setIdentity('Quincy')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
-        <div style="font-size:20px;margin-bottom:6px">🌿</div>Quincy
-      </button>
-      <button onclick="setIdentity('Rapha')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
-        <div style="font-size:20px;margin-bottom:6px">⚔️</div>Rapha
-      </button>
-      <button onclick="setIdentity('Wayne')" style="padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
-        <div style="font-size:20px;margin-bottom:6px">🧙</div>Wayne
-      </button>
-    </div>
-    <button onclick="setIdentity('Myrtle')" style="width:100%;padding:16px 10px;background:rgba(26,51,68,0.8);border:1.5px solid var(--border-warm);border-radius:12px;font-family:'Cinzel',serif;font-size:13px;color:var(--cream);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.2s;margin-bottom:20px" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border-warm)'">
-      <div style="font-size:20px;margin-bottom:6px">🗡️</div>Myrtle
-    </button>
-    <div style="font-size:11px;color:rgba(244,237,216,0.3)">Your choice is saved on this device. You can change it any time in settings.</div>
-  </div>
-</div>
 
-<!-- Identity badge (top right, tap to change) -->
-<div id="identity-badge" style="display:none;position:fixed;top:10px;right:10px;z-index:90;background:rgba(14,31,43,0.9);border:1px solid var(--border-warm);border-radius:20px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(8px)" onclick="showIdentityOverlay()">
-  <span style="font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);letter-spacing:0.06em" id="identity-badge-name"></span>
 </div>
 
 </div><!-- /app -->
@@ -1962,7 +1939,38 @@ function addMsg(npc, text, type, reward) {
   const div = document.createElement('div');
   div.className = 'msg ' + type;
   let inner = `<div class="msg-bubble">${text}</div>`;
-  if (reward) inner += `<div style="margin-top:4px"><span class="secret-badge">✦ ${reward.name}</span></div>`;
+  if (reward) {
+    const isItem = reward.type === 'item';
+    const icon = isItem ? '⚔' : '📜';
+    const label = isItem ? 'ITEM FOUND' : 'INFO UNLOCKED';
+    inner += `<div style="margin-top:8px">
+      <span class="secret-badge ${isItem ? 'item' : ''}">${icon} ${reward.name} — ${label}</span>
+    </div>`;
+    // Auto-add items to the current player's sheet inventory
+    if (isItem && claimedCharacter !== null) {
+      const alreadyHas = CHARS[claimedCharacter].items.some(i => i.name === reward.name);
+      if (!alreadyHas) {
+        CHARS[claimedCharacter].items.push({ name: reward.name, desc: 'Found via ' + npc + ' conversation', qty: 1, star: true });
+        saveCharToServer(claimedCharacter, 'items', null, null);
+        // Show a brief confirmation
+        setTimeout(() => {
+          const note = document.createElement('div');
+          note.style.cssText = 'font-size:11px;color:#2a8a5a;font-style:italic;text-align:center;padding:4px;font-family:Lora,serif';
+          note.textContent = '→ Added to your inventory';
+          container.appendChild(note);
+          container.scrollTop = container.scrollHeight;
+        }, 400);
+      }
+    }
+    // Info rewards: add as a starred note item too
+    if (!isItem && claimedCharacter !== null) {
+      const alreadyHas = CHARS[claimedCharacter].items.some(i => i.name === reward.name);
+      if (!alreadyHas) {
+        CHARS[claimedCharacter].items.push({ name: reward.name, desc: 'Intel from ' + npc, qty: 1, star: true });
+        saveCharToServer(claimedCharacter, 'items', null, null);
+      }
+    }
+  }
   div.innerHTML = inner;
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
@@ -2033,7 +2041,7 @@ function tryUnlockLetter() {
     unlockedLetters.add(currentLetterChar);
     document.getElementById('letter-lock-card').style.display = 'none';
     document.getElementById('letter-' + currentLetterChar).classList.add('show');
-    postEvent({ type:'letter_opened', character: currentLetterChar });
+    postEvent({ type:'letter_opened', character: currentLetterChar, player: PLAYER_NAME || 'unknown' });
   } else {
     document.getElementById('letter-unlock-input').style.borderColor = 'var(--rust)';
     setTimeout(() => document.getElementById('letter-unlock-input').style.borderColor = '', 800);
@@ -2677,10 +2685,14 @@ function setIdentity(name) {
   PLAYER_NAME = name;
   localStorage.setItem('kaleidoscope_player', name);
   document.getElementById('identity-overlay').style.display = 'none';
+  // Show badge
+  const badge = document.getElementById('identity-badge');
+  if (badge) { badge.style.display = 'block'; document.getElementById('identity-badge-name').textContent = name.toUpperCase(); }
   // Auto-select voter and sheet
   document.querySelectorAll('.voter-btn').forEach(b => {
-    if (b.textContent.trim().startsWith(name)) { b.classList.add('active'); currentVoter = name; }
+    b.classList.toggle('active', b.textContent.trim() === name);
   });
+  currentVoter = name;
   document.getElementById('voter-status').textContent = 'Voting as ' + name;
   const idx = CHAR_INDEX[name];
   if (idx !== undefined) {
@@ -2688,6 +2700,10 @@ function setIdentity(name) {
     claimCharacter(idx);
   }
   refreshVoteDisplay();
+}
+
+function showIdentityOverlay() {
+  document.getElementById('identity-overlay').style.display = 'flex';
 }
 
 function checkIdentityOnLoad() {
