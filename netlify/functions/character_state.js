@@ -84,9 +84,9 @@ const DEFAULTS = {
     ]
   },
   wayne: {
-    name: "Wayne", class: "Wizard 3", race: "Gnome",
+    name: "Wayne", class: "Wizard 4", race: "Gnome",
     str: 8, dex: 11, con: 10, int: 15, wis: 14, cha: 19,
-    hp: 14, maxHp: 14, tempHp: 0,
+    hp: 18, maxHp: 18, tempHp: 0,
     ac: 10, speed: 30, pp: 12, prof: 2,
     inspiration: false,
     conditions: [],
@@ -102,7 +102,7 @@ const DEFAULTS = {
     ],
     slots: [
       { lvl: "1st", total: 4, used: 0 },
-      { lvl: "2nd", total: 2, used: 0 }
+      { lvl: "2nd", total: 3, used: 0 }
     ],
     coins: { gp: 150, sp: 0, cp: 0, ep: 0, pp: 0 },
     items: [
@@ -113,9 +113,9 @@ const DEFAULTS = {
     ]
   },
   myrtle: {
-    name: "Myrtle", class: "Rogue 3", race: "Halfling",
+    name: "Myrtle", class: "Rogue 4", race: "Halfling",
     str: 12, dex: 17, con: 15, int: 10, wis: 8, cha: 13,
-    hp: 24, maxHp: 24, tempHp: 0,
+    hp: 27, maxHp: 27, tempHp: 0,
     ac: 13, speed: 30, pp: 13, prof: 2,
     inspiration: false,
     conditions: [],
@@ -128,7 +128,8 @@ const DEFAULTS = {
       { name: "Rapier", bonus: "+5", dmg: "1d8+3 piercing", range: "Melee" },
       { name: "Hand Crossbow", bonus: "+5", dmg: "1d6+3 piercing", range: "30/120ft" },
       { name: "Shortsword", bonus: "+5", dmg: "1d6+3 piercing", range: "Melee" },
-      { name: "Sneak Attack", bonus: "—", dmg: "+2d6 on eligible hit", range: "—" }
+      { name: "Sneak Attack", bonus: "—", dmg: "+2d6 on eligible hit", range: "—" },
+      { name: "Uncanny Dodge", bonus: "—", dmg: "Halve damage (reaction, 1/turn)", range: "When attacker you can see hits you" }
     ],
     slots: [],
     coins: { gp: 51, sp: 0, cp: 0, ep: 0, pp: 0 },
