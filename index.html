@@ -905,6 +905,14 @@ body {
 .dm-val { color: var(--ink-mid); text-align: right; }
 .dm-refresh { display: flex; justify-content: center; margin-bottom: 16px; }
 
+/* Debug Panel Toggle */
+.debug-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(51,39,20,0.5); border: 1px dashed rgba(212,168,50,0.3); border-radius: 10px; margin-bottom: 12px; cursor: pointer; user-select: none; }
+.debug-panel-title { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.1em; color: var(--gold); }
+.debug-panel-toggle { font-size: 12px; color: var(--warm-sand); transition: transform 0.2s; }
+.debug-panel.hidden .debug-panel-toggle { transform: rotate(-90deg); }
+.debug-panel-content { display: block; }
+.debug-panel.hidden .debug-panel-content { display: none; }
+
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 2px; }
 </style>
@@ -2874,5 +2882,6 @@ document.getElementById('notes-date').textContent = 'Session — ' + new Date().
 checkIdentityOnLoad();
 loadVotesFromServer();
 </script>
+<script src="kaleidoscope-enhancements.js"></script>
 </body>
 </html>

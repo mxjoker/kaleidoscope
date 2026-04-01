@@ -9,6 +9,9 @@ const DEFAULTS = {
     ac: 15, speed: 40, pp: 13, prof: 2,
     inspiration: false,
     conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    notes: "",
+    proficiencies: {},
     attacks: [
       { name: "Unarmed Strike", bonus: "+4", dmg: "1d4+2 bludgeoning", range: "Melee" },
       { name: "Dagger", bonus: "+4", dmg: "1d4+2 piercing", range: "Melee / 20ft" },
@@ -23,9 +26,7 @@ const DEFAULTS = {
       { name: "Bracer of Defense", desc: "", qty: 1, star: false },
       { name: "Grappling Hook", desc: "", qty: 1, star: false },
       { name: "10 Darts", desc: "", qty: 10, star: false }
-    ],
-    notes: "", charNotes: "", reminders: [],
-    proficiencies: {}
+    ]
   },
   quincy: {
     name: "Quincy", class: "Ranger 4", race: "Wood Elf",
@@ -34,6 +35,9 @@ const DEFAULTS = {
     ac: 15, speed: 35, pp: 14, prof: 2,
     inspiration: false,
     conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    notes: "",
+    proficiencies: {},
     attacks: [
       { name: "Longbow", bonus: "+5", dmg: "1d8+2 piercing", range: "150/600ft" },
       { name: "Shortsword", bonus: "+5", dmg: "1d6+2 piercing", range: "Melee" },
@@ -46,9 +50,7 @@ const DEFAULTS = {
       { name: "Blue (Sprite)", desc: "Beastmaster companion — AC 17, HP 12, fly 40ft, invisibility, poison shortbow", qty: 1, star: true },
       { name: "Fizzy Firebreath Soda", desc: "10ft cone, DC 11 Dex or 1d4 fire", qty: 1, star: false },
       { name: "Health Potion", desc: "2d4+2 HP", qty: 1, star: false }
-    ],
-    notes: "", charNotes: "", reminders: [],
-    proficiencies: {}
+    ]
   },
   rapha: {
     name: "Rapha", class: "Paladin 2", race: "Half-Elf",
@@ -57,6 +59,9 @@ const DEFAULTS = {
     ac: 16, speed: 30, pp: 13, prof: 2,
     inspiration: false,
     conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    notes: "",
+    proficiencies: {},
     attacks: [
       { name: "Morningstar", bonus: "+4", dmg: "1d8+2 piercing", range: "Melee" },
       { name: "Dagger", bonus: "+4", dmg: "1d4+2 piercing", range: "Melee / 20/60ft" },
@@ -70,9 +75,7 @@ const DEFAULTS = {
       { name: "Music Charm", desc: "Advantage on Persuasion for 10 min (from carnival singing contest)", qty: 1, star: true },
       { name: "Glittercorn Popcorn", desc: "DC 10 Con or blinded 1 turn in 10ft radius", qty: 1, star: false },
       { name: "Healer's Kit", desc: "Stabilise a creature, 10 uses", qty: 1, star: false }
-    ],
-    notes: "", charNotes: "", reminders: [],
-    proficiencies: {}
+    ]
   },
   wayne: {
     name: "Wayne", class: "Wizard 3", race: "Gnome",
@@ -81,6 +84,9 @@ const DEFAULTS = {
     ac: 10, speed: 30, pp: 12, prof: 2,
     inspiration: false,
     conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    notes: "",
+    proficiencies: {},
     attacks: [
       { name: "Fire Bolt", bonus: "+4", dmg: "1d10 fire", range: "120ft" },
       { name: "Quarterstaff", bonus: "-1", dmg: "1d6-1 bludgeoning", range: "Melee" },
@@ -96,9 +102,7 @@ const DEFAULTS = {
       { name: "Carnival Manifest", desc: "Partially unknown script — Wayne's name at bottom, sigil of elemental cult", qty: 1, star: true },
       { name: "Cloak of Billowing", desc: "Billows dramatically on command. Purely cosmetic.", qty: 1, star: false },
       { name: "Pearl of Power (Lesser)", desc: "Recover one 1st-level spell slot (1/day)", qty: 1, star: false }
-    ],
-    notes: "", charNotes: "", reminders: [],
-    proficiencies: {}
+    ]
   },
   myrtle: {
     name: "Myrtle", class: "Rogue 3", race: "Halfling",
@@ -107,6 +111,9 @@ const DEFAULTS = {
     ac: 13, speed: 30, pp: 13, prof: 2,
     inspiration: false,
     conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    notes: "",
+    proficiencies: {},
     attacks: [
       { name: "Rapier", bonus: "+5", dmg: "1d8+3 piercing", range: "Melee" },
       { name: "Hand Crossbow", bonus: "+5", dmg: "1d6+3 piercing", range: "30/120ft" },
@@ -121,9 +128,7 @@ const DEFAULTS = {
       { name: "Silent Steps Tattoo", desc: "Advantage on Stealth for 10 min (1/long rest)", qty: 1, star: true },
       { name: "Bag of Chalk Shadows", desc: "5ft puff of darkness 1/day", qty: 1, star: false },
       { name: "Disguise Kit", desc: "", qty: 1, star: false }
-    ],
-    notes: "", charNotes: "", reminders: [],
-    proficiencies: {}
+    ]
   }
 };
 
