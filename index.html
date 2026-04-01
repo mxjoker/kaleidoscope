@@ -1062,9 +1062,16 @@ body {
         </div>
       </div>
 
-      <div id="chat-cabin" class="card chat-area">
-        <div style="text-align:center;padding:20px;color:var(--warm-sand);font-style:italic;font-size:14px">
-          Charts and navigation tools are spread across the table.<br>The captain isn't here right now.
+      <div id="chat-cabin" class="card" style="padding:0;overflow:hidden">
+        <div style="padding:14px 16px 10px;border-bottom:1px solid var(--border-warm)">
+          <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">⚖️ The Wager Board</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">Kimchi doesn't announce it. He just watches. At the next port, the one who wagered most on a single bet will find something waiting.</div>
+        </div>
+        <div id="wager-board-rows" style="padding:12px 16px">
+          <div style="text-align:center;color:var(--warm-sand);font-size:13px;font-style:italic;padding:12px 0">Loading...</div>
+        </div>
+        <div style="padding:10px 16px 14px;border-top:1px solid var(--border-warm)">
+          <div style="font-size:10px;color:rgba(196,168,122,0.5);font-style:italic;text-align:center">Updates live · Highest single bet per player · All games count</div>
         </div>
       </div>
     </div>
@@ -1371,6 +1378,13 @@ body {
             <span class="journal-chevron">▼</span>
           </div>
           <div class="journal-body"><div class="journal-text">Have been researching the Salted Meridian. Four theories. Three involve Captain Vess being alive. One involves something worse. Showed Dred'ban theory two. He did a very long silence — approximately 8.4 seconds. This is the longest recorded. Filing as: Confirmation (Probable). Also: three shipping manifests. The navigational instrument is not on the recovery list. Neither is the captain. Filed under: This Is A Problem.</div></div>
+        </div>
+        <div class="journal-entry">
+          <div class="journal-header" onclick="toggleJournal(this)">
+            <span class="journal-entry-num">Entry 13 — Port Carrow to Fenhollow</span>
+            <span class="journal-chevron">▼</span>
+          </div>
+          <div class="journal-body"><div class="journal-text">Captain Vess is alive. This is consistent with theories one, two, and three. Theory four remains unconfirmed. Have not discarded it. Chest is still in Wayne's pocket dimension. No one has opened it. This is either very disciplined or very afraid. Filed under: Ambiguous. Myrtle's wanted status in Port Carrow is a variable I have been tracking. Her evasion coefficient is high. Dred'ban said nothing when I told him. He looked at the horizon for eleven seconds. New record. Filed under: Dred'ban: A Study in Silence, Entry 7 (Subentry: Horizon Incidents). A letter arrived for the crew before we left. Two halflings. Mountains. Vow. Dog named Buttercup. Mass estimate: small but determined. Dred'ban picked up the letter and put it back down without reading it. He's coming anyway. Filed under: Confirmed (Category: Crew).</div></div>
         </div>
       </div>
     </div>
@@ -1939,6 +1953,9 @@ function selectLocation(loc) {
   document.getElementById(chatId).classList.add('show');
   activeLocation = loc;
 
+  // Load wager board when cabin selected
+  if (loc === 'cabin') loadWagerBoard();
+
   // Greet if first time
   if (!chatGreeted[loc]) {
     chatGreeted[loc] = true;
@@ -2418,6 +2435,54 @@ function playBVR(playerChoice) {
       const hintArr = BVR_HINTS[truthful ? kimchiNext : choices.filter(c=>c!==kimchiNext)[Math.floor(Math.random()*2)]];
       document.getElementById('bvr-hint').textContent = hintArr[Math.floor(Math.random()*hintArr.length)];
     }, 1200);
+  }
+}
+
+// ══════════ WAGER BOARD ══════════
+async function loadWagerBoard() {
+  const el = document.getElementById('wager-board-rows');
+  if (!el) return;
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const gameEvents = (data.events || []).filter(e => e.type === 'game_played' && e.bet > 0);
+
+    // Find highest single bet per player
+    const highBets = {};
+    gameEvents.forEach(e => {
+      const p = e.player || 'Unknown';
+      if (!highBets[p] || e.bet > highBets[p].bet) {
+        highBets[p] = { bet: e.bet, game: e.game, outcome: e.outcome };
+      }
+    });
+
+    const ranked = Object.entries(highBets).sort((a, b) => b[1].bet - a[1].bet);
+
+    if (ranked.length === 0) {
+      el.innerHTML = '<div style="text-align:center;color:var(--warm-sand);font-size:13px;font-style:italic;padding:12px 0">No wagers recorded yet. Kimchi is waiting.</div>';
+      return;
+    }
+
+    const medals = ['🥇','🥈','🥉'];
+    const gameNames = { tides: "Tide's Truth", bvr: 'Blade, Bottle, Rope' };
+    el.innerHTML = ranked.map(([player, d], i) => {
+      const medal = medals[i] || `${i+1}.`;
+      const gameName = gameNames[d.game] || d.game;
+      const outcomeColour = d.outcome === 'win' ? 'var(--hp-green)' : d.outcome === 'draw' ? 'var(--warm-sand)' : 'var(--rust)';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-warm)">
+        <span style="font-size:18px;width:24px;text-align:center">${medal}</span>
+        <div style="flex:1">
+          <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--cream)">${player}</div>
+          <div style="font-size:11px;color:var(--warm-sand)">${gameName}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:#d4a832">${d.bet} gp</div>
+          <div style="font-size:10px;color:${outcomeColour}">${d.outcome}</div>
+        </div>
+      </div>`;
+    }).join('') + (ranked.length > 0 ? `<div style="margin-top:10px;padding:10px;background:rgba(51,39,20,0.4);border-radius:8px;border:1px dashed rgba(212,168,50,0.25)"><div style="font-size:11px;color:var(--warm-sand);font-style:italic;line-height:1.6">Kimchi hasn't said anything. But at the next port, <span style="color:var(--gold);font-weight:600">${ranked[0][0]}</span> will find something waiting at the dock.</div></div>` : '');
+  } catch(e) {
+    el.innerHTML = '<div style="color:var(--rust);font-size:12px;text-align:center">Could not load wager board.</div>';
   }
 }
 
