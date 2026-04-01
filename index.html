@@ -913,6 +913,12 @@ body {
 .debug-panel-content { display: block; }
 .debug-panel.hidden .debug-panel-content { display: none; }
 
+/* Training */
+.training-card { padding:12px;border:1px solid var(--border-warm);border-radius:10px;background:rgba(14,31,43,0.5);cursor:pointer;transition:border-color 0.2s;-webkit-tap-highlight-color:transparent; }
+.training-card:active { border-color:var(--teal); }
+.training-card.chosen { border-color:var(--gold);background:rgba(51,39,20,0.4); }
+.training-card.locked { opacity:0.4;cursor:default;pointer-events:none; }
+
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 2px; }
 </style>
@@ -1176,6 +1182,78 @@ body {
           <span style="font-size:11px;color:var(--warm-sand)">[A small ink paw-print sits at the bottom of the letter. Buttercup, presumably.]</span>
         </div>
         <div class="letter-mechanic"><strong>⚓ NEXT VOYAGE</strong> The Kaleidoscope has been asked to escort two halfling pilgrims through the Grandspire Mountains to a mountain hamlet called Ratstew Gap. The journey begins at half strength — the pass is already taking its toll.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TRAINING ══════════ -->
+  <div class="panel" id="panel-training">
+    <div class="page-header">
+      <div class="page-title">🏋️ Training</div>
+      <div class="page-sub">One session · One instructor · One bonus</div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="card">
+        <div style="font-size:12px;color:var(--warm-sand);font-style:italic;line-height:1.6;margin-bottom:14px">Choose one crew member to train with before the next voyage. The boost lasts for the session and can't be stacked. One choice per voyage.</div>
+        <div id="training-chosen-banner" style="display:none;padding:10px 12px;background:rgba(51,39,20,0.5);border:1px solid var(--gold);border-radius:8px;margin-bottom:14px;font-family:'Cinzel',serif;font-size:11px;color:var(--gold);text-align:center;letter-spacing:0.06em"></div>
+        <div id="training-options" style="display:flex;flex-direction:column;gap:10px">
+
+          <div class="training-card" id="train-axel" onclick="chooseTrain('axel', this)">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="font-size:22px">🐉</span>
+              <div style="flex:1">
+                <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--cream)">Sparring with Axel</div>
+                <div style="font-size:11px;color:var(--warm-sand);margin:3px 0 6px">He makes you block until your arms give out. Then he smiles. "Again."</div>
+                <div style="font-size:11px;color:var(--teal-bright);font-style:italic">⚔ Advantage on one attack roll this session</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="training-card" id="train-kimchi" onclick="chooseTrain('kimchi', this)">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="font-size:22px">🌊</span>
+              <div style="flex:1">
+                <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--cream)">Reading the Water with Kimchi</div>
+                <div style="font-size:11px;color:var(--warm-sand);margin:3px 0 6px">He doesn't explain. He just points at the horizon until you understand what you're looking for.</div>
+                <div style="font-size:11px;color:var(--teal-bright);font-style:italic">👁 Advantage on one Perception or Insight check this session</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="training-card" id="train-dredban" onclick="chooseTrain('dredban', this)">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="font-size:22px">🛡️</span>
+              <div style="flex:1">
+                <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--cream)">Drills with Dred'ban</div>
+                <div style="font-size:11px;color:var(--warm-sand);margin:3px 0 6px">Twenty minutes. No words. You come away knowing exactly how much space you waste when you move.</div>
+                <div style="font-size:11px;color:var(--teal-bright);font-style:italic">🛡 +2 AC until the first hit you receive this session</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="training-card" id="train-puddle" onclick="chooseTrain('puddle', this)">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="font-size:22px">🧪</span>
+              <div style="flex:1">
+                <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--cream)">Field Research with Puddle</div>
+                <div style="font-size:11px;color:var(--warm-sand);margin:3px 0 6px">She narrates everything she's doing in real time. It's overwhelming and somehow very useful.</div>
+                <div style="font-size:11px;color:var(--teal-bright);font-style:italic">🔬 Advantage on one Investigation or Arcana check this session</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="training-card" id="train-darius" onclick="chooseTrain('darius', this)">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="font-size:22px">🧭</span>
+              <div style="flex:1">
+                <div style="font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--cream)">Navigation Lesson from Darius</div>
+                <div style="font-size:11px;color:var(--warm-sand);margin:3px 0 6px">He shows you one route on the charts. Then asks you to find it yourself. You almost do.</div>
+                <div style="font-size:11px;color:var(--teal-bright);font-style:italic">🗺 Advantage on one Survival or History check this session</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
@@ -1788,6 +1866,10 @@ body {
           <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:8px">HP, gold, and stat edits made by players during the session.</div>
           <div id="dm-sheet-changes">Loading...</div>
         </div>
+        <div class="card">
+          <div class="dm-section-title">🏋️ Training Choices</div>
+          <div id="dm-training">Loading...</div>
+        </div>
         <div class="debug-panel">
           <div class="debug-panel-header">
             <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
@@ -1855,6 +1937,7 @@ body {
 <div class="more-menu" id="more-menu">
   <button class="more-item" onclick="showPanel('sheet');closeMore()" style="color:var(--gold);border-bottom:1px solid var(--border-warm);margin-bottom:4px;padding-bottom:14px">⚔️ My Sheet</button>
   <button class="more-item" onclick="showPanel('provisions');closeMore()">🛒 Provisions</button>
+  <button class="more-item" onclick="showPanel('training');closeMore()">🏋️ Training</button>
   <button class="more-item" onclick="showPanel('ledger');closeMore()">📖 Crew Ledger</button>
   <button class="more-item" onclick="showPanel('curiosities');closeMore()">🔮 Curiosities</button>
   <button class="more-item" onclick="showPanel('journal');closeMore()">📔 Puddle's Journal</button>
@@ -2545,6 +2628,30 @@ function updateWagerPrizeUI() {
   }
 }
 
+// ══════════ TRAINING ══════════
+function chooseTrain(npc, el) {
+  if (el.classList.contains('locked') || el.classList.contains('chosen')) return;
+  if (!PLAYER_NAME) { alert('Choose your character first.'); return; }
+  const npcLabel = el.querySelector('[style*="Cinzel"]').textContent.trim();
+  const bonus = el.querySelector('[style*="teal-bright"]').textContent.trim();
+  if (!confirm('Train with ' + npcLabel + ' this voyage?')) return;
+  // Lock all cards, mark chosen
+  document.querySelectorAll('.training-card').forEach(c => {
+    c.classList.remove('chosen');
+    c.classList.add('locked');
+  });
+  el.classList.remove('locked');
+  el.classList.add('chosen');
+  // Show banner
+  const banner = document.getElementById('training-chosen-banner');
+  if (banner) {
+    banner.style.display = 'block';
+    banner.textContent = '✓ Training with ' + npcLabel.split(' ')[npcLabel.split(' ').length > 2 ? 2 : 0] + ' locked in — ' + bonus;
+  }
+  // Log to server
+  postEvent({ type:'training_chosen', player: PLAYER_NAME, npc, bonus });
+}
+
 // ══════════ BACKEND ══════════
 async function postEvent(data) {
   try {
@@ -2642,6 +2749,15 @@ async function loadDMReport() {
     }).join('');
     document.getElementById('dm-sheet-changes').innerHTML = sheetHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No sheet changes yet.</div>';
 
+    // Training choices — latest per player
+    const trainEvents = (data.events || []).filter(e => e.type === 'training_chosen');
+    const latestTrain = {};
+    trainEvents.forEach(e => { if (e.player) latestTrain[e.player] = e; });
+    const trainHtml = Object.values(latestTrain).map(e =>
+      `<div class="dm-row"><span class="dm-key">${e.player}</span><span class="dm-val">${e.npc} — ${e.bonus}</span></div>`
+    ).join('');
+    document.getElementById('dm-training').innerHTML = trainHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No training chosen yet.</div>';
+
     // Debug: show raw last 10 events so we can diagnose missing secrets
     const debugEl = document.getElementById('dm-debug');
     if (debugEl) {
@@ -2672,7 +2788,7 @@ const CHAR_DEFAULTS = [
       {name:'Bracer of Defense',    desc:'',                                                   qty:1, star:false},
       {name:'Grappling Hook',       desc:'',                                                   qty:1, star:false},
       {name:'10 Darts',             desc:'',                                                   qty:10, star:false}
-    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+    ], notes:'', sessionNotes:'', reminders:[], proficiencies:{} },
 
   { name:'Quincy', class:'Ranger 4', race:'Wood Elf',
     str:12, dex:16, con:13, int:9, wis:14, cha:10,
@@ -2688,7 +2804,7 @@ const CHAR_DEFAULTS = [
       {name:'Blue (Sprite)',        desc:'Beastmaster companion — AC 17, HP 12, fly 40ft, invisibility, poisoned shortbow', qty:1, star:true},
       {name:'Fizzy Firebreath Soda',desc:'10ft cone, DC 11 Dex or 1d4 fire', qty:1, star:false},
       {name:'Health Potion',        desc:'2d4+2 HP',                          qty:1, star:false}
-    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+    ], notes:'', sessionNotes:'', reminders:[], proficiencies:{} },
 
   { name:'Rapha', class:'Paladin 4', race:'Half-Elf',
     str:14, dex:12, con:8, int:11, wis:12, cha:15,
@@ -2705,7 +2821,7 @@ const CHAR_DEFAULTS = [
       {name:'Music Charm',         desc:'Advantage on Persuasion for 10 min (carnival prize)',qty:1, star:true},
       {name:'Glittercorn Popcorn', desc:'DC 10 Con or blinded 1 turn in 10ft radius',        qty:1, star:false},
       {name:"Healer's Kit",        desc:'Stabilise a creature, 10 uses',                     qty:1, star:false}
-    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+    ], notes:'', sessionNotes:'', reminders:[], proficiencies:{} },
 
   { name:'Wayne', class:'Wizard 4', race:'Gnome',
     str:8, dex:11, con:10, int:15, wis:14, cha:19,
@@ -2722,7 +2838,7 @@ const CHAR_DEFAULTS = [
       {name:'Carnival Manifest', desc:'Partially unknown script — Wayne\'s name at bottom, elemental cult sigil', qty:1, star:true},
       {name:'Cloak of Billowing',desc:'Billows dramatically on command. Purely cosmetic.',                  qty:1, star:false},
       {name:'Pearl of Power (Lesser)', desc:'Recover one 1st-level spell slot (1/day)',                   qty:1, star:false}
-    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+    ], notes:'', sessionNotes:'', reminders:[], proficiencies:{} },
 
   { name:'Myrtle', class:'Rogue 4', race:'Halfling',
     str:12, dex:17, con:15, int:10, wis:8, cha:13,
@@ -2741,7 +2857,7 @@ const CHAR_DEFAULTS = [
       {name:'Silent Steps Tattoo',   desc:'Advantage on Stealth for 10 min (1/long rest)',                          qty:1, star:true},
       {name:'Bag of Chalk Shadows',  desc:'5ft puff of darkness 1/day',                                             qty:1, star:false},
       {name:'Disguise Kit',          desc:'',                                                                        qty:1, star:false}
-    ], notes:'', charNotes:'', reminders:[], proficiencies:{} }
+    ], notes:'', sessionNotes:'', reminders:[], proficiencies:{} }
 ];
 
 // Working copy — gets overlaid with server state on load
