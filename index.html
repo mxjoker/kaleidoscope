@@ -1928,11 +1928,11 @@ const NPC_SECRETS = {
       oneTime:false, id:'kimchi-drinking' }
   ],
   puddle: [
-    { keywords:['box','myrtle\'s box','locked box','the box','carnival box'],
+    { keywords:['box','myrtle\'s box','myrtles box','myrtle box','locked box','the box','carnival box'],
       response:"\"Thermal anomaly! 22 degrees versus 14 ambient. I filed it under Thermal Anomalies of Unclear Origin, subsection: Myrtle Said Stop. Which is a subsection I have had to create more than once.\"",
       reward:{name:"Puddle's Thermal Notes", type:"info", desc:"Puddle measured the box at 22°C when ambient was 14°C. She notes it was consistent — not warming up, not cooling down. Whatever is inside maintains its own temperature. She asked Myrtle twice. Myrtle said stop both times."},
       oneTime:false, id:'carnival-box' },
-    { keywords:['manifest','wayne\'s book','backstage','carnival manifest','wayne found'],
+    { keywords:['manifest','wayne\'s book','waynes book','wayne book','backstage','carnival manifest','wayne found'],
       response:"\"Wayne's spellbook was thicker when he came back. Mass increase approximately 340 grams. Smells of incense. I have a VERY interesting subsection started.\"",
       reward:{name:"Puddle's Observation Log: Wayne", type:"info", desc:"Mass increase: ~340g. Faint smell of incense — not Wayne's normal components. Puddle clocked it the moment he came back from backstage at the carnival. The spellbook gained something. Wayne hasn't mentioned it. Filed under: Interesting (Category: VERY)."},
       oneTime:true, id:'wayne-manifest' },
@@ -1940,7 +1940,7 @@ const NPC_SECRETS = {
       response:"\"Three manifests! Registered under Captain Vess. The navigational instrument isn't on the recovery list. NEITHER IS THE CAPTAIN. I have written 'ALIVE?' in the margin. In capital letters. With a question mark and also an exclamation point.\"",
       reward:{name:"Puddle's Research: The Meridian", type:"info", desc:"Three shipping manifests, all registered to Captain Vess. The navigational instrument — a sextant — doesn't appear on the official recovery list. Neither does Vess himself. Puddle's margin note: 'ALIVE?' The harbour authority closed the file unusually fast."},
       oneTime:false, id:'the-wreck-puddle' },
-    { keywords:['blue','sprite','quincy\'s sprite','blue the sprite'],
+    { keywords:['blue','sprite','quincy\'s sprite','quincys sprite','blue the sprite'],
       response:"\"I have been trying to interview Blue for the journal but she keeps moving away. I have noted this as 'possibly a game.' It is a very long game.\"",
       reward:null, oneTime:false, id:'blue' },
     { keywords:['dredban','dred\'ban','dred ban','what about dred','why is dred'],
@@ -1970,7 +1970,7 @@ const NPC_SECRETS = {
       oneTime:true, id:'danger-dredban' }
   ],
   darius: [
-    { keywords:['never leave','never leaves','why don\'t you','why do you stay','leave the ship','stay on the ship'],
+    { keywords:['never leave','never leaves','why don\'t you','why dont you','why do you stay','leave the ship','stay on the ship'],
       response:"\"Ha.\" He laughs, but a little quickly. \"The ship needs a captain aboard. Always.\" His hand moves to the edge of the table.",
       reward:{name:"The Captain's Non-Answer", type:"info", desc:"He laughed a half-second too fast. His hand moved to the table edge — steadying himself, or reaching for something that wasn't there. 'The ship needs a captain aboard' is true of any ship. It's not a reason. It's a line."},
       oneTime:false, id:'never-leaves' },
@@ -2005,7 +2005,9 @@ function checkSecrets(npc, msg) {
     if (s.keywords.some(k => lower.includes(k))) {
       if (s.oneTime) usedOneTimeSecrets.add(s.id);
       // Log to backend
+      // Send as both types: new event.js uses 'secret_triggered', old GPT event.js uses 'found_secret'
       postEvent({ type:'secret_triggered', player: PLAYER_NAME || 'unknown', npc, secretId:s.id, reward: s.reward?.name || null, oneTime: s.oneTime });
+      postEvent({ type:'found_secret', player: PLAYER_NAME || 'unknown', npc, secret:s.id, reward: s.reward?.name || null, oneTime: s.oneTime });
       return s;
     }
   }
