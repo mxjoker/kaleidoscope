@@ -635,7 +635,7 @@ body {
   background: rgba(109,232,216,0.06);
   -webkit-tap-highlight-color: transparent;
 }
-.journal-entry-num { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.08em; color: #6de8d8; }
+.journal-entry-num { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.08em; color: #1a7a6e; }
 .journal-chevron { font-size: 12px; color: var(--warm-sand); transition: transform 0.2s; }
 .journal-entry.open .journal-chevron { transform: rotate(180deg); }
 .journal-body { display: none; padding: 14px; border-top: 1px solid var(--border-warm); }
@@ -902,8 +902,9 @@ body {
           <p>The crew investigated the wreck of the Salted Meridian and found Captain Vess alive in the debris. They pulled him out and paid 3gp to get him care at the local inn.</p>
           <p>Wayne used Kimchi's IOU to get the harbormaster talking — Vess's box had been sold for 50gp. The party took the gold back. Wayne's carnival manifest turned out to contain a sigil linked to a cult of elemental worshippers.</p>
           <p>They tracked a woman named Maren Thoss to the Carrow Arms. After a failed con and Myrtle getting caught picking Thoss's pocket, she fled. The guards investigated but the party talked their way out. Thoss is still wanted. <em>Myrtle is wanted by the Port Carrow guards.</em></p>
-          <p>The crew chased Thoss to the Ironside Inn — broke in the back, waterboarded the front desk, kicked in the door — and found her trying to release a water elemental from a chest. They killed Thoss. Wayne used Rope Trick to punt the chest into a pocket dimension. The elemental is still in there.</p>
+          <p>The crew chased Thoss to the Ironside Inn — broke in the back, waterboarded the front desk, kicked in the door — and found her in the middle of something they interrupted before they could see it through. They killed Thoss. Wayne used Rope Trick to shunt the chest into a pocket dimension before anything could get out. Whatever was in there is still in there. Nobody has discussed what that means.</p>
           <p>Total haul: 180gp split seven ways. The captain's personal box is still missing — known to contain a magic sextant. Next session: <strong>Ratstew Gap</strong>.</p>
+          <p><em>Note: Half the crew came down with something in the days after. Probably the water. Probably nothing. Everyone's running at half strength heading into the next job.</em></p>
         </div>
       </div>
       <div class="card">
@@ -923,7 +924,7 @@ body {
         <div class="card-title">Next Voyage</div>
         <div class="hook-card" style="margin:0">
           <div class="hook-title">Ratstew Gap</div>
-          <div class="hook-body">A mountain pass in the Grandspire range. Two halfling pilgrims — the last survivors of a decimated caravan — need shepherding through to build a shrine at the gap. Everyone starts at half HP. Something is very wrong with the inn.</div>
+          <div class="hook-body">A mountain pass in the Grandspire range. Two halfling pilgrims — the last survivors of a decimated caravan — need shepherding through to build a shrine at the gap. Half the crew have been under the weather since Fenhollow. Bad water, bad air, bad luck. Everyone's running at half strength. Something is very wrong with the inn at the gap.</div>
         </div>
       </div>
     </div>
@@ -1135,22 +1136,43 @@ body {
         </div>
       </div>
 
+      <!-- Question 1 -->
+      <div class="card">
+        <div class="vote-question">
+          <div class="vote-q-text">The crew is feeling rough. How do you want to handle that before heading into the mountains?</div>
+          <div class="vote-options" id="vote-q1">
+            <div class="vote-option" onclick="castVote(1,'a',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Push through — we've been worse</div><div class="vote-voters" id="voters-1-a"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(1,'b',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Rest one more day in port — recover what we can</div><div class="vote-voters" id="voters-1-b"></div></div>
+            </div>
+            <div class="vote-option" onclick="castVote(1,'c',this)">
+              <div class="vote-radio"></div>
+              <div><div class="vote-opt-text">Someone should look into what actually made us sick</div><div class="vote-voters" id="voters-1-c"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Question 2 -->
       <div class="card">
         <div class="vote-question">
-          <div class="vote-q-text">Who stays with the Kaleidoscope?</div>
+          <div class="vote-q-text">The two halfling pilgrims, Brother Mazlo and Sister Rosy, want to travel with the group. How does the crew treat them?</div>
           <div class="vote-options" id="vote-q2">
             <div class="vote-option" onclick="castVote(2,'a',this)">
               <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Dred'ban guards the ship — max security, lose your heavy hitter</div><div class="vote-voters" id="voters-2-a"></div></div>
+              <div><div class="vote-opt-text">They're clients — professional, polite, no more</div><div class="vote-voters" id="voters-2-a"></div></div>
             </div>
             <div class="vote-option" onclick="castVote(2,'b',this)">
               <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Puddle stays and documents — she will touch something</div><div class="vote-voters" id="voters-2-b"></div></div>
+              <div><div class="vote-opt-text">Keep them close and protected — they seem important</div><div class="vote-voters" id="voters-2-b"></div></div>
             </div>
             <div class="vote-option" onclick="castVote(2,'c',this)">
               <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Everyone goes — full strength, ship unguarded</div><div class="vote-voters" id="voters-2-c"></div></div>
+              <div><div class="vote-opt-text">Get to know them — everyone on a job like this has a story</div><div class="vote-voters" id="voters-2-c"></div></div>
             </div>
           </div>
         </div>
@@ -1159,19 +1181,19 @@ body {
       <!-- Question 3 -->
       <div class="card">
         <div class="vote-question">
-          <div class="vote-q-text">Does Myrtle open the locked carnival box before you go?</div>
+          <div class="vote-q-text">Wayne's carnival manifest — the cult sigil. The crew knows about it now. What do you want to do?</div>
           <div class="vote-options" id="vote-q3">
             <div class="vote-option" onclick="castVote(3,'a',this)">
               <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Yes — we need to know what's in it (Myrtle seems hesitant)</div><div class="vote-voters" id="voters-3-a"></div></div>
+              <div><div class="vote-opt-text">Leave it alone — one problem at a time</div><div class="vote-voters" id="voters-3-a"></div></div>
             </div>
             <div class="vote-option" onclick="castVote(3,'b',this)">
               <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">After the wreck — it can wait</div><div class="vote-voters" id="voters-3-b"></div></div>
+              <div><div class="vote-opt-text">Wayne should keep digging — knowledge is protection</div><div class="vote-voters" id="voters-3-b"></div></div>
             </div>
             <div class="vote-option" onclick="castVote(3,'c',this)">
               <div class="vote-radio"></div>
-              <div><div class="vote-opt-text">Myrtle's call — we don't ask (she notices)</div><div class="vote-voters" id="voters-3-c"></div></div>
+              <div><div class="vote-opt-text">Find someone who knows about elemental cults before it matters</div><div class="vote-voters" id="voters-3-c"></div></div>
             </div>
           </div>
         </div>
@@ -1186,25 +1208,97 @@ body {
   <div class="panel" id="panel-newcrew">
     <div class="page-header">
       <div class="page-title">👥 New Crew</div>
-      <div class="page-sub">Recently joined the Kaleidoscope</div>
+      <div class="page-sub">Full sheets — available for guest players</div>
     </div>
     <div style="padding:0 16px 16px">
-      <div class="crew-card">
+
+      <!-- PUDDLE -->
+      <div class="card">
         <div class="crew-header">
           <div class="crew-dot" style="background:#6de8d8"></div>
-          <div><div class="crew-name">Puddle</div><div class="crew-title">Oozling · Wild Magic Sorcerer 4</div></div>
+          <div>
+            <div class="crew-name">Puddle</div>
+            <div class="crew-title">Oozling · Wild Magic Sorcerer 4 · CG</div>
+          </div>
         </div>
-        <div class="crew-bio">Blue-green, translucent, constantly in motion. Divided from her parent "Splash" four years ago. Keeps a detailed journal called <em>Things Worth Knowing</em>. Joined after accidentally polymorphing a dockmaster's horse into a pelican. She's enthusiastic about everything and will absolutely touch things she shouldn't.</div>
-        <button class="crew-talk-btn" onclick="goToNPC('hold')">→ Find her in the Ship's Hold</button>
+        <div class="crew-bio">Blue-green, translucent, constantly in motion. Keeps a journal called <em>Things Worth Knowing.</em> Joined after polymorphing a dockmaster's horse into a pelican. She's warm, curious, and will absolutely touch things she shouldn't.</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">STR</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">7</div><div style="font-size:10px;color:var(--rust)">−2</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">DEX</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">14</div><div style="font-size:10px;color:var(--rust)">+2</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CON</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">14</div><div style="font-size:10px;color:var(--rust)">+2</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">INT</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">13</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">WIS</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CHA</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">17</div><div style="font-size:10px;color:var(--rust)">+3</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">26</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">HP</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">AC</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">30ft</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">SPEED</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">+5</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">SPELL ATK</div></div>
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">SPELLS · Save DC 13</div>
+        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8;margin-bottom:10px">
+          <strong>Cantrips:</strong> Fire Bolt (+5, 1d10 fire, 120ft) · Minor Illusion · Prestidigitation · Detect Magic<br>
+          <strong>1st (4 slots):</strong> Charm Person · Mage Armor · Thunderwave (2d8, DC 13 Con)<br>
+          <strong>2nd (3 slots):</strong> Misty Step · Shatter (3d8, DC 13 Con, 10ft sphere)
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">SORCERY · 4 points</div>
+        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8;margin-bottom:10px">
+          <strong>Bend Luck (reaction):</strong> Spend 2 points — add or subtract 1d4 from any roll you can see<br>
+          <strong>Tides of Chaos:</strong> Advantage on one attack, check, or save (1/long rest)<br>
+          <strong>Wild Magic Surge:</strong> Roll d20 after casting — on 1, roll the Wild Magic table (DM rolls)
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">RACIAL TRAITS</div>
+        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8">
+          <strong>Magic Resistance:</strong> Advantage on saves vs spells and magical effects<br>
+          <strong>Gelatinous:</strong> Can move through spaces of larger creatures<br>
+          <strong>Malleable Form:</strong> Disguise Self 1/long rest
+        </div>
+        <button class="crew-talk-btn" style="margin-top:12px" onclick="goToNPC('hold')">→ Find her in the Ship's Hold</button>
       </div>
-      <div class="crew-card">
+
+      <!-- DRED'BAN -->
+      <div class="card">
         <div class="crew-header">
           <div class="crew-dot" style="background:#c890d8"></div>
-          <div><div class="crew-name">Dred'ban</div><div class="crew-title">Blackhorn · Fighter 4 · Ship's Security</div></div>
+          <div>
+            <div class="crew-name">Dred'ban</div>
+            <div class="crew-title">Blackhorn · Champion Fighter 4 · LN</div>
+          </div>
         </div>
-        <div class="crew-bio">Purple-shelled, cracked left shoulder, says very little. Has been re-upping his contract for three months without explanation. He watches everything. The silence isn't hostility — it's something else. Puddle has a whole chart for it.</div>
-        <button class="crew-talk-btn" onclick="goToNPC('bow')">→ Find him at the Bow</button>
+        <div class="crew-bio">Deep matte purple shell, cracked along the left shoulder. Ship's security. Speaks rarely — in fragments when he does. Has been re-upping his contract for three months without explaining why. He watches everything. The silence isn't hostility.</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">STR</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">18</div><div style="font-size:10px;color:var(--rust)">+4</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">DEX</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">12</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CON</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">16</div><div style="font-size:10px;color:var(--rust)">+3</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">INT</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">10</div><div style="font-size:10px;color:var(--rust)">+0</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">WIS</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">13</div><div style="font-size:10px;color:var(--rust)">+1</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:6px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:9px;color:var(--ocean-light)">CHA</div><div style="font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--ink-deep)">7</div><div style="font-size:10px;color:var(--rust)">−2</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">42</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">HP</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">18</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">AC</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">25ft</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">SPEED</div></div>
+          <div style="background:var(--parchment);border:1px solid var(--border-warm);border-radius:8px;padding:8px 4px;text-align:center"><div style="font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--ink-deep)">+6</div><div style="font-size:9px;color:var(--ocean-light);font-family:'Cinzel',serif">ATK BONUS</div></div>
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">ATTACKS</div>
+        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8;margin-bottom:10px">
+          <strong>Warhammer (two-hand):</strong> +6 to hit · 1d8+4 bludgeoning<br>
+          <strong>Gore (horn strike):</strong> +6 to hit · 1d6+4 piercing<br>
+          <strong>Handaxe (thrown):</strong> +6 to hit · 1d6+4 slashing · range 20/60ft<br>
+          <strong>Charge:</strong> Move 20ft straight + Gore — extra 1d8, STR save (DC 18) or knocked prone
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.08em;color:var(--ocean-light);margin-bottom:8px">CLASS & RACIAL FEATURES</div>
+        <div style="font-size:12px;color:var(--ink-mid);line-height:1.8">
+          <strong>Action Surge:</strong> Take one additional action on your turn (1/short rest)<br>
+          <strong>Second Wind:</strong> Bonus action — regain 1d10+4 HP (1/short rest)<br>
+          <strong>Improved Critical:</strong> Weapon attacks crit on 19–20<br>
+          <strong>Hard Shell:</strong> Permanent +1 AC bonus (included above)<br>
+          <strong>Saving Throws:</strong> STR +6 · CON +5
+        </div>
+        <button class="crew-talk-btn" style="margin-top:12px" onclick="goToNPC('bow')">→ Find him at the Bow</button>
       </div>
+
     </div>
   </div>
 
@@ -1212,25 +1306,45 @@ body {
   <div class="panel" id="panel-provisions">
     <div class="page-header">
       <div class="page-title">🛒 Provisions</div>
-      <div class="page-sub">Curio's Curiosities & Dockside General</div>
+      <div class="page-sub">Next port & the catalogue</div>
     </div>
     <div style="padding:0 16px 16px">
+
+      <!-- Poor port -->
       <div class="card">
-        <div class="card-title">Curio's Curiosities</div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Potion of Healing</div><div class="shop-item-desc">Regain 2d4+2 HP</div></div><div class="shop-item-price">40 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Gloves of Thievery</div><div class="shop-item-desc">+5 to Sleight of Hand, invisible</div></div><div class="shop-item-price">250 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Driftglobe</div><div class="shop-item-desc">Light / Daylight on command, floats</div></div><div class="shop-item-price">200 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Cap of Water Breathing</div><div class="shop-item-desc">Breathe underwater while worn</div></div><div class="shop-item-price">250 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Wand of Magic Detection</div><div class="shop-item-desc">Detect Magic at will (3 charges/day)</div></div><div class="shop-item-price">200 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Pearl of Power (Lesser)</div><div class="shop-item-desc">Recover one 1st-level spell slot (1/day)</div></div><div class="shop-item-price">250 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Cloak of Billowing</div><div class="shop-item-desc">Billows dramatically on command. Purely cosmetic.</div></div><div class="shop-item-price">75 gp</div></div>
+        <div class="card-title">Ratstew Gap — Pickworth's Supply Post</div>
+        <div style="font-size:12px;color:var(--warm-sand);font-style:italic;margin-bottom:12px;line-height:1.6">A half-collapsed general store run by a man who charges double because he can. The selection is poor, the quality is worse, and he knows you don't have other options. Cash only. No haggling.</div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Potion of Healing</div><div class="shop-item-desc">Regain 2d4+2 HP. Dusty. Probably fine.</div></div><div class="shop-item-price">65 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Healer's Kit</div><div class="shop-item-desc">Stabilise a creature, 10 uses. Overpriced.</div></div><div class="shop-item-price">12 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Rope (50ft, hempen)</div><div class="shop-item-desc">It's rope.</div></div><div class="shop-item-price">4 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Torch (×5)</div><div class="shop-item-desc">Burns. Mostly.</div></div><div class="shop-item-price">3 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Rations (1 day)</div><div class="shop-item-desc">Hard tack and salt meat. Technically food.</div></div><div class="shop-item-price">2 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Vial of Antitoxin</div><div class="shop-item-desc">Advantage on Con saves vs poison for 1 hour. Pickworth has two. Won't say why.</div></div><div class="shop-item-price">55 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Mystery Flask</div><div class="shop-item-desc">"Bought it off a traveller. Glows a bit. Ten gold and it's yours." — Pickworth</div></div><div class="shop-item-price">10 gp</div></div>
       </div>
+
+      <!-- Mail order -->
       <div class="card">
-        <div class="card-title">Dockside General</div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Healer's Kit</div><div class="shop-item-desc">Stabilise a creature, 10 uses</div></div><div class="shop-item-price">5 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Climber's Kit</div><div class="shop-item-desc">Pitons, gloves, harness, boot tips</div></div><div class="shop-item-price">25 gp</div></div>
-        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Grappling Hook</div><div class="shop-item-desc">Rope sold separately</div></div><div class="shop-item-price">2 gp</div></div>
+        <div style="background:linear-gradient(135deg,rgba(26,51,68,0.6),rgba(14,31,43,0.8));border-radius:10px;padding:14px;margin-bottom:14px;border:1px solid rgba(212,168,50,0.2)">
+          <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px">📦 Fenhollow Catalogue — Order Now</div>
+          <div style="font-size:12px;color:rgba(244,237,216,0.7);line-height:1.6">Order before departure and receive a <strong style="color:var(--gold)">25% discount</strong> on any listed item. Your order will be waiting at the port after Ratstew Gap. Allow one port of travel. No refunds. Kimchi handles the paperwork.</div>
+        </div>
+        <div style="font-size:11px;font-family:'Cinzel',serif;letter-spacing:0.08em;color:var(--teal);margin-bottom:10px">CURIO'S CURIOSITIES — ADVANCE ORDER</div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Driftglobe <span style="font-size:10px;color:var(--vote-purple)">★ Popular</span></div><div class="shop-item-desc">Floats, lights up on command. Light or Daylight 1/day.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">200</span> 150 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Cap of Water Breathing</div><div class="shop-item-desc">Breathe underwater indefinitely. Useful if the next job is wet.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">250</span> 188 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Wand of Magic Detection</div><div class="shop-item-desc">Detect Magic at will, 3 charges/day. Never be surprised again.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">200</span> 150 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Bag of Holding <span style="font-size:10px;color:var(--gold)">✦ New</span></div><div class="shop-item-desc">Holds 500lbs / 64 cubic feet. Weighs 15lbs. Don't put another Bag of Holding inside it.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">400</span> 300 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Headband of Intellect <span style="font-size:10px;color:var(--gold)">✦ New</span></div><div class="shop-item-desc">Sets INT to 19 while worn. Narrow fit — may not suit all head shapes.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">400</span> 300 gp</div></div>
+        <div style="font-size:11px;font-family:'Cinzel',serif;letter-spacing:0.08em;color:var(--teal);margin:12px 0 10px">THE INK & NEEDLE — ADVANCE ORDER</div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Shared Sight Tattoo <span style="font-size:10px;color:var(--teal-bright)">Quincy?</span></div><div class="shop-item-desc">See through your companion's eyes for 10 min. 1/long rest.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">250</span> 188 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Radiant Brand Tattoo <span style="font-size:10px;color:var(--teal-bright)">Rapha?</span></div><div class="shop-item-desc">+2 radiant damage on weapon attacks for 1 min. 1/long rest.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">250</span> 188 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Arcane Sigil Tattoo <span style="font-size:10px;color:var(--teal-bright)">Wayne?</span></div><div class="shop-item-desc">+1 to spell attack rolls for 1 min. 1/long rest.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">250</span> 188 gp</div></div>
+        <div style="font-size:11px;font-family:'Cinzel',serif;letter-spacing:0.08em;color:var(--teal);margin:12px 0 10px">DOCKSIDE GENERAL — ADVANCE ORDER</div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Spyglass (quality)</div><div class="shop-item-desc">Actually good. See detail at a mile. Ship use.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">300</span> 225 gp</div></div>
+        <div class="shop-item"><div class="shop-item-info"><div class="shop-item-name">Climber's Kit</div><div class="shop-item-desc">Pitons, harness, gloves, boot tips.</div></div><div class="shop-item-price"><span style="text-decoration:line-through;color:var(--warm-sand);font-size:11px">25</span> 19 gp</div></div>
+        <div style="margin-top:12px;padding:10px 12px;background:rgba(139,111,196,0.08);border:1px solid rgba(139,111,196,0.2);border-radius:8px;font-size:12px;color:var(--warm-sand);font-style:italic">Tell the DM what you want to order before the session. Kimchi handles the rest.</div>
       </div>
+
     </div>
   </div>
 
@@ -1242,10 +1356,12 @@ body {
     </div>
     <div style="padding:0 16px 16px">
       <div class="card">
+        <div class="ledger-entry"><div class="ledger-who">WAYNE</div><div class="ledger-text">Identified the sigil from the carnival manifest. A cult of elemental worshippers. Said nothing for a moment. Then: "Interesting."</div></div>
+        <div class="ledger-entry"><div class="ledger-who">MYRTLE</div><div class="ledger-text">Got caught picking Maren Thoss's pocket at the Carrow Arms. Talked her way out of it. The guards are still looking for her. She seems unbothered.</div></div>
+        <div class="ledger-entry"><div class="ledger-who">AXEL & WAYNE</div><div class="ledger-text">Convinced the harbormaster to talk. It cost Kimchi's IOU. They split the 50 gold without discussing it.</div></div>
+        <div class="ledger-entry"><div class="ledger-who">THE PARTY</div><div class="ledger-text">Kicked in the door at the Ironside Inn. Waterboarded the front desk. Found Thoss mid-ritual and stopped her. Whatever was in that chest did not get out. Wayne put it somewhere else. Nobody asked where.</div></div>
+        <div class="ledger-entry"><div class="ledger-who">CAPTAIN VESS</div><div class="ledger-text">Pulled alive from the wreck debris. Paid 3 gold to get him care at the inn. His personal box — said to contain a magic sextant — is still missing.</div></div>
         <div class="ledger-entry"><div class="ledger-who">QUINCY</div><div class="ledger-text">"Blue went still in the Hall of Mirrors and said 'Not us.' Nobody's talked about it since."</div></div>
-        <div class="ledger-entry"><div class="ledger-who">WAYNE</div><div class="ledger-text">Came back from backstage at the carnival with a spellbook that was, according to Puddle, measurably heavier.</div></div>
-        <div class="ledger-entry"><div class="ledger-who">MYRTLE</div><div class="ledger-text">Picked up a box near the fire-breathers. It settled into her hands. She hasn't opened it.</div></div>
-        <div class="ledger-entry"><div class="ledger-who">AXEL</div><div class="ledger-text">The carnival proprietor recognised him before he gave his name. Hands were shaking.</div></div>
         <div class="ledger-entry"><div class="ledger-who">PUDDLE</div><div class="ledger-text">Has begun a subsection in her journal: "Dred'ban: A Study in Silence." Current entries: 9. The nod was entry one.</div></div>
       </div>
     </div>
@@ -1951,8 +2067,8 @@ function tryUnlockLetter() {
 
 // ══════════ VOTE ══════════
 let currentVoter = null;
-const votes = {}; // { "charName": { 1: 'a', 2: 'b', 3: 'c' } }
-const allVotes = { 1:{}, 2:{}, 3:{} }; // { optionKey: [voters] }
+const votes = {};
+const allVotes = { 1:{}, 2:{}, 3:{} };
 
 function selectVoter(name, btn) {
   currentVoter = name;
@@ -1970,19 +2086,19 @@ function castVote(qNum, option, el) {
     return;
   }
   if (!votes[currentVoter]) votes[currentVoter] = {};
-
-  // Remove from old option
   const oldOpt = votes[currentVoter][qNum];
   if (oldOpt && allVotes[qNum][oldOpt]) {
     allVotes[qNum][oldOpt] = allVotes[qNum][oldOpt].filter(v => v !== currentVoter);
   }
-
-  // Add to new
   votes[currentVoter][qNum] = option;
   if (!allVotes[qNum][option]) allVotes[qNum][option] = [];
   if (!allVotes[qNum][option].includes(currentVoter)) allVotes[qNum][option].push(currentVoter);
-
   refreshVoteDisplay();
+  // Post to backend
+  fetch('/.netlify/functions/vote', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ player: currentVoter, questionId: qNum, optionId: option })
+  }).catch(()=>{});
   postEvent({ type:'vote_cast', player: currentVoter, questionId: qNum, optionId: option });
 }
 
@@ -1993,8 +2109,6 @@ function refreshVoteDisplay() {
       if (!el) return;
       const voters = allVotes[q][opt] || [];
       el.textContent = voters.length ? voters.join(', ') : '';
-
-      // Mark voted option for current voter
       const optEl = el.closest('.vote-option');
       if (optEl) {
         const myVote = currentVoter && votes[currentVoter] && votes[currentVoter][q] === opt;
@@ -2002,6 +2116,30 @@ function refreshVoteDisplay() {
       }
     });
   }
+}
+
+// Load existing votes from server so all players see live results
+async function loadVotesFromServer() {
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const voteEvents = (data.events || []).filter(e => e.type === 'vote_cast');
+    // Rebuild vote state from events (last vote per player per question wins)
+    voteEvents.forEach(e => {
+      const { player, questionId, optionId } = e;
+      if (!votes[player]) votes[player] = {};
+      // Remove old vote for this player/question
+      const oldOpt = votes[player][questionId];
+      if (oldOpt && allVotes[questionId]?.[oldOpt]) {
+        allVotes[questionId][oldOpt] = allVotes[questionId][oldOpt].filter(v => v !== player);
+      }
+      votes[player][questionId] = optionId;
+      if (!allVotes[questionId]) allVotes[questionId] = {};
+      if (!allVotes[questionId][optionId]) allVotes[questionId][optionId] = [];
+      if (!allVotes[questionId][optionId].includes(player)) allVotes[questionId][optionId].push(player);
+    });
+    refreshVoteDisplay();
+  } catch(e) {}
 }
 
 // ══════════ JOURNAL ══════════
@@ -2199,9 +2337,9 @@ async function loadDMReport() {
       if (!voteMap[key][e.optionId].includes(e.player)) voteMap[key][e.optionId].push(e.player);
     });
     const voteLabels = {
-      1:{ a:'First light', b:'After dark', c:'Watch from shore' },
-      2:{ a:"Dred'ban stays", b:'Puddle stays', c:'Everyone goes' },
-      3:{ a:'Open the box', b:'After the wreck', c:"Myrtle's call" }
+      1:{ a:'Push through', b:'Rest one more day', c:'Investigate the sickness' },
+      2:{ a:'Professional distance', b:'Keep them close', c:'Get to know them' },
+      3:{ a:'Leave it alone', b:'Wayne keeps digging', c:'Find an expert' }
     };
     let votesHtml = '';
     [1,2,3].forEach(q => {
@@ -2558,7 +2696,8 @@ document.getElementById('letter-unlock-input').addEventListener('keydown', e => 
 
 // ══════════ INIT ══════════
 document.getElementById('notes-date').textContent = 'Session — ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-claimCharacter(0); // load Axel from server on startup
+claimCharacter(0);
+loadVotesFromServer(); // pull existing votes so all players see live results
 </script>
 </body>
 </html>
