@@ -47,12 +47,12 @@ async function updatePlayerGoldAfterGame(playerName, goldChange) {
     });
     
     // Update display if character sheet is visible
-    const goldDisplay = document.querySelector(`[data-char="${character}"] .gold-amount`);
-    if (goldDisplay) {
-      goldDisplay.textContent = state.coins.gp;
-      goldDisplay.classList.add('gold-color');
-      goldDisplay.style.animation = 'none';
-      setTimeout(() => { goldDisplay.style.animation = ''; }, 10);
+    const gpEl = document.getElementById('coin-gp');
+    if (gpEl) gpEl.textContent = state.coins.gp;
+
+    // Also update the in-memory CHARS array so the sheet stays in sync
+    if (typeof CHARS !== 'undefined' && typeof claimedCharacter !== 'undefined' && claimedCharacter !== null) {
+      CHARS[claimedCharacter].coins.gp = state.coins.gp;
     }
     
     return state.coins.gp;
@@ -140,18 +140,21 @@ function getActiveCharKey() {
   return charMap[name.trim()] || null;
 }
 
-// Setup auto-save for notes field with debounce
+// Setup auto-save for notes fields with debounce
+// session-notes → saves as 'sessionNotes', char-notes → saves as 'notes'
 function setupCharacterNotesAutosave() {
-  const notesAreas = document.querySelectorAll('.notes-area');
-  let saveTimeout;
-  
-  notesAreas.forEach(textarea => {
+  const fieldMap = { 'session-notes': 'sessionNotes', 'char-notes': 'notes' };
+  let saveTimeouts = {};
+
+  Object.entries(fieldMap).forEach(([elemId, fieldKey]) => {
+    const textarea = document.getElementById(elemId);
+    if (!textarea) return;
     textarea.addEventListener('input', function() {
-      clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(() => {
+      clearTimeout(saveTimeouts[elemId]);
+      saveTimeouts[elemId] = setTimeout(() => {
         const character = getActiveCharKey();
         if (!character) return;
-        saveCharacterField(character, 'notes', this.value);
+        saveCharacterField(character, fieldKey, this.value);
       }, 1000);
     });
   });

@@ -11,6 +11,8 @@ const DEFAULTS = {
     conditions: [],
     deathSaves: { successes: 0, failures: 0 },
     notes: "",
+    sessionNotes: "",
+    reminders: [],
     proficiencies: {},
     attacks: [
       { name: "Unarmed Strike", bonus: "+4", dmg: "1d4+2 bludgeoning", range: "Melee" },
@@ -37,6 +39,8 @@ const DEFAULTS = {
     conditions: [],
     deathSaves: { successes: 0, failures: 0 },
     notes: "",
+    sessionNotes: "",
+    reminders: [],
     proficiencies: {},
     attacks: [
       { name: "Longbow", bonus: "+5", dmg: "1d8+2 piercing", range: "150/600ft" },
@@ -61,6 +65,8 @@ const DEFAULTS = {
     conditions: [],
     deathSaves: { successes: 0, failures: 0 },
     notes: "",
+    sessionNotes: "",
+    reminders: [],
     proficiencies: {},
     attacks: [
       { name: "Morningstar", bonus: "+4", dmg: "1d8+2 piercing", range: "Melee" },
@@ -86,6 +92,8 @@ const DEFAULTS = {
     conditions: [],
     deathSaves: { successes: 0, failures: 0 },
     notes: "",
+    sessionNotes: "",
+    reminders: [],
     proficiencies: {},
     attacks: [
       { name: "Fire Bolt", bonus: "+4", dmg: "1d10 fire", range: "120ft" },
@@ -113,6 +121,8 @@ const DEFAULTS = {
     conditions: [],
     deathSaves: { successes: 0, failures: 0 },
     notes: "",
+    sessionNotes: "",
+    reminders: [],
     proficiencies: {},
     attacks: [
       { name: "Rapier", bonus: "+5", dmg: "1d8+3 piercing", range: "Melee" },

@@ -2599,6 +2599,16 @@ async function claimCharacter(idx) {
         proficiencies: serverState.proficiencies || {}
       };
       proficiencies = { ...proficiencies, ...CHARS[idx].proficiencies };
+      // Restore notes and reminders to DOM
+      const sessionEl = document.getElementById('session-notes');
+      const charEl = document.getElementById('char-notes');
+      if (sessionEl) sessionEl.value = serverState.sessionNotes || '';
+      if (charEl) charEl.value = serverState.notes || '';
+      const remindersList = document.getElementById('reminders-list');
+      if (remindersList && Array.isArray(serverState.reminders)) {
+        remindersList.innerHTML = '';
+        serverState.reminders.forEach(text => appendReminderItem(text));
+      }
     }
   } catch(e) { /* use defaults */ }
   loadChar(idx);
@@ -2806,7 +2816,25 @@ function toggleAdv(mode) { advMode=advMode===mode?null:mode; const ab=document.g
 function rollDice(sides,label) { let r,note=''; if(advMode==='adv'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.max(a,b);note=` (${a}, ${b})`;} else if(advMode==='dis'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.min(a,b);note=` (${a}, ${b})`;} else r=Math.ceil(Math.random()*sides); document.getElementById('dice-result').classList.add('show'); document.getElementById('dice-num').textContent=r+note; document.getElementById('dice-lbl').textContent=label+(advMode?' with '+(advMode==='adv'?'advantage':'disadvantage'):''); }
 function addAttack() { const name=document.getElementById('atk-name').value.trim(); if(!name)return; CHARS[currentChar].attacks.push({name,bonus:document.getElementById('atk-bonus').value.trim()||'+0',dmg:document.getElementById('atk-dmg').value.trim()||'—',range:document.getElementById('atk-range').value.trim()||'Melee'}); ['atk-name','atk-bonus','atk-dmg','atk-range'].forEach(id=>document.getElementById(id).value=''); document.getElementById('attack-form').classList.remove('show'); loadChar(currentChar); saveCharToServer(currentChar,'attacks',null,null); }
 function addItem() { const name=document.getElementById('loot-name').value.trim(); if(!name)return; CHARS[currentChar].items.push({name,desc:document.getElementById('loot-desc').value.trim(),qty:parseInt(document.getElementById('loot-qty').value,10)||1,star:false}); document.getElementById('loot-name').value=''; document.getElementById('loot-desc').value=''; document.getElementById('loot-qty').value='1'; document.getElementById('loot-form').classList.remove('show'); renderItems(CHARS[currentChar]); saveCharToServer(currentChar,'items',null,null); }
-function addReminder() { const inp=document.getElementById('reminder-input'),text=inp.value.trim(); if(!text)return; const list=document.getElementById('reminders-list'),item=document.createElement('div'); item.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-warm)'; item.innerHTML=`<div onclick="this.parentElement.remove()" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--warm-sand);cursor:pointer;flex-shrink:0;background:var(--parchment);"></div><span style="font-size:13px;color:var(--ink-deep);flex:1">${text}</span>`; list.appendChild(item); inp.value=''; }
+function appendReminderItem(text) {
+  const list = document.getElementById('reminders-list');
+  const item = document.createElement('div');
+  item.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-warm)';
+  item.innerHTML = `<div onclick="removeReminder(this)" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--warm-sand);cursor:pointer;flex-shrink:0;background:var(--parchment);"></div><span style="font-size:13px;color:var(--ink-deep);flex:1">${text}</span>`;
+  list.appendChild(item);
+}
+function saveReminders() {
+  const items = Array.from(document.querySelectorAll('#reminders-list span')).map(s => s.textContent);
+  const name = CHARS[currentChar]?.name?.toLowerCase();
+  if (!name) return;
+  fetch('/.netlify/functions/character_state?character=' + name)
+    .then(r => r.json()).then(state => {
+      state.reminders = items;
+      fetch('/.netlify/functions/character_state', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ character: name, state, field:'reminders', oldValue: null, newValue: items }) });
+    }).catch(() => {});
+}
+function removeReminder(el) { el.parentElement.remove(); saveReminders(); }
+function addReminder() { const inp=document.getElementById('reminder-input'),text=inp.value.trim(); if(!text)return; appendReminderItem(text); inp.value=''; saveReminders(); }
 
 // Keyboard
 document.getElementById('edit-input').addEventListener('keydown', e => { if(e.key==='Enter')saveEdit(); if(e.key==='Escape')closeEdit(); });
