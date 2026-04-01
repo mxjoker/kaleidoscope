@@ -897,10 +897,13 @@ body {
     </div>
     <div style="padding:0 16px 16px">
       <div class="card">
-        <div class="log-session-badge">Session 1 — Mimic Mayhem</div>
+        <div class="log-session-badge">Session 2 — The Wreck of the Salted Meridian</div>
         <div class="log-recap">
-          <p>The Kaleidoscope made port at Fenhollow after a stint at the Wandering Carnival of Vel in Crestmere. Before leaving, someone left a job on the captain's table — investigate the wreck of the Salted Meridian, reported drifting offshore.</p>
-          <p>Something happened at that carnival that nobody's quite talking about yet.</p>
+          <p>The crew investigated the wreck of the Salted Meridian and found Captain Vess alive in the debris. They pulled him out and paid 3gp to get him care at the local inn.</p>
+          <p>Wayne used Kimchi's IOU to get the harbormaster talking — Vess's box had been sold for 50gp. The party took the gold back. Wayne's carnival manifest turned out to contain a sigil linked to a cult of elemental worshippers.</p>
+          <p>They tracked a woman named Maren Thoss to the Carrow Arms. After a failed con and Myrtle getting caught picking Thoss's pocket, she fled. The guards investigated but the party talked their way out. Thoss is still wanted. <em>Myrtle is wanted by the Port Carrow guards.</em></p>
+          <p>The crew chased Thoss to the Ironside Inn — broke in the back, waterboarded the front desk, kicked in the door — and found her trying to release a water elemental from a chest. They killed Thoss. Wayne used Rope Trick to punt the chest into a pocket dimension. The elemental is still in there.</p>
+          <p>Total haul: 180gp split seven ways. The captain's personal box is still missing — known to contain a magic sextant. Next session: <strong>Ratstew Gap</strong>.</p>
         </div>
       </div>
       <div class="card">
@@ -908,19 +911,19 @@ body {
         <table class="gold-table">
           <thead><tr><th>Character</th><th>Class</th><th>Gold (gp)</th></tr></thead>
           <tbody>
-            <tr><td>Axel Flameborn</td><td style="color:var(--warm-sand);font-size:12px">Monk 3</td><td><span class="gold-amt">307</span></td></tr>
-            <tr><td>Quincy Schueb</td><td style="color:var(--warm-sand);font-size:12px">Ranger 4</td><td><span class="gold-amt">26</span></td></tr>
-            <tr><td>Rapha</td><td style="color:var(--warm-sand);font-size:12px">Paladin 2</td><td><span class="gold-amt">133</span></td></tr>
-            <tr><td>Wayne Kerr</td><td style="color:var(--warm-sand);font-size:12px">Wizard 3</td><td><span class="gold-amt">120</span></td></tr>
-            <tr><td>Myrtle</td><td style="color:var(--warm-sand);font-size:12px">Rogue</td><td><span class="gold-amt">0</span></td></tr>
+            <tr><td>Axel Flameborn</td><td style="color:var(--warm-sand);font-size:12px">Monk 3</td><td><span class="gold-amt">354</span></td></tr>
+            <tr><td>Quincy Schueb</td><td style="color:var(--warm-sand);font-size:12px">Ranger 4</td><td><span class="gold-amt">283</span></td></tr>
+            <tr><td>Rapha</td><td style="color:var(--warm-sand);font-size:12px">Paladin 2</td><td><span class="gold-amt">120</span></td></tr>
+            <tr><td>Wayne Kerr</td><td style="color:var(--warm-sand);font-size:12px">Wizard 3</td><td><span class="gold-amt">150</span></td></tr>
+            <tr><td>Myrtle</td><td style="color:var(--warm-sand);font-size:12px">Rogue 3</td><td><span class="gold-amt">51</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="card">
         <div class="card-title">Next Voyage</div>
         <div class="hook-card" style="margin:0">
-          <div class="hook-title">The Wreck of the Salted Meridian</div>
-          <div class="hook-body">A derelict ship, registered to a Captain Vess, has been spotted drifting half a mile off the Fenhollow coast. The harbour authority closed the file fast. Someone left a lantern burning.</div>
+          <div class="hook-title">Ratstew Gap</div>
+          <div class="hook-body">A mountain pass in the Grandspire range. Two halfling pilgrims — the last survivors of a decimated caravan — need shepherding through to build a shrine at the gap. Everyone starts at half HP. Something is very wrong with the inn.</div>
         </div>
       </div>
     </div>
@@ -1642,6 +1645,11 @@ body {
           <div class="dm-section-title">🏦 Kimchi's Bank</div>
           <div id="dm-bank">Loading...</div>
         </div>
+        <div class="card">
+          <div class="dm-section-title">📋 Sheet Changes</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:8px">HP, gold, and stat edits made by players during the session.</div>
+          <div id="dm-sheet-changes">Loading...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1670,7 +1678,7 @@ body {
 <!-- More menu -->
 <div class="more-overlay" id="more-overlay" onclick="closeMore()"></div>
 <div class="more-menu" id="more-menu">
-  <button class="more-item" onclick="showPanel('sheet');closeMore()">⚔️ My Sheet</button>
+  <button class="more-item" onclick="showPanel('sheet');closeMore()" style="color:var(--gold);border-bottom:1px solid var(--border-warm);margin-bottom:4px;padding-bottom:14px">⚔️ My Sheet</button>
   <button class="more-item" onclick="showPanel('newcrew');closeMore()">👥 New Crew</button>
   <button class="more-item" onclick="showPanel('provisions');closeMore()">🛒 Provisions</button>
   <button class="more-item" onclick="showPanel('ledger');closeMore()">📖 Crew Ledger</button>
@@ -2218,19 +2226,149 @@ async function loadDMReport() {
     // Bank
     const bank = data.globalState?.kimchiBank ?? 100;
     document.getElementById('dm-bank').innerHTML = `<div class="dm-row"><span class="dm-key">Kimchi's remaining bank</span><span class="dm-val" style="font-family:'Cinzel',serif;font-size:16px;color:#7a5a00">${bank} gp</span></div>`;
+
+    // Sheet changes
+    const sheetEvents = (data.events || []).filter(e => e.type === 'sheet_change' && e.field && e.oldValue !== null && e.newValue !== null && e.oldValue !== e.newValue);
+    let sheetHtml = sheetEvents.slice(-30).reverse().map(e => {
+      const time = new Date(e.timestamp).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="dm-row"><span class="dm-key">${e.character} · ${e.field}</span><span class="dm-val">${e.oldValue} → ${e.newValue} <span style="color:var(--warm-sand);font-size:10px">${time}</span></span></div>`;
+    }).join('');
+    document.getElementById('dm-sheet-changes').innerHTML = sheetHtml || '<div style="color:var(--warm-sand);font-size:13px;font-style:italic">No sheet changes yet.</div>';
   } catch(e) {
     document.getElementById('dm-votes').innerHTML = '<div style="color:var(--rust);font-size:13px">Could not load state.</div>';
   }
 }
 
 // ══════════ CHARACTER SHEET ══════════
-const CHARS = [
-  { name:'Axel', class:'Monk 3', race:'Dragonborn', str:16, dex:16, con:14, int:10, wis:14, cha:8, hp:24, maxHp:24, ac:16, speed:35, pp:14, prof:2, attacks:[{name:'Flurry Strike',bonus:'+5',dmg:'1d6+3 bludgeoning',range:'Melee'},{name:'Blazing Fists',bonus:'+5',dmg:'1d6+3 + 1d6 fire',range:'Melee (1 ki)'}], slots:[], coins:{gp:307,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Blazing Fists Tattoo',desc:'+1d6 fire unarmed, 1 ki, 1/long rest',qty:1,star:true}] },
-  { name:'Quincy', class:'Ranger 4', race:'Wood Elf', str:10, dex:18, con:12, int:12, wis:14, cha:10, hp:32, maxHp:32, ac:15, speed:35, pp:14, prof:2, attacks:[{name:'Longbow',bonus:'+6',dmg:'1d8+4 piercing',range:'150/600ft'},{name:'Shortsword',bonus:'+6',dmg:'1d6+4 piercing',range:'Melee'}], slots:[{lvl:'1st',total:3,used:0}], coins:{gp:26,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Blue (Sprite)',desc:'Animal companion, tiny fey',qty:1,star:true}] },
-  { name:'Rapha', class:'Paladin 2', race:'Half-Elf', str:16, dex:10, con:14, int:10, wis:12, cha:16, hp:18, maxHp:18, ac:18, speed:30, pp:11, prof:2, attacks:[{name:'Longsword',bonus:'+5',dmg:'1d8+3 slashing',range:'Melee'},{name:'Divine Smite',bonus:'—',dmg:'2d8 radiant',range:'On hit'}], slots:[{lvl:'1st',total:2,used:0}], coins:{gp:133,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Cotton Candy Cloud',desc:'Feather Fall 1 round',qty:1,star:true},{name:'Glittercorn Popcorn',desc:'DC 10 Con or blinded 10ft',qty:1,star:false}] },
-  { name:'Wayne', class:'Wizard 3', race:'Gnome', str:8, dex:14, con:12, int:18, wis:13, cha:19, hp:16, maxHp:16, ac:13, speed:25, pp:13, prof:2, attacks:[{name:'Fire Bolt',bonus:'+6',dmg:'1d10 fire',range:'120ft'},{name:'Staff',bonus:'+1',dmg:'1d6−1 bludgeoning',range:'Melee'}], slots:[{lvl:'1st',total:4,used:0},{lvl:'2nd',total:2,used:0}], coins:{gp:120,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Charm of Spark',desc:'Lightning Bolt 1/day, no slot',qty:1,star:true},{name:'Carnival Manifest',desc:'Partially unknown script, Wayne\'s name at bottom',qty:1,star:true}] },
-  { name:'Myrtle', class:'Rogue ~3', race:'Unknown', str:10, dex:18, con:12, int:14, wis:13, cha:12, hp:22, maxHp:22, ac:14, speed:30, pp:14, prof:2, attacks:[{name:'Dagger',bonus:'+6',dmg:'1d4+4 piercing',range:'Melee / 20ft'},{name:'Sneak Attack',bonus:'—',dmg:'+2d6 on eligible hit',range:'—'}], slots:[], coins:{gp:0,sp:0,cp:0,ep:0,pp:0}, items:[{name:'Locked Carnival Box',desc:'Dark lacquered, no keyhole, faintly warm',qty:1,star:true},{name:'Silent Steps Tattoo',desc:'Advantage on Stealth checks, permanent',qty:1,star:true}] }
+// CHARS holds the in-memory working state. On load, server state overlays these defaults.
+const CHAR_DEFAULTS = [
+  { name:'Axel', class:'Monk 3', race:'Dragonborn (Blue — Lightning)',
+    str:10, dex:15, con:14, int:10, wis:16, cha:13,
+    hp:21, maxHp:21, tempHp:0, ac:15, speed:40, pp:13, prof:2,
+    attacks:[
+      {name:'Unarmed Strike', bonus:'+4', dmg:'1d4+2 bludgeoning', range:'Melee'},
+      {name:'Dagger +1',      bonus:'+5', dmg:'1d4+3 piercing',    range:'Melee / 20ft'},
+      {name:'Blazing Fists',  bonus:'—',  dmg:'+1d6 fire',          range:'1 ki, 1/long rest'},
+      {name:'Breath Weapon',  bonus:'—',  dmg:'2d6 lightning (Dex save)', range:'5×30ft line, 1/rest'}
+    ],
+    slots:[], coins:{gp:354,sp:0,cp:0,ep:0,pp:0},
+    items:[
+      {name:'Blazing Fists Tattoo', desc:'+1d6 fire on unarmed strikes, 1 ki, 1/long rest', qty:1, star:true},
+      {name:'Dagger +1',            desc:'',                                                   qty:1, star:false},
+      {name:'Bracer of Defense',    desc:'',                                                   qty:1, star:false},
+      {name:'Grappling Hook',       desc:'',                                                   qty:1, star:false},
+      {name:'10 Darts',             desc:'',                                                   qty:10, star:false}
+    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+
+  { name:'Quincy', class:'Ranger 4', race:'Wood Elf',
+    str:12, dex:16, con:13, int:9, wis:14, cha:10,
+    hp:26, maxHp:26, tempHp:0, ac:15, speed:35, pp:14, prof:2,
+    attacks:[
+      {name:'Longbow',      bonus:'+5', dmg:'1d8+2 piercing',          range:'150/600ft'},
+      {name:'Shortsword',   bonus:'+5', dmg:'1d6+2 piercing',          range:'Melee'},
+      {name:'Longsword',    bonus:'+3', dmg:'1d8+2 slashing (1d10 2H)', range:'Melee'},
+      {name:"Hunter's Mark",bonus:'—',  dmg:'+1d6 on marked target',    range:'Concentration, 1hr'}
+    ],
+    slots:[{lvl:'1st',total:3,used:0}], coins:{gp:283,sp:0,cp:0,ep:0,pp:0},
+    items:[
+      {name:'Blue (Sprite)',        desc:'Beastmaster companion — AC 17, HP 12, fly 40ft, invisibility, poisoned shortbow', qty:1, star:true},
+      {name:'Fizzy Firebreath Soda',desc:'10ft cone, DC 11 Dex or 1d4 fire', qty:1, star:false},
+      {name:'Health Potion',        desc:'2d4+2 HP',                          qty:1, star:false}
+    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+
+  { name:'Rapha', class:'Paladin 2', race:'Half-Elf',
+    str:14, dex:12, con:8, int:11, wis:12, cha:15,
+    hp:24, maxHp:24, tempHp:0, ac:16, speed:30, pp:13, prof:2,
+    attacks:[
+      {name:'Morningstar',   bonus:'+4', dmg:'1d8+2 piercing', range:'Melee'},
+      {name:'Dagger',        bonus:'+4', dmg:'1d4+2 piercing', range:'Melee / 20/60ft'},
+      {name:'Divine Smite',  bonus:'—',  dmg:'2d8 radiant',    range:'On hit (uses slot)'},
+      {name:'Divine Favor',  bonus:'—',  dmg:'+1d4 radiant',   range:'Concentration, 1 min'}
+    ],
+    slots:[{lvl:'1st',total:3,used:0}], coins:{gp:120,sp:0,cp:0,ep:0,pp:0},
+    items:[
+      {name:'Cotton Candy Cloud',  desc:'Feather Fall 1 round',                              qty:1, star:true},
+      {name:'Music Charm',         desc:'Advantage on Persuasion for 10 min (carnival prize)',qty:1, star:true},
+      {name:'Glittercorn Popcorn', desc:'DC 10 Con or blinded 1 turn in 10ft radius',        qty:1, star:false},
+      {name:"Healer's Kit",        desc:'Stabilise a creature, 10 uses',                     qty:1, star:false}
+    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+
+  { name:'Wayne', class:'Wizard 3', race:'Gnome',
+    str:8, dex:11, con:10, int:15, wis:14, cha:19,
+    hp:14, maxHp:14, tempHp:0, ac:10, speed:30, pp:12, prof:2,
+    attacks:[
+      {name:'Fire Bolt',     bonus:'+4', dmg:'1d10 fire',           range:'120ft'},
+      {name:'Quarterstaff',  bonus:'-1', dmg:'1d6-1 bludgeoning',   range:'Melee'},
+      {name:'Charm of Spark',bonus:'—',  dmg:'Lightning Bolt 1st lv',range:'1/day, no slot'}
+    ],
+    slots:[{lvl:'1st',total:4,used:0},{lvl:'2nd',total:2,used:0}],
+    coins:{gp:150,sp:0,cp:0,ep:0,pp:0},
+    items:[
+      {name:'Charm of Spark',    desc:'Lightning Bolt 1/day at 1st level, no slot required',               qty:1, star:true},
+      {name:'Carnival Manifest', desc:'Partially unknown script — Wayne\'s name at bottom, elemental cult sigil', qty:1, star:true},
+      {name:'Cloak of Billowing',desc:'Billows dramatically on command. Purely cosmetic.',                  qty:1, star:false},
+      {name:'Pearl of Power (Lesser)', desc:'Recover one 1st-level spell slot (1/day)',                   qty:1, star:false}
+    ], notes:'', charNotes:'', reminders:[], proficiencies:{} },
+
+  { name:'Myrtle', class:'Rogue 3', race:'Halfling',
+    str:12, dex:17, con:15, int:10, wis:8, cha:13,
+    hp:24, maxHp:24, tempHp:0, ac:13, speed:30, pp:13, prof:2,
+    attacks:[
+      {name:'Rapier',       bonus:'+5', dmg:'1d8+3 piercing', range:'Melee'},
+      {name:'Hand Crossbow',bonus:'+5', dmg:'1d6+3 piercing', range:'30/120ft'},
+      {name:'Shortsword',   bonus:'+5', dmg:'1d6+3 piercing', range:'Melee'},
+      {name:'Sneak Attack', bonus:'—',  dmg:'+2d6 on eligible hit', range:'—'}
+    ],
+    slots:[], coins:{gp:51,sp:0,cp:0,ep:0,pp:0},
+    items:[
+      {name:'Locked Carnival Box',   desc:'Picked off a fire-breather. Dark lacquered, no keyhole, faintly warm.', qty:1, star:true},
+      {name:'Gloves of Thievery',    desc:'+5 to Sleight of Hand and lockpicking, invisible while worn',            qty:1, star:true},
+      {name:'Silent Steps Tattoo',   desc:'Advantage on Stealth for 10 min (1/long rest)',                          qty:1, star:true},
+      {name:'Bag of Chalk Shadows',  desc:'5ft puff of darkness 1/day',                                             qty:1, star:false},
+      {name:'Disguise Kit',          desc:'',                                                                        qty:1, star:false}
+    ], notes:'', charNotes:'', reminders:[], proficiencies:{} }
 ];
+
+// Working copy — gets overlaid with server state on load
+let CHARS = CHAR_DEFAULTS.map(c => ({...c, items:[...c.items.map(i=>({...i}))], slots:[...c.slots.map(s=>({...s}))], coins:{...c.coins}}));
+
+// ── Server-backed character state ──
+let claimedCharacter = null; // which character this browser has claimed
+
+async function claimCharacter(idx) {
+  claimedCharacter = idx;
+  const name = CHARS[idx].name.toLowerCase();
+  try {
+    const res = await fetch(`/.netlify/functions/character_state?character=${name}`);
+    if (res.ok) {
+      const serverState = await res.json();
+      // Overlay server state onto working copy
+      CHARS[idx] = { ...CHARS[idx], ...serverState,
+        items: serverState.items || CHARS[idx].items,
+        slots: serverState.slots || CHARS[idx].slots,
+        coins: serverState.coins || CHARS[idx].coins,
+        proficiencies: serverState.proficiencies || {}
+      };
+      proficiencies = { ...proficiencies, ...CHARS[idx].proficiencies };
+    }
+  } catch(e) { /* use defaults */ }
+  loadChar(idx);
+}
+
+async function saveCharToServer(idx, field, oldValue, newValue) {
+  if (claimedCharacter !== idx) return; // only save your own sheet
+  const name = CHARS[idx].name.toLowerCase();
+  const state = CHARS[idx];
+  // Store proficiencies on the char object so they persist
+  state.proficiencies = proficiencies;
+  try {
+    await fetch('/.netlify/functions/character_state', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ character: name, state, field, oldValue, newValue })
+    });
+  } catch(e) {}
+}
 const SAVES = ['STR','DEX','CON','INT','WIS','CHA'];
 const SKILLS_DEF = [
   {name:'Acrobatics',attr:'DEX'},{name:'Animal Handling',attr:'WIS'},{name:'Arcana',attr:'INT'},{name:'Athletics',attr:'STR'},
@@ -2351,42 +2489,65 @@ function makeItemRow(it, idx) {
   return row;
 }
 
-function toggleStar(idx) { const c = CHARS[currentChar]; if(c.items[idx]) c.items[idx].star = !c.items[idx].star; renderItems(c); }
-function adjustCoin(type, delta) { const c = CHARS[currentChar]; c.coins[type] = Math.max(0,(c.coins[type]||0)+delta); document.getElementById('coin-'+type).textContent = c.coins[type]; }
-function cyclePip(el, key, ci, type) {
-  proficiencies[key] = ((proficiencies[key]||0)+1)%3;
-  el.className = 'skill-pip '+(proficiencies[key]===2?'expert':proficiencies[key]===1?'prof':'');
-  const c = CHARS[ci]; const be = el.parentElement.querySelector('.skill-bonus'); const ne = el.parentElement.querySelector('.skill-name');
+function toggleStar(idx) { const c=CHARS[currentChar]; if(c.items[idx]) c.items[idx].star=!c.items[idx].star; renderItems(c); saveCharToServer(currentChar,'items',null,null); }
+function adjustCoin(type,delta) { const c=CHARS[currentChar]; const old=c.coins[type]||0; c.coins[type]=Math.max(0,old+delta); document.getElementById('coin-'+type).textContent=c.coins[type]; saveCharToServer(currentChar,`coins.${type}`,old,c.coins[type]); }
+function cyclePip(el,key,ci,type) {
+  proficiencies[key]=((proficiencies[key]||0)+1)%3;
+  el.className='skill-pip '+(proficiencies[key]===2?'expert':proficiencies[key]===1?'prof':'');
+  const c=CHARS[ci]; const be=el.parentElement.querySelector('.skill-bonus'); const ne=el.parentElement.querySelector('.skill-name');
   if(!be||!ne) return;
-  const name = ne.textContent; const p = proficiencies[key];
-  const base = type==='save' ? getAttrMod(c,name.replace(' Save','')) : getAttrMod(c,(SKILLS_DEF.find(s=>s.name===name)||{attr:'STR'}).attr);
-  be.textContent = fmtMod(base+(p===2?c.prof*2:p===1?c.prof:0));
+  const name=ne.textContent; const p=proficiencies[key];
+  const base=type==='save'?getAttrMod(c,name.replace(' Save','')):getAttrMod(c,(SKILLS_DEF.find(s=>s.name===name)||{attr:'STR'}).attr);
+  be.textContent=fmtMod(base+(p===2?c.prof*2:p===1?c.prof:0));
+  saveCharToServer(ci,'proficiencies',null,null);
 }
-function toggleSlot(ci,si,pi) { const s=CHARS[ci].slots[si]; s.used=pi<s.used?pi:pi+1; if(s.used>s.total)s.used=0; loadChar(ci); }
-function selectChar(i) { currentChar=i; document.querySelectorAll('.char-btn').forEach((b,bi)=>b.classList.toggle('active',bi===i)); loadChar(i); }
+function toggleSlot(ci,si,pi) { const s=CHARS[ci].slots[si]; s.used=pi<s.used?pi:pi+1; if(s.used>s.total)s.used=0; loadChar(ci); saveCharToServer(ci,'slots',null,null); }
+function selectChar(i) { currentChar=i; document.querySelectorAll('.char-btn').forEach((b,bi)=>b.classList.toggle('active',bi===i)); claimCharacter(i); }
 function showCSTab(tab) {
   document.querySelectorAll('.cs-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('cs-'+tab).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(b=>{ if(b.textContent.toLowerCase().replace(/[^a-z]/g,'').includes(tab.replace(/-/g,''))) b.classList.add('active'); });
 }
-function openEdit(id,label) { editTarget=id; const el=document.getElementById(id); document.getElementById('edit-label').textContent='Set '+label; document.getElementById('edit-input').value=el?el.textContent.replace(/[+×—]/g,''):''; document.getElementById('edit-modal').classList.add('show'); setTimeout(()=>document.getElementById('edit-input').focus(),100); }
+function openEdit(id,label) { editTarget=id; const el=document.getElementById(id); document.getElementById('edit-label').textContent='Set '+label; document.getElementById('edit-input').value=el?el.textContent.replace(/[+×—−]/g,''):''; document.getElementById('edit-modal').classList.add('show'); setTimeout(()=>document.getElementById('edit-input').focus(),100); }
 function saveEdit() {
   const val=document.getElementById('edit-input').value.trim(); if(!val){closeEdit();return;}
-  const c=CHARS[currentChar]; const n=parseInt(val,10);
-  const map={'hp-current':()=>{c.hp=Math.min(n,c.maxHp);},'hp-max':()=>{c.maxHp=n;},'temp-hp':()=>{c.tempHp=n;},'stat-str':()=>{c.str=n;},'stat-dex':()=>{c.dex=n;},'stat-con':()=>{c.con=n;},'stat-int':()=>{c.int=n;},'stat-wis':()=>{c.wis=n;},'stat-cha':()=>{c.cha=n;},'qs-ac':()=>{c.ac=n;},'qs-speed':()=>{c.speed=n;},'qs-pp':()=>{c.pp=n;},'prof-bonus':()=>{c.prof=n;}};
+  const c=CHARS[currentChar]; const n=parseInt(val,10); const old=c[editTarget?.replace('stat-','').replace('qs-','')] || c.hp;
+  const map={
+    'hp-current':()=>{const o=c.hp;c.hp=Math.min(n,c.maxHp);saveCharToServer(currentChar,'hp',o,c.hp);},
+    'hp-max':()=>{const o=c.maxHp;c.maxHp=n;saveCharToServer(currentChar,'maxHp',o,n);},
+    'temp-hp':()=>{c.tempHp=n;saveCharToServer(currentChar,'tempHp',null,n);},
+    'stat-str':()=>{const o=c.str;c.str=n;saveCharToServer(currentChar,'str',o,n);},
+    'stat-dex':()=>{const o=c.dex;c.dex=n;saveCharToServer(currentChar,'dex',o,n);},
+    'stat-con':()=>{const o=c.con;c.con=n;saveCharToServer(currentChar,'con',o,n);},
+    'stat-int':()=>{const o=c.int;c.int=n;saveCharToServer(currentChar,'int',o,n);},
+    'stat-wis':()=>{const o=c.wis;c.wis=n;saveCharToServer(currentChar,'wis',o,n);},
+    'stat-cha':()=>{const o=c.cha;c.cha=n;saveCharToServer(currentChar,'cha',o,n);},
+    'qs-ac':()=>{const o=c.ac;c.ac=n;saveCharToServer(currentChar,'ac',o,n);},
+    'qs-speed':()=>{const o=c.speed;c.speed=n;saveCharToServer(currentChar,'speed',o,n);},
+    'qs-pp':()=>{const o=c.pp;c.pp=n;saveCharToServer(currentChar,'pp',o,n);},
+    'prof-bonus':()=>{const o=c.prof;c.prof=n;saveCharToServer(currentChar,'prof',o,n);}
+  };
   if(map[editTarget])map[editTarget]();
-  else if(editTarget.startsWith('coin-'))c.coins[editTarget.replace('coin-','')]=Math.max(0,n);
+  else if(editTarget?.startsWith('coin-')){const k=editTarget.replace('coin-','');const o=c.coins[k];c.coins[k]=Math.max(0,n);saveCharToServer(currentChar,`coins.${k}`,o,n);}
   closeEdit(); loadChar(currentChar);
 }
 function closeEdit() { document.getElementById('edit-modal').classList.remove('show'); editTarget=null; }
 function showHPInput(mode) { hpAdjMode=mode; document.getElementById('hp-input-row').classList.add('show'); document.getElementById('hp-adj-input').value=''; document.getElementById('hp-adj-input').focus(); }
-function applyHP() { const val=parseInt(document.getElementById('hp-adj-input').value,10)||0; const c=CHARS[currentChar]; if(hpAdjMode==='dmg')c.hp=Math.max(0,c.hp-val); else if(hpAdjMode==='heal')c.hp=Math.min(c.maxHp,c.hp+val); else c.tempHp=val; document.getElementById('hp-input-row').classList.remove('show'); loadChar(currentChar); }
+function applyHP() {
+  const val=parseInt(document.getElementById('hp-adj-input').value,10)||0;
+  const c=CHARS[currentChar]; const old=c.hp;
+  if(hpAdjMode==='dmg'){c.hp=Math.max(0,c.hp-val);saveCharToServer(currentChar,'hp',old,c.hp);}
+  else if(hpAdjMode==='heal'){c.hp=Math.min(c.maxHp,c.hp+val);saveCharToServer(currentChar,'hp',old,c.hp);}
+  else{c.tempHp=val;saveCharToServer(currentChar,'tempHp',null,val);}
+  document.getElementById('hp-input-row').classList.remove('show');
+  loadChar(currentChar);
+}
 function toggleInspiration() { inspiration=!inspiration; const btn=document.getElementById('insp-btn'); btn.textContent=inspiration?'✦ INSPIRED!':'✦ INSPIRATION'; btn.style.background=inspiration?'#7a5a00':'#5a4200'; btn.style.borderColor=inspiration?'#d4a832':'#a07800'; btn.style.color=inspiration?'#fff8d0':'#fde97a'; }
 function toggleAdv(mode) { advMode=advMode===mode?null:mode; const ab=document.getElementById('adv-btn'),db=document.getElementById('dis-btn'); ab.style.background=advMode==='adv'?'#1e8449':'#1a5c33'; ab.style.borderColor=advMode==='adv'?'#52d68a':'#27864d'; db.style.background=advMode==='dis'?'#9c3a28':'#6b2318'; db.style.borderColor=advMode==='dis'?'#e05a44':'#9c3a28'; }
 function rollDice(sides,label) { let r,note=''; if(advMode==='adv'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.max(a,b);note=` (${a}, ${b})`;} else if(advMode==='dis'){const a=Math.ceil(Math.random()*sides),b=Math.ceil(Math.random()*sides);r=Math.min(a,b);note=` (${a}, ${b})`;} else r=Math.ceil(Math.random()*sides); document.getElementById('dice-result').classList.add('show'); document.getElementById('dice-num').textContent=r+note; document.getElementById('dice-lbl').textContent=label+(advMode?' with '+(advMode==='adv'?'advantage':'disadvantage'):''); }
-function addAttack() { const name=document.getElementById('atk-name').value.trim(); if(!name)return; CHARS[currentChar].attacks.push({name,bonus:document.getElementById('atk-bonus').value.trim()||'+0',dmg:document.getElementById('atk-dmg').value.trim()||'—',range:document.getElementById('atk-range').value.trim()||'Melee'}); ['atk-name','atk-bonus','atk-dmg','atk-range'].forEach(id=>document.getElementById(id).value=''); document.getElementById('attack-form').classList.remove('show'); loadChar(currentChar); }
-function addItem() { const name=document.getElementById('loot-name').value.trim(); if(!name)return; CHARS[currentChar].items.push({name,desc:document.getElementById('loot-desc').value.trim(),qty:parseInt(document.getElementById('loot-qty').value,10)||1,star:false}); document.getElementById('loot-name').value=''; document.getElementById('loot-desc').value=''; document.getElementById('loot-qty').value='1'; document.getElementById('loot-form').classList.remove('show'); renderItems(CHARS[currentChar]); }
+function addAttack() { const name=document.getElementById('atk-name').value.trim(); if(!name)return; CHARS[currentChar].attacks.push({name,bonus:document.getElementById('atk-bonus').value.trim()||'+0',dmg:document.getElementById('atk-dmg').value.trim()||'—',range:document.getElementById('atk-range').value.trim()||'Melee'}); ['atk-name','atk-bonus','atk-dmg','atk-range'].forEach(id=>document.getElementById(id).value=''); document.getElementById('attack-form').classList.remove('show'); loadChar(currentChar); saveCharToServer(currentChar,'attacks',null,null); }
+function addItem() { const name=document.getElementById('loot-name').value.trim(); if(!name)return; CHARS[currentChar].items.push({name,desc:document.getElementById('loot-desc').value.trim(),qty:parseInt(document.getElementById('loot-qty').value,10)||1,star:false}); document.getElementById('loot-name').value=''; document.getElementById('loot-desc').value=''; document.getElementById('loot-qty').value='1'; document.getElementById('loot-form').classList.remove('show'); renderItems(CHARS[currentChar]); saveCharToServer(currentChar,'items',null,null); }
 function addReminder() { const inp=document.getElementById('reminder-input'),text=inp.value.trim(); if(!text)return; const list=document.getElementById('reminders-list'),item=document.createElement('div'); item.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-warm)'; item.innerHTML=`<div onclick="this.parentElement.remove()" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--warm-sand);cursor:pointer;flex-shrink:0;background:var(--parchment);"></div><span style="font-size:13px;color:var(--ink-deep);flex:1">${text}</span>`; list.appendChild(item); inp.value=''; }
 
 // Keyboard
@@ -2397,7 +2558,7 @@ document.getElementById('letter-unlock-input').addEventListener('keydown', e => 
 
 // ══════════ INIT ══════════
 document.getElementById('notes-date').textContent = 'Session — ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-loadChar(0);
+claimCharacter(0); // load Axel from server on startup
 </script>
 </body>
 </html>
