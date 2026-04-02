@@ -1187,6 +1187,65 @@ body {
         </div>
         <!-- /memory-board-section -->
 
+        <!-- ══ BRASS NAVIGATOR ══ -->
+        <div id="navigator-section" style="display:none;border-top:2px solid var(--border-warm)">
+          <div style="padding:14px 16px 12px;border-bottom:1px solid var(--border-warm)">
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">🧭 The Brass Navigator</div>
+            <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">Not all directions are meant to be followed. Some are meant to be avoided.</div>
+          </div>
+          <div style="padding:14px 16px 6px">
+            <div style="font-size:11px;color:var(--seafoam);margin-bottom:14px">Align the three rings. If the combination is right, something will unlock.</div>
+
+            <!-- Three selectors -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+
+              <!-- Star ring -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+                <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.06em;text-align:center">STAR</div>
+                <div id="nav-star-display" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);background:rgba(14,31,43,0.9);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="cycleNav('star')">⭐</div>
+                <div id="nav-star-label" style="font-size:9px;color:var(--warm-sand);text-align:center;font-style:italic;min-height:24px;line-height:1.3">Faded North Star</div>
+              </div>
+
+              <!-- Wind ring -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+                <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.06em;text-align:center">WIND</div>
+                <div id="nav-wind-display" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);background:rgba(14,31,43,0.9);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="cycleNav('wind')">💨</div>
+                <div id="nav-wind-label" style="font-size:9px;color:var(--warm-sand);text-align:center;font-style:italic;min-height:24px;line-height:1.3">No Wind</div>
+              </div>
+
+              <!-- Moon ring -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+                <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.06em;text-align:center">MOON</div>
+                <div id="nav-moon-display" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);background:rgba(14,31,43,0.9);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="cycleNav('moon')">🌑</div>
+                <div id="nav-moon-label" style="font-size:9px;color:var(--warm-sand);text-align:center;font-style:italic;min-height:24px;line-height:1.3">New Moon</div>
+              </div>
+
+            </div>
+
+            <!-- Feedback line -->
+            <div id="nav-feedback" style="text-align:center;font-size:11px;color:#7a6a55;font-style:italic;margin-bottom:14px;min-height:16px"></div>
+          </div>
+
+          <!-- Unlocked echoes — hidden until discovered -->
+          <div id="nav-echo-1" style="display:none;margin:0 16px 12px;background:rgba(61,154,170,0.08);border:1px solid rgba(61,154,170,0.3);border-radius:10px;padding:12px 14px">
+            <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--teal-bright);letter-spacing:0.06em;margin-bottom:6px">📖 CAPTAIN'S LOG ECHO — I</div>
+            <div style="font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"The sea was flat as glass. No stars, no wind. The bell rang on its own.<br><br>Crew asked if we were anchored. We weren't.<br>Something else was holding us."</div>
+          </div>
+          <div id="nav-echo-2" style="display:none;margin:0 16px 12px;background:rgba(61,154,170,0.08);border:1px solid rgba(61,154,170,0.3);border-radius:10px;padding:12px 14px">
+            <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--teal-bright);letter-spacing:0.06em;margin-bottom:6px">📖 CAPTAIN'S LOG ECHO — II</div>
+            <div style="font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"We followed a sky that wasn't ours. Constellations shifted. Crew thought I was lost.<br><br>I wasn't. I was being led.<br>I stopped trusting the stars after that. They don't lie. But something can lie through them."</div>
+          </div>
+          <div id="nav-echo-3" style="display:none;margin:0 16px 12px;background:rgba(61,154,170,0.08);border:1px solid rgba(61,154,170,0.3);border-radius:10px;padding:12px 14px">
+            <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--teal-bright);letter-spacing:0.06em;margin-bottom:6px">📖 CAPTAIN'S LOG ECHO — III</div>
+            <div style="font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"Two winds. Opposite directions. Same sea. Only one of them touched the ship.<br><br>That's when I knew. It wasn't trying to sink us.<br>It was trying to choose."</div>
+          </div>
+
+          <div style="padding:0 16px 14px">
+            <div id="nav-echo-count" style="font-size:10px;color:#7a6a55;font-style:italic;text-align:center"></div>
+          </div>
+        </div>
+        <!-- /navigator-section -->
+
       </div><!-- /chat-cabin -->
 
     </div>
@@ -2026,6 +2085,20 @@ body {
           </div>
           <div id="dm-memory-board-live" style="margin-top:12px;font-size:12px;color:var(--warm-sand)">—</div>
         </div>
+        <div class="card">
+          <div class="dm-section-title">🧭 Captain's Quarters — Brass Navigator</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:12px">Players align three rings to unlock Captain's Log Echoes. Three correct combos — unlocks persist in Blobs so all players see them.</div>
+          <div style="font-size:11px;color:var(--cream);margin-bottom:10px;line-height:1.6">
+            <strong style="color:var(--gold)">Echo I:</strong> ⭐ Faded North Star + 💨 No Wind + 🌑 New Moon<br>
+            <strong style="color:var(--gold)">Echo II:</strong> ⭐ Broken Constellation + 💨 East Wind + 🌓 Half Moon<br>
+            <strong style="color:var(--gold)">Echo III:</strong> ⭐ Hidden Star + 💨 Opposing Winds + 🌕 Full Moon
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button onclick="toggleNavigatorSection()" id="dm-navigator-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🧭 NAVIGATOR: HIDDEN</button>
+            <button onclick="dmResetNavigator()" style="padding:9px 18px;background:#1a3344;border:1px solid var(--rust);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--rust);font-weight:600;cursor:pointer;letter-spacing:0.06em;">↺ Reset Unlocks</button>
+          </div>
+          <div id="dm-navigator-live" style="margin-top:10px;font-size:12px;color:var(--warm-sand)">—</div>
+        </div>
         <div class="debug-panel">
           <div class="debug-panel-header">
             <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
@@ -2217,6 +2290,8 @@ function selectLocation(loc) {
     loadSeaChartState();
     applyMemoryBoardSectionState();
     if (localStorage.getItem('memory-board-section') === 'on') loadMemoryBoard();
+    applyNavigatorSectionState();
+    if (localStorage.getItem('navigator-section') === 'on') loadNavigatorUnlocks();
   }
 
   // Greet if first time
@@ -2957,7 +3032,152 @@ async function dmClearMemoryBoard() {
   } catch (e) { alert('Could not clear board.'); }
 }
 
-// ══════════ TRAINING ══════════
+// ══════════ BRASS NAVIGATOR ══════════
+const NAV_OPTIONS = {
+  star: [
+    { emoji: '⭐', label: 'Faded North Star' },
+    { emoji: '✨', label: 'Broken Constellation' },
+    { emoji: '🌟', label: 'Hidden Star' },
+    { emoji: '💫', label: 'Wandering Star' }
+  ],
+  wind: [
+    { emoji: '🌬️', label: 'No Wind' },
+    { emoji: '➡️', label: 'East Wind' },
+    { emoji: '↔️', label: 'Opposing Winds' },
+    { emoji: '↙️', label: 'Southern Wind' }
+  ],
+  moon: [
+    { emoji: '🌑', label: 'New Moon' },
+    { emoji: '🌓', label: 'Half Moon' },
+    { emoji: '🌕', label: 'Full Moon' },
+    { emoji: '🌘', label: 'Dark Moon' }
+  ]
+};
+
+// Correct combinations: [starIdx, windIdx, moonIdx] → echo id
+const NAV_COMBOS = [
+  { combo: [0, 0, 0], echo: 'nav-echo-1', label: 'Echo I' },
+  { combo: [1, 1, 1], echo: 'nav-echo-2', label: 'Echo II' },
+  { combo: [2, 2, 2], echo: 'nav-echo-3', label: 'Echo III' }
+];
+
+const navState = { star: 0, wind: 0, moon: 0 };
+
+function cycleNav(ring) {
+  navState[ring] = (navState[ring] + 1) % NAV_OPTIONS[ring].length;
+  renderNavRings();
+  checkNavCombo();
+}
+
+function renderNavRings() {
+  ['star', 'wind', 'moon'].forEach(ring => {
+    const opt = NAV_OPTIONS[ring][navState[ring]];
+    const display = document.getElementById('nav-' + ring + '-display');
+    const label = document.getElementById('nav-' + ring + '-label');
+    if (display) display.textContent = opt.emoji;
+    if (label) label.textContent = opt.label;
+  });
+}
+
+async function checkNavCombo() {
+  const current = [navState.star, navState.wind, navState.moon];
+  const matched = NAV_COMBOS.find(c => c.combo.every((v, i) => v === current[i]));
+  const feedback = document.getElementById('nav-feedback');
+
+  if (!matched) {
+    if (feedback) feedback.textContent = '';
+    return;
+  }
+
+  // Check if already unlocked in globalState
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const unlocked = (data.globalState.navigatorUnlocks || []);
+
+    if (unlocked.includes(matched.echo)) {
+      if (feedback) { feedback.textContent = 'Already charted.'; feedback.style.color = 'var(--seafoam)'; }
+      return;
+    }
+
+    // New unlock — save to globalState via a custom event type
+    await fetch('/.netlify/functions/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'navigator_unlock', echo: matched.echo, player: PLAYER_NAME || 'Unknown' })
+    });
+
+    // Also patch globalState directly via state_patch function (handled in event.js)
+    if (feedback) { feedback.textContent = '✦ The rings align. Something stirs.'; feedback.style.color = 'var(--gold)'; }
+    setTimeout(() => { if (feedback) feedback.textContent = ''; }, 3000);
+
+    await loadNavigatorUnlocks();
+  } catch (e) {
+    console.error('Navigator check failed:', e);
+  }
+}
+
+async function loadNavigatorUnlocks() {
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const unlocked = data.globalState.navigatorUnlocks || [];
+    let count = 0;
+    NAV_COMBOS.forEach(c => {
+      const el = document.getElementById(c.echo);
+      if (el) {
+        const isUnlocked = unlocked.includes(c.echo);
+        el.style.display = isUnlocked ? 'block' : 'none';
+        if (isUnlocked) count++;
+      }
+    });
+    const countEl = document.getElementById('nav-echo-count');
+    if (countEl) countEl.textContent = count > 0 ? count + ' of 3 echo' + (count === 1 ? '' : 's') + ' discovered' : 'No echoes discovered yet';
+    // DM live status
+    const dmEl = document.getElementById('dm-navigator-live');
+    if (dmEl) dmEl.textContent = count + ' / 3 echoes unlocked by players.';
+  } catch (e) { console.error('loadNavigatorUnlocks failed:', e); }
+}
+
+function toggleNavigatorSection() {
+  const current = localStorage.getItem('navigator-section') === 'on';
+  localStorage.setItem('navigator-section', current ? 'off' : 'on');
+  applyNavigatorSectionState();
+  if (!current) loadNavigatorUnlocks();
+}
+
+function applyNavigatorSectionState() {
+  const on = localStorage.getItem('navigator-section') === 'on';
+  const section = document.getElementById('navigator-section');
+  if (section) section.style.display = on ? 'block' : 'none';
+  const btn = document.getElementById('dm-navigator-btn');
+  if (btn) {
+    btn.textContent = on ? '🧭 NAVIGATOR: VISIBLE' : '🧭 NAVIGATOR: HIDDEN';
+    btn.style.borderColor = on ? 'var(--hp-green)' : 'var(--teal)';
+    btn.style.color = on ? 'var(--hp-green)' : 'var(--teal-bright)';
+  }
+}
+
+async function dmResetNavigator() {
+  if (!confirm('Reset all Navigator echo unlocks? Players will need to find the combinations again.')) return;
+  try {
+    await fetch('/.netlify/functions/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'navigator_reset' })
+    });
+    NAV_COMBOS.forEach(c => {
+      const el = document.getElementById(c.echo);
+      if (el) el.style.display = 'none';
+    });
+    const dmEl = document.getElementById('dm-navigator-live');
+    if (dmEl) dmEl.textContent = 'Unlocks reset. 0 / 3 echoes unlocked.';
+    const countEl = document.getElementById('nav-echo-count');
+    if (countEl) countEl.textContent = 'No echoes discovered yet';
+  } catch (e) { alert('Reset failed.'); }
+}
+
+// ══════════ BRASS NAVIGATOR ══════════
 function chooseTrain(npc, el) {
   if (el.classList.contains('locked') || el.classList.contains('chosen')) return;
   if (!PLAYER_NAME) { alert('Choose your character first.'); return; }
@@ -3005,6 +3225,8 @@ function tryDMUnlock() {
     loadSeaChartState();
     applyMemoryBoardSectionState();
     loadMemoryBoard();
+    applyNavigatorSectionState();
+    loadNavigatorUnlocks();
   } else {
     document.getElementById('dm-password').style.borderColor = 'var(--rust)';
     setTimeout(() => document.getElementById('dm-password').style.borderColor = '', 800);

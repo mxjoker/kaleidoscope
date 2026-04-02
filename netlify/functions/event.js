@@ -51,6 +51,19 @@ export default async function handler(req, context) {
       globalState.kimchiBank = Math.max(0, (globalState.kimchiBank ?? 100) - event.net);
     }
 
+    // Track navigator echo unlocks
+    if (event.type === "navigator_unlock" && event.echo) {
+      if (!globalState.navigatorUnlocks) globalState.navigatorUnlocks = [];
+      if (!globalState.navigatorUnlocks.includes(event.echo)) {
+        globalState.navigatorUnlocks.push(event.echo);
+      }
+    }
+
+    // Reset navigator unlocks
+    if (event.type === "navigator_reset") {
+      globalState.navigatorUnlocks = [];
+    }
+
     events.push(event);
     if (events.length > 500) events = events.slice(-500);
 
