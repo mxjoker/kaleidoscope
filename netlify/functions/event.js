@@ -69,6 +69,15 @@ export default async function handler(req, context) {
       globalState.lanternState = event.state;
     }
 
+    // Drawer lock updates
+    if (event.type === "drawer_update") {
+      if (!globalState.drawer) globalState.drawer = {};
+      Object.assign(globalState.drawer, event.patch);
+      // Auto-open if all three locks solved
+      const d = globalState.drawer;
+      if (d.keyFound && d.comboSolved && d.phraseSolved) d.drawerOpen = true;
+    }
+
     events.push(event);
     if (events.length > 500) events = events.slice(-500);
 

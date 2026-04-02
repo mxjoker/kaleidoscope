@@ -1271,6 +1271,106 @@ body {
         </div>
         <!-- /lantern-section -->
 
+        <!-- ══ LOCKED DRAWER ══ -->
+        <div id="drawer-section" style="display:none;border-top:2px solid var(--border-warm)">
+          <div style="padding:14px 16px 12px;border-bottom:1px solid var(--border-warm)">
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">🔐 The Locked Drawer</div>
+            <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">"Didn't lose it. Hid it. There's a difference."</div>
+          </div>
+
+          <!-- Lock status row -->
+          <div style="padding:14px 16px 8px;display:flex;gap:10px;justify-content:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div id="drawer-lock1-icon" style="font-size:24px">🔒</div>
+              <div style="font-size:9px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.04em;text-align:center">KEY</div>
+            </div>
+            <div style="font-size:20px;color:#3a3a3a;align-self:center">·</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div id="drawer-lock2-icon" style="font-size:24px">🔒</div>
+              <div style="font-size:9px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.04em;text-align:center">COMBO</div>
+            </div>
+            <div style="font-size:20px;color:#3a3a3a;align-self:center">·</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div id="drawer-lock3-icon" style="font-size:24px">🔒</div>
+              <div style="font-size:9px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.04em;text-align:center">PHRASE</div>
+            </div>
+          </div>
+          <div id="drawer-progress-text" style="text-align:center;font-size:11px;color:#7a6a55;font-style:italic;padding-bottom:10px"></div>
+
+          <!-- Lock 1: Physical Key -->
+          <div id="drawer-lock1-section" style="margin:0 16px 12px;background:rgba(26,51,68,0.4);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px">
+            <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--warm-sand);letter-spacing:0.06em;margin-bottom:6px">🗝 LOCK ONE — Physical Key</div>
+            <div id="drawer-lock1-status" style="font-size:12px;color:#7a6a55;font-style:italic">The first lock requires a physical key. It hasn't turned up yet.</div>
+          </div>
+
+          <!-- Lock 2: Combination -->
+          <div id="drawer-lock2-section" style="margin:0 16px 12px;background:rgba(26,51,68,0.4);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px">
+            <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--warm-sand);letter-spacing:0.06em;margin-bottom:8px">🔢 LOCK TWO — Combination Dial</div>
+            <div id="drawer-lock2-solved" style="display:none;font-size:12px;color:var(--hp-green);font-style:italic">✓ The dial clicks open.</div>
+            <div id="drawer-lock2-input-area">
+              <div style="font-size:11px;color:var(--warm-sand);margin-bottom:8px;line-height:1.5">Three numbers. The clues are scattered across the chart and the Captain's notes.</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input id="drawer-combo-1" type="number" min="0" max="9" placeholder="–" maxlength="1"
+                  style="width:44px;height:44px;text-align:center;background:rgba(14,31,43,0.8);border:1px solid var(--border-warm);border-radius:8px;color:var(--cream);font-family:'Cinzel',serif;font-size:18px;font-weight:600;outline:none"
+                  oninput="this.value=this.value.slice(0,1);document.getElementById('drawer-combo-2').focus()"/>
+                <input id="drawer-combo-2" type="number" min="0" max="9" placeholder="–" maxlength="1"
+                  style="width:44px;height:44px;text-align:center;background:rgba(14,31,43,0.8);border:1px solid var(--border-warm);border-radius:8px;color:var(--cream);font-family:'Cinzel',serif;font-size:18px;font-weight:600;outline:none"
+                  oninput="this.value=this.value.slice(0,1);document.getElementById('drawer-combo-3').focus()"/>
+                <input id="drawer-combo-3" type="number" min="0" max="9" placeholder="–" maxlength="1"
+                  style="width:44px;height:44px;text-align:center;background:rgba(14,31,43,0.8);border:1px solid var(--border-warm);border-radius:8px;color:var(--cream);font-family:'Cinzel',serif;font-size:18px;font-weight:600;outline:none"
+                  oninput="this.value=this.value.slice(0,1)"/>
+                <button onclick="submitDrawerCombo()" style="padding:10px 14px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.04em">Try</button>
+              </div>
+              <div id="drawer-combo-feedback" style="margin-top:8px;font-size:11px;color:var(--warm-sand);font-style:italic;min-height:16px"></div>
+            </div>
+          </div>
+
+          <!-- Lock 3: Phrase -->
+          <div id="drawer-lock3-section" style="margin:0 16px 12px;background:rgba(26,51,68,0.4);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px">
+            <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--warm-sand);letter-spacing:0.06em;margin-bottom:8px">🗣 LOCK THREE — Spoken Phrase</div>
+            <div id="drawer-lock3-solved" style="display:none;font-size:12px;color:var(--hp-green);font-style:italic">✓ Something releases. The last lock falls open.</div>
+            <div id="drawer-lock3-input-area">
+              <div style="font-size:11px;color:var(--warm-sand);margin-bottom:8px;line-height:1.5">Somewhere in Darius's notes, a phrase repeats. Say it aloud to the drawer.</div>
+              <div style="display:flex;gap:8px">
+                <input id="drawer-phrase-input" type="text" placeholder="Type the phrase..."
+                  style="flex:1;background:rgba(14,31,43,0.8);border:1px solid var(--border-warm);border-radius:8px;color:var(--cream);font-family:'Lora',Georgia,serif;font-size:12px;padding:10px 12px;outline:none"
+                  onkeydown="if(event.key==='Enter')submitDrawerPhrase()"/>
+                <button onclick="submitDrawerPhrase()" style="padding:10px 14px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.04em">Speak</button>
+              </div>
+              <div id="drawer-phrase-feedback" style="margin-top:8px;font-size:11px;color:var(--warm-sand);font-style:italic;min-height:16px"></div>
+            </div>
+          </div>
+
+          <!-- DRAWER OPEN — full contents -->
+          <div id="drawer-open-contents" style="display:none;margin:0 16px 16px">
+            <div style="text-align:center;padding:12px 0 16px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:0.08em">✦ THE DRAWER OPENS ✦</div>
+
+            <div style="background:rgba(212,168,50,0.06);border:1px solid rgba(212,168,50,0.25);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+              <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px">📜 AN UNSENT LETTER</div>
+              <div style="font-size:12px;color:var(--cream);line-height:1.8;font-style:italic">"I don't expect forgiveness.<br>I don't expect understanding.<br>I only expect distance.<br><br>If this reaches you, it means I failed again.<br><br>I thought I could outrun it. I thought the sea would be enough. It wasn't.<br><br>It doesn't care where I go.<br>It only cares where I return.<br><br>So I don't return.<br><br>Not to land. Not to you.<br><br>— Darius"</div>
+            </div>
+
+            <div style="background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+              <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--warm-sand);letter-spacing:0.06em;margin-bottom:8px">🧸 A SMALL WOODEN TOY — a boat</div>
+              <div style="font-size:12px;color:var(--cream);line-height:1.7">Scratched into the bottom, almost worn away:</div>
+              <div style="font-size:13px;color:var(--gold);font-style:italic;margin-top:6px;font-family:'Cinzel',serif;letter-spacing:0.04em">"Kaleidoscope — make it home"</div>
+            </div>
+
+            <div style="background:rgba(40,20,10,0.4);border:1px solid rgba(176,92,58,0.35);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+              <div style="font-size:10px;font-family:'Cinzel',serif;color:var(--rust);letter-spacing:0.06em;margin-bottom:8px">🗺 A HALF-BURNED MAP</div>
+              <div style="font-size:12px;color:var(--cream);line-height:1.7;font-style:italic">A coastline is circled many times. The name has been burned away.</div>
+              <div style="font-size:12px;color:var(--rust);font-style:italic;margin-top:8px">"If I return, it returns."</div>
+            </div>
+
+            <div style="background:rgba(14,31,43,0.6);border:1px dashed rgba(196,168,122,0.2);border-radius:10px;padding:14px 16px">
+              <div style="font-size:10px;font-family:'Cinzel',serif;color:#7a6a55;letter-spacing:0.06em;margin-bottom:6px">— SOMETHING ELSE —</div>
+              <div style="font-size:12px;color:#7a6a55;font-style:italic">The drawer has a false bottom. You can feel it. But there's no way to open it. Not yet.</div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /drawer-section -->
+
       </div><!-- /chat-cabin -->
 
     </div>
@@ -2140,6 +2240,23 @@ body {
           </div>
           <button onclick="toggleLanternSection()" id="dm-lantern-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🕯️ LANTERN: HIDDEN</button>
         </div>
+        <div class="card">
+          <div class="dm-section-title">🔐 Captain's Quarters — Locked Drawer</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:12px">Three locks. Grant the key when it appears in-world. Players solve combo (5-1-7) and phrase themselves. Force-unlock any lock if needed.</div>
+          <div id="dm-drawer-status" style="font-size:12px;color:var(--cream);margin-bottom:12px;line-height:1.8">Loading...</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onclick="dmDrawerToggle('keyFound')" id="dm-drawer-key-btn" style="padding:8px 14px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em">🗝 Grant Key</button>
+              <button onclick="dmDrawerForce('comboSolved')" style="padding:8px 14px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em">🔢 Force Combo</button>
+              <button onclick="dmDrawerForce('phraseSolved')" style="padding:8px 14px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em">🗣 Force Phrase</button>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onclick="dmDrawerForce('drawerOpen')" style="padding:8px 14px;background:#1a3344;border:1px solid var(--gold);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--gold);cursor:pointer;letter-spacing:0.04em">✦ Force Open All</button>
+              <button onclick="dmDrawerReset()" style="padding:8px 14px;background:#1a3344;border:1px solid var(--rust);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--rust);cursor:pointer;letter-spacing:0.04em">↺ Reset All Locks</button>
+            </div>
+          </div>
+          <button onclick="toggleDrawerSection()" id="dm-drawer-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🔐 DRAWER: HIDDEN</button>
+        </div>
         <div class="debug-panel">
           <div class="debug-panel-header">
             <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
@@ -2335,6 +2452,8 @@ function selectLocation(loc) {
     if (localStorage.getItem('navigator-section') === 'on') loadNavigatorUnlocks();
     applyLanternSectionState();
     if (localStorage.getItem('lantern-section') === 'on') loadLanternState();
+    applyDrawerSectionState();
+    if (localStorage.getItem('drawer-section') === 'on') loadDrawerState();
   }
 
   // Greet if first time
@@ -3329,6 +3448,161 @@ function applyLanternSectionState() {
   }
 }
 
+// ══════════ LOCKED DRAWER ══════════
+async function loadDrawerState() {
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const drawer = data.globalState.drawer || {};
+    renderDrawer(drawer);
+    renderDrawerDM(drawer);
+  } catch (e) { console.error('loadDrawerState failed:', e); }
+}
+
+function renderDrawer(d) {
+  const open = d.drawerOpen || false;
+  const k = d.keyFound || false;
+  const c = d.comboSolved || false;
+  const p = d.phraseSolved || false;
+  const solvedCount = [k, c, p].filter(Boolean).length;
+
+  // Lock icons
+  const l1 = document.getElementById('drawer-lock1-icon');
+  const l2 = document.getElementById('drawer-lock2-icon');
+  const l3 = document.getElementById('drawer-lock3-icon');
+  if (l1) l1.textContent = k ? '🔓' : '🔒';
+  if (l2) l2.textContent = c ? '🔓' : '🔒';
+  if (l3) l3.textContent = p ? '🔓' : '🔒';
+
+  // Progress text
+  const prog = document.getElementById('drawer-progress-text');
+  if (prog) {
+    if (open) prog.textContent = '✦ The drawer is open.';
+    else prog.textContent = solvedCount + ' of 3 locks solved';
+  }
+
+  // Lock 1 status
+  const l1status = document.getElementById('drawer-lock1-status');
+  if (l1status) l1status.textContent = k
+    ? '✓ The key has been found. This lock is open.'
+    : 'The first lock requires a physical key. It hasn\'t turned up yet.';
+  if (l1status) l1status.style.color = k ? 'var(--hp-green)' : '#7a6a55';
+
+  // Lock 2
+  const l2solved = document.getElementById('drawer-lock2-solved');
+  const l2area = document.getElementById('drawer-lock2-input-area');
+  if (l2solved) l2solved.style.display = c ? 'block' : 'none';
+  if (l2area) l2area.style.display = c ? 'none' : 'block';
+
+  // Lock 3
+  const l3solved = document.getElementById('drawer-lock3-solved');
+  const l3area = document.getElementById('drawer-lock3-input-area');
+  if (l3solved) l3solved.style.display = p ? 'block' : 'none';
+  if (l3area) l3area.style.display = p ? 'none' : 'block';
+
+  // Drawer contents
+  const contents = document.getElementById('drawer-open-contents');
+  if (contents) contents.style.display = open ? 'block' : 'none';
+}
+
+function renderDrawerDM(d) {
+  const open = d.drawerOpen || false;
+  const k = d.keyFound || false;
+  const c = d.comboSolved || false;
+  const p = d.phraseSolved || false;
+  const el = document.getElementById('dm-drawer-status');
+  if (!el) return;
+  el.innerHTML =
+    (k ? '🔓' : '🔒') + ' Key: ' + (k ? '<span style="color:var(--hp-green)">Found</span>' : '<span style="color:#7a6a55">Not found</span>') + '<br>' +
+    (c ? '🔓' : '🔒') + ' Combo: ' + (c ? '<span style="color:var(--hp-green)">Solved</span>' : '<span style="color:#7a6a55">Unsolved</span>') + '<br>' +
+    (p ? '🔓' : '🔒') + ' Phrase: ' + (p ? '<span style="color:var(--hp-green)">Spoken</span>' : '<span style="color:#7a6a55">Unspoken</span>') + '<br>' +
+    (open ? '✦ <span style="color:var(--gold)">Drawer is open</span>' : '🔐 <span style="color:#7a6a55">Drawer remains locked</span>');
+  // Update key button label
+  const kbtn = document.getElementById('dm-drawer-key-btn');
+  if (kbtn) kbtn.textContent = k ? '🗝 Revoke Key' : '🗝 Grant Key';
+}
+
+async function postDrawerUpdate(patch) {
+  await fetch('/.netlify/functions/event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'drawer_update', patch, player: PLAYER_NAME || 'Unknown' })
+  });
+  await loadDrawerState();
+}
+
+async function submitDrawerCombo() {
+  const v1 = document.getElementById('drawer-combo-1').value;
+  const v2 = document.getElementById('drawer-combo-2').value;
+  const v3 = document.getElementById('drawer-combo-3').value;
+  const fb = document.getElementById('drawer-combo-feedback');
+  if (!v1 || !v2 || !v3) { if (fb) fb.textContent = 'Enter all three numbers.'; return; }
+  const code = v1 + v2 + v3;
+  if (code === '517') {
+    if (fb) { fb.textContent = '✓ The dial clicks. Something shifts.'; fb.style.color = 'var(--hp-green)'; }
+    await postDrawerUpdate({ comboSolved: true });
+  } else {
+    const wrong = ['No. That\'s not the number I remember.', 'You\'re thinking like a sailor. Don\'t. Think like a survivor.', 'Close, perhaps. Or not at all.'];
+    if (fb) { fb.textContent = wrong[Math.floor(Math.random() * wrong.length)]; fb.style.color = 'var(--warm-sand)'; }
+    document.getElementById('drawer-combo-1').value = '';
+    document.getElementById('drawer-combo-2').value = '';
+    document.getElementById('drawer-combo-3').value = '';
+    document.getElementById('drawer-combo-1').focus();
+  }
+}
+
+async function submitDrawerPhrase() {
+  const input = document.getElementById('drawer-phrase-input');
+  const fb = document.getElementById('drawer-phrase-feedback');
+  const raw = (input.value || '').trim().toLowerCase().replace(/[^a-z0-9 ]/g, '');
+  if (!raw) return;
+  if (raw === 'i will not make that mistake again') {
+    if (fb) { fb.textContent = '✓ The last lock releases.'; fb.style.color = 'var(--hp-green)'; }
+    await postDrawerUpdate({ phraseSolved: true });
+  } else {
+    const wrong = ['"Too simple."', '"Too hopeful."', '"That\'s what I said the first time."', '"Not those words. Try again."'];
+    if (fb) { fb.textContent = wrong[Math.floor(Math.random() * wrong.length)]; fb.style.color = 'var(--warm-sand)'; }
+    input.value = '';
+  }
+}
+
+async function dmDrawerToggle(field) {
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const current = (data.globalState.drawer || {})[field] || false;
+    await postDrawerUpdate({ [field]: !current });
+  } catch (e) { alert('Could not update drawer.'); }
+}
+
+async function dmDrawerForce(field) {
+  await postDrawerUpdate({ [field]: true });
+}
+
+async function dmDrawerReset() {
+  if (!confirm('Reset all drawer locks? Players will need to solve them again.')) return;
+  await postDrawerUpdate({ keyFound: false, comboSolved: false, phraseSolved: false, drawerOpen: false });
+}
+
+function toggleDrawerSection() {
+  const current = localStorage.getItem('drawer-section') === 'on';
+  localStorage.setItem('drawer-section', current ? 'off' : 'on');
+  applyDrawerSectionState();
+  if (!current) loadDrawerState();
+}
+
+function applyDrawerSectionState() {
+  const on = localStorage.getItem('drawer-section') === 'on';
+  const section = document.getElementById('drawer-section');
+  if (section) section.style.display = on ? 'block' : 'none';
+  const btn = document.getElementById('dm-drawer-btn');
+  if (btn) {
+    btn.textContent = on ? '🔐 DRAWER: VISIBLE' : '🔐 DRAWER: HIDDEN';
+    btn.style.borderColor = on ? 'var(--hp-green)' : 'var(--teal)';
+    btn.style.color = on ? 'var(--hp-green)' : 'var(--teal-bright)';
+  }
+}
+
 // ══════════ TRAINING ══════════
 function chooseTrain(npc, el) {
   if (el.classList.contains('locked') || el.classList.contains('chosen')) return;
@@ -3381,6 +3655,8 @@ function tryDMUnlock() {
     loadNavigatorUnlocks();
     applyLanternSectionState();
     loadLanternState();
+    applyDrawerSectionState();
+    loadDrawerState();
   } else {
     document.getElementById('dm-password').style.borderColor = 'var(--rust)';
     setTimeout(() => document.getElementById('dm-password').style.borderColor = '', 800);
