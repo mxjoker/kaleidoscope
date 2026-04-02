@@ -24,14 +24,36 @@ export default async function handler(req, context) {
       persona ||
       `You are a mysterious NPC aboard a ship called The Kaleidoscope. Be brief and in character.`;
 
-    // Build messages array from history + new message
-    const messages = [
-      ...history.slice(-8).map((h) => ({
-        role: h.role,
-        content: h.content,
-      })),
-      { role: "user", content: message },
-    ];
+    // Build messages array from history
+    // The frontend already includes the current user message in history,
+    // so we DON'T append it again — that would create consecutive user messages
+    // which the Anthropic API rejects with a 400 error.
+    let raw = history.slice(-8).map((h) => ({
+      role: h.role,
+      content: h.content,
+    }));
+
+    // If history is empty or doesn't end with the current message, add it
+    const lastMsg = raw[raw.length - 1];
+    if (!lastMsg || lastMsg.role !== "user" || lastMsg.content !== message) {
+      raw.push({ role: "user", content: message });
+    }
+
+    // Ensure messages alternate roles — deduplicate consecutive same-role messages
+    const messages = [];
+    for (const m of raw) {
+      if (messages.length > 0 && messages[messages.length - 1].role === m.role) {
+        // Merge consecutive same-role messages
+        messages[messages.length - 1].content += "\n" + m.content;
+      } else {
+        messages.push(m);
+      }
+    }
+
+    // Ensure first message is from user (API requirement)
+    if (messages.length > 0 && messages[0].role !== "user") {
+      messages.shift();
+    }
 
     const response = await client.messages.create({
       model: "claude-sonnet-4-20250514",
@@ -53,10 +75,13 @@ export default async function handler(req, context) {
     });
   } catch (error) {
     console.error("Chat error:", error);
+    console.error("Error type:", error?.constructor?.name);
+    console.error("Error status:", error?.status);
+    console.error("Error message:", error?.message);
     const errorMessage = error?.message || "Unknown error";
     const errorStatus = error?.status || 500;
     return new Response(
-      JSON.stringify({ error: errorMessage, response: "..." }),
+      JSON.stringify({ error: errorMessage, status: errorStatus, response: "..." }),
       {
         status: errorStatus,
         headers: { "Content-Type": "application/json" },

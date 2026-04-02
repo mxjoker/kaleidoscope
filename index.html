@@ -2660,12 +2660,18 @@ async function sendMsg(npc) {
     });
     const data = await res.json();
     typing.textContent = '';
+    if (!res.ok) {
+      console.error('Chat API error:', res.status, data);
+      addMsg(npc, '(The wind swallows the words. Try again.)', 'npc');
+      return;
+    }
     const reply = data.response || "...";
     addMsg(npc, reply, 'npc');
     chatHistory[npc].push({ role:'assistant', content:reply });
   } catch(e) {
+    console.error('Chat fetch error:', e);
     typing.textContent = '';
-    addMsg(npc, '...', 'npc');
+    addMsg(npc, '(The wind swallows the words. Try again.)', 'npc');
   }
 }
 
