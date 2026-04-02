@@ -1082,7 +1082,66 @@ body {
         <div style="padding:8px 16px 14px;border-top:1px solid var(--border-warm)">
           <div style="font-size:10px;color:#7a6a55;font-style:italic;text-align:center">Highest single bet per player · All games count</div>
         </div>
+
+        <!-- ══ SEA CHART ══ -->
+        <div id="sea-chart-section" style="display:none;border-top:2px solid var(--border-warm)">
+          <div style="padding:14px 16px 12px;border-bottom:1px solid var(--border-warm)">
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">🗺️ The Ever-Shifting Sea Chart</div>
+            <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">Ink fades. Memory doesn't. Trust neither.</div>
+          </div>
+        <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+
+          <!-- Entry 1: The Quiet Wake -->
+          <div id="chart-quiet-wake" class="chart-entry" style="display:none;background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px;cursor:pointer" onclick="toggleChartEntry('quiet-wake-detail')">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);letter-spacing:0.04em">📍 The Quiet Wake</div>
+            <div id="quiet-wake-detail" style="display:none;margin-top:8px;font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"Sea went still. No wind. No current. Crew said it felt like the world was holding its breath.<br>We left before it exhaled."<br><br><span style="font-size:11px;color:var(--seafoam);font-style:normal">— Navigation advantage (ask your DM)</span></div>
+            <div style="font-size:10px;color:var(--warm-sand);margin-top:4px;font-style:italic">Tap to read the Captain's notes</div>
+          </div>
+
+          <!-- Entry 2: Shellwater Shoals -->
+          <div id="chart-shellwater" class="chart-entry" style="display:none;background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px;cursor:pointer" onclick="toggleChartEntry('shellwater-detail')">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);letter-spacing:0.04em">📍 Shellwater Shoals</div>
+            <div id="shellwater-detail" style="display:none;margin-top:8px;font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"Cook swore the shells were whispering. Turned out to be crabs.<br>Still… they stopped when I got close."</div>
+            <div style="font-size:10px;color:var(--warm-sand);margin-top:4px;font-style:italic">Tap to read the Captain's notes</div>
+          </div>
+
+          <!-- Entry 3: Marked, Then Scratched Out -->
+          <div id="chart-scratched" class="chart-entry" style="display:none;background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px;cursor:pointer" onclick="toggleChartEntry('scratched-detail')">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--rust);letter-spacing:0.04em">📍 <s style="color:#8a4a2a">██████████</s> <span style="font-size:10px;color:#8a4a2a">[name destroyed]</span></div>
+            <div id="scratched-detail" style="display:none;margin-top:8px;font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"No port. No landfall. No exceptions.<br>I will not make that mistake again."</div>
+            <div style="font-size:10px;color:var(--warm-sand);margin-top:4px;font-style:italic">Tap to read the Captain's notes</div>
+          </div>
+
+          <!-- Entry 4: Route That Never Happened -->
+          <div id="chart-ghost-route" class="chart-entry" style="display:none;background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px;cursor:pointer" onclick="toggleChartEntry('ghost-route-detail')">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);letter-spacing:0.04em">📍 Route That Never Happened <span style="font-size:10px;color:#8a8a6a;margin-left:4px">[not in any log]</span></div>
+            <div id="ghost-route-detail" style="display:none;margin-top:8px;font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"We outran it once. That was enough to learn.<br>It doesn't chase ships. It follows decisions."</div>
+            <div style="font-size:10px;color:var(--warm-sand);margin-top:4px;font-style:italic">Tap to read the Captain's notes</div>
+          </div>
+
+          <!-- Entry 5: Char Line Coast -->
+          <div id="chart-char-coast" class="chart-entry" style="display:none;background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px;cursor:pointer" onclick="toggleChartEntry('char-coast-detail')">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--rust);letter-spacing:0.04em">📍 Char Line Coast</div>
+            <div id="char-coast-detail" style="display:none;margin-top:8px;font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"Fire on the water. Not natural. Not survivable.<br>Counted six silhouettes walking through it.<br>Only five boarded."</div>
+            <div style="font-size:10px;color:var(--warm-sand);margin-top:4px;font-style:italic">Tap to read the Captain's notes</div>
+          </div>
+
+          <!-- Entry 6: Placeholder (future) -->
+          <div id="chart-entry-6" class="chart-entry" style="display:none;background:rgba(26,51,68,0.5);border:1px solid var(--border-warm);border-radius:10px;padding:12px 14px;cursor:pointer" onclick="toggleChartEntry('entry-6-detail')">
+            <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--teal-bright);letter-spacing:0.04em">📍 The Drift Meridian</div>
+            <div id="entry-6-detail" style="display:none;margin-top:8px;font-size:12px;color:var(--cream);line-height:1.6;font-style:italic">"Three days without stars. Compass gave up on day two.<br>We found our way back. The things we saw there did not follow."<br><br><span style="font-size:11px;color:var(--seafoam);font-style:normal">— Something about this place felt deliberate.</span></div>
+            <div style="font-size:10px;color:var(--warm-sand);margin-top:4px;font-style:italic">Tap to read the Captain's notes</div>
+          </div>
+
+          <!-- Empty state -->
+          <div id="chart-empty" style="text-align:center;color:#7a6a55;font-size:12px;font-style:italic;padding:16px 0">The chart is rolled up. Nothing to read yet.</div>
+
+        </div>
       </div>
+      <!-- /sea-chart-section -->
+
+      </div><!-- /chat-cabin -->
+
     </div>
   </div>
 
@@ -1859,6 +1918,58 @@ body {
           <div class="dm-section-title">🏋️ Training Choices</div>
           <div id="dm-training">Loading...</div>
         </div>
+        <div class="card">
+          <div class="dm-section-title">🗺️ Captain's Quarters — Sea Chart</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:12px">Toggle entries to reveal them in the Captain's Cabin. Saved in your browser — players see what you enable.</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(26,51,68,0.5);border-radius:8px;border:1px solid var(--border-warm)">
+              <div>
+                <div style="font-size:12px;color:var(--cream);font-family:'Cinzel',serif">📍 The Quiet Wake</div>
+                <div style="font-size:10px;color:var(--warm-sand);font-style:italic;margin-top:2px">Session 1 · calm sea, navigation reward</div>
+              </div>
+              <button id="chart-toggle-quiet-wake" onclick="toggleChartDM('quiet-wake')" style="padding:6px 12px;background:#1a3344;border:1px solid var(--border-warm);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);font-weight:600;cursor:pointer;letter-spacing:0.04em;min-width:64px">OFF</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(26,51,68,0.5);border-radius:8px;border:1px solid var(--border-warm)">
+              <div>
+                <div style="font-size:12px;color:var(--cream);font-family:'Cinzel',serif">📍 Shellwater Shoals</div>
+                <div style="font-size:10px;color:var(--warm-sand);font-style:italic;margin-top:2px">Session 1 · light tone, creatures react to Darius</div>
+              </div>
+              <button id="chart-toggle-shellwater" onclick="toggleChartDM('shellwater')" style="padding:6px 12px;background:#1a3344;border:1px solid var(--border-warm);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);font-weight:600;cursor:pointer;letter-spacing:0.04em;min-width:64px">OFF</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(26,51,68,0.5);border-radius:8px;border:1px solid var(--border-warm)">
+              <div>
+                <div style="font-size:12px;color:var(--cream);font-family:'Cinzel',serif">📍 [Name Destroyed]</div>
+                <div style="font-size:10px;color:var(--warm-sand);font-style:italic;margin-top:2px">Session 4 · Darius's rule first appears</div>
+              </div>
+              <button id="chart-toggle-scratched" onclick="toggleChartDM('scratched')" style="padding:6px 12px;background:#1a3344;border:1px solid var(--border-warm);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);font-weight:600;cursor:pointer;letter-spacing:0.04em;min-width:64px">OFF</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(26,51,68,0.5);border-radius:8px;border:1px solid var(--border-warm)">
+              <div>
+                <div style="font-size:12px;color:var(--cream);font-family:'Cinzel',serif">📍 Route That Never Happened</div>
+                <div style="font-size:10px;color:var(--warm-sand);font-style:italic;margin-top:2px">Session 2 · eerie, follows decisions</div>
+              </div>
+              <button id="chart-toggle-ghost-route" onclick="toggleChartDM('ghost-route')" style="padding:6px 12px;background:#1a3344;border:1px solid var(--border-warm);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);font-weight:600;cursor:pointer;letter-spacing:0.04em;min-width:64px">OFF</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(26,51,68,0.5);border-radius:8px;border:1px solid var(--border-warm)">
+              <div>
+                <div style="font-size:12px;color:var(--cream);font-family:'Cinzel',serif">📍 Char Line Coast</div>
+                <div style="font-size:10px;color:var(--warm-sand);font-style:italic;margin-top:2px">Session 5 · dark, six silhouettes / five boarded</div>
+              </div>
+              <button id="chart-toggle-char-coast" onclick="toggleChartDM('char-coast')" style="padding:6px 12px;background:#1a3344;border:1px solid var(--border-warm);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);font-weight:600;cursor:pointer;letter-spacing:0.04em;min-width:64px">OFF</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(26,51,68,0.5);border-radius:8px;border:1px solid var(--border-warm)">
+              <div>
+                <div style="font-size:12px;color:var(--cream);font-family:'Cinzel',serif">📍 The Drift Meridian</div>
+                <div style="font-size:10px;color:var(--warm-sand);font-style:italic;margin-top:2px">Session 6+ · three days without stars</div>
+              </div>
+              <button id="chart-toggle-entry-6" onclick="toggleChartDM('entry-6')" style="padding:6px 12px;background:#1a3344;border:1px solid var(--border-warm);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);font-weight:600;cursor:pointer;letter-spacing:0.04em;min-width:64px">OFF</button>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <button onclick="toggleSeaChartSection()" id="dm-sea-chart-section-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🗺️ SEA CHART: HIDDEN</button>
+            <span style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-left:10px">Shows/hides the chart section in the Cabin</span>
+          </div>
+        </div>
         <div class="debug-panel">
           <div class="debug-panel-header">
             <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
@@ -2047,6 +2158,7 @@ function selectLocation(loc) {
       document.getElementById('wager-board-rows').style.display = 'none';
       document.getElementById('wager-board-locked').style.display = 'block';
     }
+    loadSeaChartState();
   }
 
   // Greet if first time
@@ -2616,6 +2728,64 @@ function updateWagerPrizeUI() {
   }
 }
 
+// ══════════ SEA CHART ══════════
+const SEA_CHART_KEYS = ['quiet-wake','shellwater','scratched','ghost-route','char-coast','entry-6'];
+
+function loadSeaChartState() {
+  // Apply saved state to both player view and DM buttons
+  const anyVisible = SEA_CHART_KEYS.some(k => localStorage.getItem('chart-' + k) === 'on');
+  // Show/hide whole section based on master toggle
+  const section = document.getElementById('sea-chart-section');
+  const sectionOn = localStorage.getItem('sea-chart-section') === 'on';
+  if (section) section.style.display = sectionOn ? 'block' : 'none';
+  const sectionBtn = document.getElementById('dm-sea-chart-section-btn');
+  if (sectionBtn) {
+    if (sectionOn) {
+      sectionBtn.textContent = '🗺️ SEA CHART: VISIBLE';
+      sectionBtn.style.borderColor = 'var(--hp-green)';
+      sectionBtn.style.color = 'var(--hp-green)';
+    } else {
+      sectionBtn.textContent = '🗺️ SEA CHART: HIDDEN';
+      sectionBtn.style.borderColor = 'var(--teal)';
+      sectionBtn.style.color = 'var(--teal-bright)';
+    }
+  }
+  // Per-entry visibility
+  SEA_CHART_KEYS.forEach(k => {
+    const on = localStorage.getItem('chart-' + k) === 'on';
+    const entryId = k === 'entry-6' ? 'chart-entry-6' : 'chart-' + k;
+    const entry = document.getElementById(entryId);
+    if (entry) entry.style.display = on ? 'block' : 'none';
+    const btn = document.getElementById('chart-toggle-' + k);
+    if (btn) {
+      btn.textContent = on ? 'ON' : 'OFF';
+      btn.style.borderColor = on ? 'var(--hp-green)' : 'var(--border-warm)';
+      btn.style.color = on ? 'var(--hp-green)' : 'var(--warm-sand)';
+    }
+  });
+  // Empty state
+  const empty = document.getElementById('chart-empty');
+  if (empty) empty.style.display = anyVisible ? 'none' : 'block';
+}
+
+function toggleChartDM(key) {
+  const current = localStorage.getItem('chart-' + key) === 'on';
+  localStorage.setItem('chart-' + key, current ? 'off' : 'on');
+  loadSeaChartState();
+}
+
+function toggleSeaChartSection() {
+  const current = localStorage.getItem('sea-chart-section') === 'on';
+  localStorage.setItem('sea-chart-section', current ? 'off' : 'on');
+  loadSeaChartState();
+}
+
+function toggleChartEntry(detailId) {
+  const el = document.getElementById(detailId);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
 // ══════════ TRAINING ══════════
 function chooseTrain(npc, el) {
   if (el.classList.contains('locked') || el.classList.contains('chosen')) return;
@@ -2661,6 +2831,7 @@ function tryDMUnlock() {
     document.getElementById('dm-content').style.display = 'block';
     loadDMReport();
     updateWagerPrizeUI();
+    loadSeaChartState();
   } else {
     document.getElementById('dm-password').style.borderColor = 'var(--rust)';
     setTimeout(() => document.getElementById('dm-password').style.borderColor = '', 800);
