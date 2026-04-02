@@ -1,7 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export default async function handler(req, context) {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
@@ -11,6 +7,15 @@ export default async function handler(req, context) {
   }
 
   try {
+    const apiKey = Netlify.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey) {
+      console.error("ANTHROPIC_API_KEY not found in environment");
+      return new Response(
+        JSON.stringify({ error: "API key not configured", response: "..." }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const { npc, message, history = [], persona } = await req.json();
 
     if (!message) {
@@ -39,11 +44,10 @@ export default async function handler(req, context) {
       raw.push({ role: "user", content: message });
     }
 
-    // Ensure messages alternate roles — deduplicate consecutive same-role messages
+    // Ensure messages alternate roles — merge consecutive same-role messages
     const messages = [];
     for (const m of raw) {
       if (messages.length > 0 && messages[messages.length - 1].role === m.role) {
-        // Merge consecutive same-role messages
         messages[messages.length - 1].content += "\n" + m.content;
       } else {
         messages.push(m);
@@ -55,37 +59,46 @@ export default async function handler(req, context) {
       messages.shift();
     }
 
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 200,
-      system: systemPrompt,
-      messages,
+    // Direct fetch to Anthropic API — no SDK needed
+    const apiRes = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 200,
+        system: systemPrompt,
+        messages,
+      }),
     });
 
+    const data = await apiRes.json();
+
+    if (!apiRes.ok) {
+      console.error("Anthropic API error:", apiRes.status, JSON.stringify(data));
+      return new Response(
+        JSON.stringify({ error: data.error?.message || "API error", response: "..." }),
+        { status: apiRes.status, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const reply =
-      response.content[0]?.type === "text"
-        ? response.content[0].text
+      data.content?.[0]?.type === "text"
+        ? data.content[0].text
         : "...";
 
     return new Response(JSON.stringify({ response: reply, npc }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Chat error:", error);
-    console.error("Error type:", error?.constructor?.name);
-    console.error("Error status:", error?.status);
-    console.error("Error message:", error?.message);
-    const errorMessage = error?.message || "Unknown error";
-    const errorStatus = error?.status || 500;
     return new Response(
-      JSON.stringify({ error: errorMessage, status: errorStatus, response: "..." }),
-      {
-        status: errorStatus,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ error: error?.message || "Unknown error", response: "..." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
