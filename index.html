@@ -1246,6 +1246,31 @@ body {
         </div>
         <!-- /navigator-section -->
 
+        <!-- ══ LANTERN OF TIDES ══ -->
+        <div id="lantern-section" style="display:none;border-top:2px solid var(--border-warm)">
+          <div style="padding:14px 16px 12px;border-bottom:1px solid var(--border-warm)">
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--gold);letter-spacing:0.06em">🕯️ The Lantern of Tides</div>
+            <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-top:4px">Light shows what the sea hides. Sometimes that's the problem.</div>
+          </div>
+
+          <!-- Lantern display -->
+          <div style="padding:20px 16px 8px;display:flex;flex-direction:column;align-items:center;gap:12px">
+            <div id="lantern-flame" style="font-size:52px;line-height:1;transition:all 0.6s ease">🕯️</div>
+            <div id="lantern-state-label" style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;color:var(--warm-sand);text-transform:uppercase">Unlit</div>
+          </div>
+
+          <!-- Reveal panel — shown per state -->
+          <div id="lantern-reveal" style="display:none;margin:0 16px 14px;border-radius:10px;padding:14px 16px;border:1px solid var(--border-warm)">
+            <div id="lantern-reveal-tag" style="font-size:10px;font-family:'Cinzel',serif;letter-spacing:0.06em;margin-bottom:8px"></div>
+            <div id="lantern-reveal-text" style="font-size:12px;color:var(--cream);line-height:1.7;font-style:italic"></div>
+          </div>
+
+          <div style="padding:0 16px 14px;text-align:center">
+            <div style="font-size:10px;color:#7a6a55;font-style:italic">The lantern changes with the sea. Check back as conditions shift.</div>
+          </div>
+        </div>
+        <!-- /lantern-section -->
+
       </div><!-- /chat-cabin -->
 
     </div>
@@ -2099,6 +2124,22 @@ body {
           </div>
           <div id="dm-navigator-live" style="margin-top:10px;font-size:12px;color:var(--warm-sand)">—</div>
         </div>
+        <div class="card">
+          <div class="dm-section-title">🕯️ Captain's Quarters — Lantern of Tides</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:12px">Set the current sea state. Players see different hidden text in the lantern depending on the state you choose. Change it between sessions to pace the reveals.</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+            <div style="font-size:11px;color:var(--cream);font-family:'Cinzel',serif;letter-spacing:0.04em">Current state: <span id="dm-lantern-current" style="color:var(--gold)">Loading...</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <button onclick="setLanternState('calm')" style="padding:9px 10px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em;text-align:left">🌊 Calm Sea<br><span style="font-size:9px;opacity:0.7;font-style:italic">Session 2 · waits for invitations</span></button>
+              <button onclick="setLanternState('storm')" style="padding:9px 10px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em;text-align:left">⛈️ Storm<br><span style="font-size:9px;opacity:0.7;font-style:italic">Session 3 · spiral symbol</span></button>
+              <button onclick="setLanternState('night')" style="padding:9px 10px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em;text-align:left">🌑 Night<br><span style="font-size:9px;opacity:0.7;font-style:italic">Session 5 · you brought it with you</span></button>
+              <button onclick="setLanternState('fullmoon')" style="padding:9px 10px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--warm-sand);cursor:pointer;letter-spacing:0.04em;text-align:left">🌕 Full Moon<br><span style="font-size:9px;opacity:0.7;font-style:italic">Session 6 · hidden star (nav hint)</span></button>
+              <button onclick="setLanternState('rare')" style="padding:9px 10px;background:#1a3344;border:1px solid var(--rust);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--rust);cursor:pointer;letter-spacing:0.04em;text-align:left;grid-column:span 2">🩸 Rare — Post-Major-Event<br><span style="font-size:9px;opacity:0.7;font-style:italic">Five survived. That was the mistake.</span></button>
+              <button onclick="setLanternState('unlit')" style="padding:9px 10px;background:#1a3344;border:1px solid var(--border-warm);border-radius:8px;font-family:'Cinzel',serif;font-size:10px;color:#7a6a55;cursor:pointer;letter-spacing:0.04em;text-align:left;grid-column:span 2">🕯️ Unlit — hide reveals, show lantern only</button>
+            </div>
+          </div>
+          <button onclick="toggleLanternSection()" id="dm-lantern-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🕯️ LANTERN: HIDDEN</button>
+        </div>
         <div class="debug-panel">
           <div class="debug-panel-header">
             <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
@@ -2292,6 +2333,8 @@ function selectLocation(loc) {
     if (localStorage.getItem('memory-board-section') === 'on') loadMemoryBoard();
     applyNavigatorSectionState();
     if (localStorage.getItem('navigator-section') === 'on') loadNavigatorUnlocks();
+    applyLanternSectionState();
+    if (localStorage.getItem('lantern-section') === 'on') loadLanternState();
   }
 
   // Greet if first time
@@ -3177,7 +3220,116 @@ async function dmResetNavigator() {
   } catch (e) { alert('Reset failed.'); }
 }
 
-// ══════════ BRASS NAVIGATOR ══════════
+// ══════════ LANTERN OF TIDES ══════════
+const LANTERN_STATES = {
+  unlit: {
+    flame: '🕯️', label: 'Unlit', bg: 'rgba(26,31,43,0.5)', border: 'var(--border-warm)',
+    tag: null, text: null, tagColor: 'var(--warm-sand)'
+  },
+  calm: {
+    flame: '🌊', label: 'Calm Sea', bg: 'rgba(14,60,80,0.4)', border: 'rgba(61,154,170,0.4)',
+    tag: '🌊 CALM SEA — something written on the wall',
+    text: '"It doesn\'t board ships.\nIt waits for invitations."',
+    tagColor: 'var(--teal-bright)'
+  },
+  storm: {
+    flame: '⛈️', label: 'Storm', bg: 'rgba(40,20,10,0.5)', border: 'rgba(176,92,58,0.4)',
+    tag: '⛈️ STORM — a symbol appears on the map',
+    text: '"A spiral with a break in it.\n\nThat\'s where it started. Or where I noticed."',
+    tagColor: 'var(--rust)'
+  },
+  night: {
+    flame: '🌑', label: 'Night', bg: 'rgba(10,14,30,0.6)', border: 'rgba(80,80,140,0.4)',
+    tag: '🌑 NIGHT — shadows form words',
+    text: '"You brought it with you."',
+    tagColor: '#8888cc'
+  },
+  fullmoon: {
+    flame: '🌕', label: 'Full Moon', bg: 'rgba(30,40,14,0.5)', border: 'rgba(212,168,50,0.35)',
+    tag: '🌕 FULL MOON — a hidden star becomes visible',
+    text: '"Even the sky changed its mind.\n\nThe Hidden Star — third ring of the Navigator."',
+    tagColor: 'var(--gold)'
+  },
+  rare: {
+    flame: '🩸', label: 'Something Changed', bg: 'rgba(60,10,10,0.6)', border: 'rgba(176,40,40,0.5)',
+    tag: '⚠ THE WALLS SHOW SOMETHING',
+    text: '"Five survived.\nThat was the mistake."',
+    tagColor: '#cc4444'
+  }
+};
+
+function renderLantern(state) {
+  const cfg = LANTERN_STATES[state] || LANTERN_STATES.unlit;
+  const flame = document.getElementById('lantern-flame');
+  const lbl = document.getElementById('lantern-state-label');
+  const reveal = document.getElementById('lantern-reveal');
+  const tag = document.getElementById('lantern-reveal-tag');
+  const text = document.getElementById('lantern-reveal-text');
+  if (flame) flame.textContent = cfg.flame;
+  if (lbl) { lbl.textContent = cfg.label; lbl.style.color = cfg.tagColor; }
+  if (reveal) {
+    if (cfg.text) {
+      reveal.style.display = 'block';
+      reveal.style.background = cfg.bg;
+      reveal.style.borderColor = cfg.border;
+      if (tag) { tag.textContent = cfg.tag; tag.style.color = cfg.tagColor; }
+      if (text) text.innerHTML = cfg.text.replace(/\n/g, '<br>');
+    } else {
+      reveal.style.display = 'none';
+    }
+  }
+}
+
+async function loadLanternState() {
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    const state = data.globalState.lanternState || 'unlit';
+    renderLantern(state);
+    // Update DM current label if present
+    const dmCurrent = document.getElementById('dm-lantern-current');
+    if (dmCurrent) {
+      const cfg = LANTERN_STATES[state] || LANTERN_STATES.unlit;
+      dmCurrent.textContent = cfg.flame + ' ' + cfg.label;
+    }
+  } catch (e) { console.error('loadLanternState failed:', e); }
+}
+
+async function setLanternState(state) {
+  try {
+    await fetch('/.netlify/functions/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'lantern_state', state })
+    });
+    const cfg = LANTERN_STATES[state] || LANTERN_STATES.unlit;
+    const dmCurrent = document.getElementById('dm-lantern-current');
+    if (dmCurrent) dmCurrent.textContent = cfg.flame + ' ' + cfg.label;
+    // Also update the player view if cabin is currently showing
+    renderLantern(state);
+  } catch (e) { alert('Could not set lantern state.'); }
+}
+
+function toggleLanternSection() {
+  const current = localStorage.getItem('lantern-section') === 'on';
+  localStorage.setItem('lantern-section', current ? 'off' : 'on');
+  applyLanternSectionState();
+  if (!current) loadLanternState();
+}
+
+function applyLanternSectionState() {
+  const on = localStorage.getItem('lantern-section') === 'on';
+  const section = document.getElementById('lantern-section');
+  if (section) section.style.display = on ? 'block' : 'none';
+  const btn = document.getElementById('dm-lantern-btn');
+  if (btn) {
+    btn.textContent = on ? '🕯️ LANTERN: VISIBLE' : '🕯️ LANTERN: HIDDEN';
+    btn.style.borderColor = on ? 'var(--hp-green)' : 'var(--teal)';
+    btn.style.color = on ? 'var(--hp-green)' : 'var(--teal-bright)';
+  }
+}
+
+// ══════════ TRAINING ══════════
 function chooseTrain(npc, el) {
   if (el.classList.contains('locked') || el.classList.contains('chosen')) return;
   if (!PLAYER_NAME) { alert('Choose your character first.'); return; }
@@ -3227,6 +3379,8 @@ function tryDMUnlock() {
     loadMemoryBoard();
     applyNavigatorSectionState();
     loadNavigatorUnlocks();
+    applyLanternSectionState();
+    loadLanternState();
   } else {
     document.getElementById('dm-password').style.borderColor = 'var(--rust)';
     setTimeout(() => document.getElementById('dm-password').style.borderColor = '', 800);

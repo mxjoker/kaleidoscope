@@ -64,6 +64,11 @@ export default async function handler(req, context) {
       globalState.navigatorUnlocks = [];
     }
 
+    // Set lantern state
+    if (event.type === "lantern_state" && event.state) {
+      globalState.lanternState = event.state;
+    }
+
     events.push(event);
     if (events.length > 500) events = events.slice(-500);
 
