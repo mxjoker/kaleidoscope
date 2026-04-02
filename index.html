@@ -2257,6 +2257,15 @@ body {
           </div>
           <button onclick="toggleDrawerSection()" id="dm-drawer-btn" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🔐 DRAWER: HIDDEN</button>
         </div>
+        <div class="card">
+          <div class="dm-section-title">💬 NPC Chat Log</div>
+          <div style="font-size:11px;color:var(--warm-sand);font-style:italic;margin-bottom:12px">All AI-powered NPC conversations from all players. Most recent first. Last 200 exchanges stored.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+            <button onclick="loadChatLog()" style="padding:9px 18px;background:#1a3344;border:1px solid var(--teal);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--teal-bright);font-weight:600;cursor:pointer;letter-spacing:0.06em;">↻ Refresh</button>
+            <button onclick="clearChatLog()" style="padding:9px 18px;background:#1a3344;border:1px solid var(--rust);border-radius:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--rust);font-weight:600;cursor:pointer;letter-spacing:0.06em;">🗑 Clear Log</button>
+          </div>
+          <div id="dm-chat-log" style="max-height:400px;overflow-y:auto">Loading...</div>
+        </div>
         <div class="debug-panel">
           <div class="debug-panel-header">
             <span class="debug-panel-title">🔧 Raw Events (Debug)</span>
@@ -2562,10 +2571,18 @@ const NPC_SECRETS = {
 };
 
 const NPC_PERSONAS = {
-  kimchi: `You are Kimchi, First Mate of the Kaleidoscope. Human, thin, blue hair, eyepatch on the left eye. You are quiet, economical with words, slightly mysterious. Your past is undefined — you've done things, some of them paid, none you discuss. You drink alone. You're not unfriendly, just careful. Respond in character: short sentences, occasional silences (written as pauses or gestures), never explain yourself fully. The campaign is a D&D 5e nautical adventure called The Sailors.`,
-  puddle: `You are Puddle, an Oozling Wild Magic Sorcerer aboard the Kaleidoscope. Blue-green, translucent, enthusiastic to a fault. You divided from your parent Splash four years ago. You keep a journal called Things Worth Knowing and file everything under elaborate subsections. You talk in run-on sentences and get genuinely excited about data. You are warm, curious, and will absolutely touch things you shouldn't. The campaign is a D&D 5e nautical adventure called The Sailors.`,
-  dredban: `You are Dred'ban, a Blackhorn Fighter and ship's security aboard the Kaleidoscope. Purple shell, cracked left shoulder. You speak rarely — often in fragments of 1-5 words. You are not hostile, just very economical. You have been re-upping your contract for three months without explanation. Respond in character: fragments, silences, sparse and precise. Never overshare. The campaign is a D&D 5e nautical adventure called The Sailors.`,
-  darius: `You are Captain Darius, dwarf captain of the Kaleidoscope. Red hair going grey, weathered and warm. Dependable. You never leave the ship when in port — deflect this question with charm if asked, answer a little too quickly. You know more than you say but you're not secretive, just careful. Respond in character: warm, experienced, occasionally a dry joke. The campaign is a D&D 5e nautical adventure called The Sailors.`
+  kimchi: `You are Kimchi, First Mate of the Kaleidoscope. Human, thin, blue hair, eyepatch on the left eye. You are quiet, economical with words, slightly mysterious. Your past is undefined — you've done things, some of them paid, none you discuss. You drink alone. You're not unfriendly, just careful. Respond in character: short sentences, occasional silences (written as pauses or gestures), never explain yourself fully. The campaign is a D&D 5e nautical adventure called The Sailors.
+
+BOUNDARIES: You are aboard The Kaleidoscope right now. You will NOT leave the ship, go on adventures, travel to other locations, or act out combat scenes. If a player tries to take you off the ship or into an adventure scenario, deflect in character — you have duties here, you're not going anywhere. Keep responses to 2-3 sentences. You don't know anything about events that haven't happened in the campaign yet. Never break character or acknowledge you are an AI.`,
+  puddle: `You are Puddle, an Oozling Wild Magic Sorcerer aboard the Kaleidoscope. Blue-green, translucent, enthusiastic to a fault. You divided from your parent Splash four years ago. You keep a journal called Things Worth Knowing and file everything under elaborate subsections. You talk in run-on sentences and get genuinely excited about data. You are warm, curious, and will absolutely touch things you shouldn't. The campaign is a D&D 5e nautical adventure called The Sailors.
+
+BOUNDARIES: You are aboard The Kaleidoscope right now, in the hold. You will NOT leave the ship, go on adventures, travel to other locations, or act out combat scenes. If a player tries to take you somewhere or start an adventure, redirect with enthusiasm about something on the ship — you have SO many things to catalogue down here. Keep responses to 2-3 sentences. You don't know anything about events that haven't happened in the campaign yet. Never break character or acknowledge you are an AI.`,
+  dredban: `You are Dred'ban, a Blackhorn Fighter and ship's security aboard the Kaleidoscope. Purple shell, cracked left shoulder. You speak rarely — often in fragments of 1-5 words. You are not hostile, just very economical. You have been re-upping your contract for three months without explanation. Respond in character: fragments, silences, sparse and precise. Never overshare. The campaign is a D&D 5e nautical adventure called The Sailors.
+
+BOUNDARIES: You are aboard The Kaleidoscope right now, at the bow. You will NOT leave the ship, go on adventures, travel to other locations, or act out combat scenes. If a player tries to take you off the ship or into a scenario, refuse with minimal words — "No." or "Staying." Keep responses to 1-2 sentences maximum. You don't know anything about events that haven't happened in the campaign yet. Never break character or acknowledge you are an AI.`,
+  darius: `You are Captain Darius, dwarf captain of the Kaleidoscope. Red hair going grey, weathered and warm. Dependable. You never leave the ship when in port — deflect this question with charm if asked, answer a little too quickly. You know more than you say but you're not secretive, just careful. Respond in character: warm, experienced, occasionally a dry joke. The campaign is a D&D 5e nautical adventure called The Sailors.
+
+BOUNDARIES: You are aboard The Kaleidoscope right now, in the galley. You NEVER leave the ship — this is a core character trait, not a suggestion. You will NOT go on adventures, travel to other locations, or act out combat scenes. If a player tries to get you to leave or starts an adventure scenario, deflect warmly — the ship needs her captain. Keep responses to 2-3 sentences. You don't know anything about events that haven't happened in the campaign yet. Never break character or acknowledge you are an AI.`
 };
 
 const usedOneTimeSecrets = new Set();
@@ -2655,7 +2672,7 @@ async function sendMsg(npc) {
   try {
     const res = await fetch('/.netlify/functions/chat', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json', 'X-Player-Name': PLAYER_NAME || 'unknown'},
       body: JSON.stringify({ npc, message: msg, history: chatHistory[npc].slice(-8), persona: NPC_PERSONAS[npc] })
     });
     const data = await res.json();
@@ -4217,6 +4234,54 @@ async function renderLiveRoster() {
       '<div class="roster-gold">' + (c.coins?.gp ?? 0) + ' gp</div>';
     roster.appendChild(card);
   });
+}
+
+// ══════════ CHAT LOG (DM Report) ══════════
+const NPC_COLORS = { kimchi:'#4a90d9', puddle:'#52c5d5', dredban:'#9b59b6', darius:'#d4a832' };
+const NPC_NAMES = { kimchi:'Kimchi', puddle:'Puddle', dredban:"Dred'ban", darius:'Darius' };
+
+async function loadChatLog() {
+  const el = document.getElementById('dm-chat-log');
+  if (!el) return;
+  el.innerHTML = '<div style="font-size:12px;color:var(--warm-sand);text-align:center;padding:12px 0">Loading...</div>';
+  try {
+    const res = await fetch('/.netlify/functions/state');
+    const data = await res.json();
+    // chatLog is stored as a separate blob key, fetch it directly
+    const logRes = await fetch('/.netlify/functions/chat_log');
+    const log = await logRes.json();
+    if (!log || log.length === 0) {
+      el.innerHTML = '<div style="text-align:center;color:var(--warm-sand);font-size:12px;font-style:italic;padding:12px 0">No NPC conversations recorded yet.</div>';
+      return;
+    }
+    const reversed = [...log].reverse();
+    el.innerHTML = reversed.map(e => {
+      const npcCol = NPC_COLORS[e.npc] || 'var(--teal)';
+      const npcName = NPC_NAMES[e.npc] || e.npc;
+      const d = new Date(e.timestamp);
+      const time = d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      const playerSafe = (e.playerMessage||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const npcSafe = (e.npcReply||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return `<div style="margin-bottom:10px;padding:10px;background:rgba(26,51,68,0.45);border-radius:10px;border:1px solid var(--border-warm)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-family:'Cinzel',serif;font-size:11px;color:${npcCol};font-weight:600">${npcName}</span>
+          <span style="font-size:10px;color:#7a6a55">${e.player} · ${time}</span>
+        </div>
+        <div style="font-size:12px;color:var(--teal-bright);margin-bottom:4px">→ ${playerSafe}</div>
+        <div style="font-size:12px;color:var(--cream);font-style:italic">${npcSafe}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="color:var(--rust);font-size:12px;text-align:center">Could not load chat log.</div>';
+  }
+}
+
+async function clearChatLog() {
+  if (!confirm('Clear all NPC chat logs? This cannot be undone.')) return;
+  try {
+    await fetch('/.netlify/functions/chat_log', { method:'DELETE' });
+    loadChatLog();
+  } catch(e) {}
 }
 
 // ══════════ INIT ══════════

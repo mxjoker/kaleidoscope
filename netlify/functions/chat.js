@@ -1,3 +1,5 @@
+import { getStore } from "@netlify/blobs";
+
 export default async function handler(req, context) {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
@@ -89,6 +91,24 @@ export default async function handler(req, context) {
       data.content?.[0]?.type === "text"
         ? data.content[0].text
         : "...";
+
+    // Log chat exchange to Blobs for DM Report
+    try {
+      const store = getStore("kaleidoscope");
+      const existing = await store.get("chatLog", { type: "json" }) || [];
+      existing.push({
+        npc,
+        player: req.headers.get("x-player-name") || "unknown",
+        playerMessage: message,
+        npcReply: reply,
+        timestamp: new Date().toISOString()
+      });
+      // Keep last 200 exchanges to avoid unbounded growth
+      const trimmed = existing.slice(-200);
+      await store.setJSON("chatLog", trimmed);
+    } catch (logErr) {
+      console.error("Chat log save failed (non-fatal):", logErr);
+    }
 
     return new Response(JSON.stringify({ response: reply, npc }), {
       status: 200,
