@@ -34,7 +34,7 @@ export default async function handler(req, context) {
     ];
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 200,
       system: systemPrompt,
       messages,
@@ -49,15 +49,16 @@ export default async function handler(req, context) {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
       },
     });
   } catch (error) {
     console.error("Chat error:", error);
+    const errorMessage = error?.message || "Unknown error";
+    const errorStatus = error?.status || 500;
     return new Response(
-      JSON.stringify({ error: "Chat failed", response: "..." }),
+      JSON.stringify({ error: errorMessage, response: "..." }),
       {
-        status: 500,
+        status: errorStatus,
         headers: { "Content-Type": "application/json" },
       }
     );
